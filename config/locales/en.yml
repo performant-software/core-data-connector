@@ -1,0 +1,4 @@
+en:
+  errors:
+    place:
+      primary_name: "A place must have a primary name"
