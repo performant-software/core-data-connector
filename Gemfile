@@ -1,10 +1,8 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'faker', '~> 3.2.1'
-gem 'resource_api', git: 'https://github.com/performant-software/resource-api.git', tag: 'v0.4.5'
-
-gem 'sqlite3'
-
 # Specify your gem's dependencies in core_data_connector.gemspec.
 gemspec
+
+gem 'resource_api', git: 'https://github.com/performant-software/resource-api.git', tag: 'v0.4.5'
+gem 'fuzzy_dates', path: '../fuzzy-dates'

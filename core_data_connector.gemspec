@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors     = ['Performant Software Solutions']
   spec.email       = ['derek@performantsoftware.com']
   spec.homepage    = 'https://github.com/performant-software/core-data-connector'
-  spec.summary     = 'Digitial humanities data. In the cloud.'
+  spec.summary     = 'Digital humanities data. In the cloud.'
   spec.description = 'Bringing digital humanities data into your Rails application.'
   spec.license     = 'MIT'
 
@@ -17,7 +17,8 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
-  spec.add_dependency 'faker'
+  spec.add_dependency 'faker', '~> 3.2.1'
   spec.add_dependency 'rails', '>= 6.0.3.2', '< 8'
   spec.add_dependency 'resource_api'
+  spec.add_dependency 'fuzzy_dates'
 end
