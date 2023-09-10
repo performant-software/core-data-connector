@@ -1,16 +1,18 @@
 GIT
   remote: https://github.com/performant-software/resource-api.git
-  revision: ebfc4357bdfd13ae863f1e1aebdcc637be2ff6de
-  tag: v0.4.5
+  revision: d3e6e72abbd37e6bddd7ab461e37cf34d7c701ba
+  tag: v0.5.1
   specs:
     resource_api (0.1.0)
       pagy (~> 5.10)
+      pundit (~> 2.3.1)
       rails (>= 7.0, < 8)
 
 PATH
   remote: .
   specs:
     core_data_connector (0.1.0)
+      faker
       rails (>= 6.0.3.2, < 8)
       resource_api
 
@@ -87,6 +89,8 @@ GEM
     crass (1.0.6)
     date (3.3.3)
     erubi (1.12.0)
+    faker (3.2.1)
+      i18n (>= 1.8.11, < 2)
     globalid (1.1.0)
       activesupport (>= 5.0)
     i18n (1.14.1)
@@ -113,10 +117,14 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
+    nokogiri (1.15.3-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.15.3-x86_64-darwin)
       racc (~> 1.4)
     pagy (5.10.1)
       activesupport
+    pundit (2.3.1)
+      activesupport (>= 3.0.0)
     racc (1.7.1)
     rack (2.2.8)
     rack-test (2.1.0)
@@ -150,6 +158,7 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
+    sqlite3 (1.6.3-arm64-darwin)
     sqlite3 (1.6.3-x86_64-darwin)
     thor (1.2.2)
     timeout (0.4.0)
@@ -161,10 +170,12 @@ GEM
     zeitwerk (2.6.11)
 
 PLATFORMS
+  arm64-darwin-22
   x86_64-darwin-19
 
 DEPENDENCIES
   core_data_connector!
+  faker (~> 3.2.1)
   resource_api!
   sqlite3
 
