@@ -2,15 +2,15 @@ module CoreDataConnector
   class Place < ApplicationRecord
     self.primary_key = :id
 
+    # Includes
+    include Ownable
+
     # Relationships
     has_many :place_names, dependent: :destroy
-    has_one :primary_name, -> { where(primary: true) }, class_name: 'PlaceName'
+    has_one :primary_name, -> { where(primary: true) }, class_name: PlaceName.to_s
 
     # Nested attributes
     accepts_nested_attributes_for :place_names, allow_destroy: true
-
-    # Resourceable parameters
-    allow_params place_names_attributes: [:id, :name, :primary, :_destroy]
 
     # Validations
     validate :validate_place_names
