@@ -1,5 +1,5 @@
 module CoreDataConnector
-  class PlacesController < ApplicationController
+  class PeopleController < ApplicationController
     include NameableController
   end
 end

@@ -1,12 +1,10 @@
 module CoreDataConnector
-  class Place < ApplicationRecord
-    self.primary_key = :id
-
+  class Person < ApplicationRecord
     # Includes
     include Nameable
     include Ownable
 
     # Delegates
-    delegate :name, to: :primary_name
+    delegate :first_name, :middle_name, :last_name, to: :primary_name
   end
 end

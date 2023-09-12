@@ -1,26 +1,26 @@
 module CoreDataConnector
-  class PlacePolicy < BasePolicy
+  class PersonPolicy < BasePolicy
     include OwnablePolicy
 
-    attr_reader :current_user, :place
+    attr_reader :current_user, :person
 
-    def initialize(current_user, place)
+    def initialize(current_user, person)
       @current_user = current_user
-      @place = place
+      @person = person
     end
 
     # Allowed create/update attributes.
     def permitted_attributes
       attrs = []
       attrs << ownable_attributes
-      attrs << { place_names_attributes: [:id, :name, :primary, :_destroy] }
+      attrs << { person_names_attributes: [:id, :first_name, :middle_name, :last_name, :primary, :_destroy] }
       attrs
     end
 
     protected
 
     def project_item
-      place.project_item
+      person.project_item
     end
 
     # Include default ownable scope.
