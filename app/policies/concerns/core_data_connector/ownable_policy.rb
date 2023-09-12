@@ -35,9 +35,8 @@ module CoreDataConnector
         { project_item_attributes: [:id, :project_id, :_destroy] }
       end
 
-      # Returns true if the current user has a `user_projects` record for the place's `project_item`.
+      # Returns true if the current user has a `user_projects` record for the owned item's `project_item`.
       def member?
-        puts project_item.inspect
         current_user
           .user_projects
           .where(project_id: project_item&.project_id)
