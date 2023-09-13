@@ -1,5 +1,8 @@
 module CoreDataConnector
   class ProjectModel < ApplicationRecord
+    # Includes
+    include UserDefinedFields::Defineable
+
     # Relationships
     belongs_to :project
 

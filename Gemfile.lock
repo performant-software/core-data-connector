@@ -8,6 +8,15 @@ GIT
       pundit (~> 2.3.1)
       rails (>= 7.0, < 8)
 
+GIT
+  remote: https://github.com/performant-software/user-defined-fields.git
+  revision: 18e14d28d6daefa403699617e3807eb646a31bcc
+  tag: v0.1.7
+  specs:
+    user_defined_fields (0.1.0)
+      rails (>= 6.0.3.2, < 8)
+      resource_api
+
 PATH
   remote: .
   specs:
@@ -15,6 +24,7 @@ PATH
       faker
       rails (>= 6.0.3.2, < 8)
       resource_api
+      user_defined_fields
 
 GEM
   remote: https://rubygems.org/
@@ -178,6 +188,7 @@ DEPENDENCIES
   faker (~> 3.2.1)
   resource_api!
   sqlite3
+  user_defined_fields!
 
 BUNDLED WITH
    2.3.16

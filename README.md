@@ -13,7 +13,7 @@ gem "core_data_connector"
 
 And then execute:
 ```bash
-$ bundle
+$ bundle install
 ```
 
 Or install it yourself as:
@@ -29,7 +29,7 @@ This gem can be used in one of two ways:
 If your application will have local tables to represent core data (#1 above), use the following command to install the necessary migrations.
 
 ```bash
-$ bundle exec rails core_data_connector:install:migrations
+$ bundle exec rails g core_data_connector:install
 ```
 
 ## Overlay
