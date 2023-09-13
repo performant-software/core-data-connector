@@ -5,6 +5,10 @@ module CoreDataConnector
 
     # Relationships
     belongs_to :project
+    has_many :project_model_relationships, dependent: :destroy, foreign_key: :primary_model_id
+
+    # Nested attributes
+    accepts_nested_attributes_for :project_model_relationships, allow_destroy: true
 
     # Validations
     validates :name, presence: true
