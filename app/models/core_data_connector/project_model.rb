@@ -1,6 +1,7 @@
 module CoreDataConnector
   class ProjectModel < ApplicationRecord
     # Includes
+    include Sluggable
     include UserDefinedFields::Defineable
 
     # Relationships
