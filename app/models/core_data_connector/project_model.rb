@@ -6,6 +6,9 @@ module CoreDataConnector
 
     # Relationships
     belongs_to :project
+    has_many :organizations, dependent: :destroy
+    has_many :people, dependent: :destroy
+    has_many :places, dependent: :destroy
     has_many :project_model_relationships, dependent: :destroy, foreign_key: :primary_model_id
 
     # Nested attributes

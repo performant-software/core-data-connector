@@ -32,25 +32,16 @@ module CoreDataConnector
       end
 
       def ownable_attributes
-        { project_item_attributes: [:id, :project_id, :_destroy] }
+        [ :project_model_id ]
       end
 
       # Returns true if the current user has a `user_projects` record for the owned item's `project_item`.
       def member?
         current_user
           .user_projects
-          .where(project_id: project_item&.project_id)
+          .where(project_id: project_id)
           .exists?
       end
-
-      protected
-
-      # Returns the project_item record that defines the ownership of the current record. This method should
-      # be implemented by sub-classes.
-      def project_item
-        nil
-      end
-
     end
   end
 end
