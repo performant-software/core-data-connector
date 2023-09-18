@@ -4,7 +4,7 @@ module CoreDataConnector
 
     included do
       # Callbacks
-      before_save :set_slug
+      before_validation :set_slug, on: :create
 
       # Validations
       validates :slug, presence: true
