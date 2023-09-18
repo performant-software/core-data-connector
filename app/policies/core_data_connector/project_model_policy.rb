@@ -25,7 +25,7 @@ module CoreDataConnector
     def show?
       return true if current_user.admin?
 
-      owner?
+      member?
     end
 
     # A user can update project models if they are the owner of the project.
@@ -43,6 +43,14 @@ module CoreDataConnector
     private
 
     # Returns true if the current user has a `user_projects` record for the model's project.
+    def member?
+      current_user
+        .user_projects
+        .where(project_id: project_model.project_id)
+        .exists?
+    end
+
+    # Returns true if the current user has an owner `user_projects` record for the model's project.
     def owner?
       current_user
         .user_projects

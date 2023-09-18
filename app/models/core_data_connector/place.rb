@@ -5,6 +5,7 @@ module CoreDataConnector
     # Includes
     include Nameable
     include Ownable
+    include Relateable
 
     # Relationships
     belongs_to :project_model

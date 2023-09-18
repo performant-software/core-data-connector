@@ -6,6 +6,7 @@ CoreDataConnector::Engine.routes.draw do
     get :model_classes, on: :collection
   end
   resources :projects
+  resources :relationships
   resources :user_projects
   resources :users
 end
