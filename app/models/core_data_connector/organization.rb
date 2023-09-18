@@ -1,7 +1,5 @@
 module CoreDataConnector
-  class Place < ApplicationRecord
-    self.primary_key = :id
-
+  class Organization < ApplicationRecord
     # Includes
     include Nameable
     include Ownable

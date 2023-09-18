@@ -1,5 +1,5 @@
 module CoreDataConnector
-  class PlacesController < ApplicationController
+  class OrganizationsController < ApplicationController
     # Includes
     include NameableController
     include OwnableController

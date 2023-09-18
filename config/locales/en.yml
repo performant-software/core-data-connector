@@ -1,4 +1,4 @@
 en:
   errors:
-    place:
-      primary_name: "A place must have a primary name"
+    nameable:
+      primary_name: "This record must have a primary name"

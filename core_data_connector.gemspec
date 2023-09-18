@@ -20,4 +20,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faker'
   spec.add_dependency 'rails', '>= 6.0.3.2', '< 8'
   spec.add_dependency 'resource_api'
+  spec.add_dependency 'user_defined_fields'
 end
