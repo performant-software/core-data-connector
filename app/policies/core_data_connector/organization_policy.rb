@@ -12,7 +12,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      attrs = [:description]
+      attrs = [:description, user_defined: {}]
       attrs << ownable_attributes
       attrs << { organization_names_attributes: [:id, :name, :primary, :_destroy] }
       attrs
