@@ -34,6 +34,11 @@ module CoreDataConnector
       model_class&.safe_constantize&.model_name&.human
     end
 
+    # Returns the singular version of the name.
+    def name_singular
+      name&.singularize
+    end
+
     private
 
     # Returns a list of valid model class names.
