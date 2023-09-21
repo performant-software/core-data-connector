@@ -1,5 +1,7 @@
-PATH
-  remote: ../resource-api
+GIT
+  remote: https://github.com/performant-software/resource-api.git
+  revision: f1092734efc2f1e86c9d7bd3a0c5b70e57c3b3ca
+  tag: v0.5.3
   specs:
     resource_api (0.1.0)
       pagy (~> 5.10)
