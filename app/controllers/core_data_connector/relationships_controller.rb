@@ -1,5 +1,8 @@
 module CoreDataConnector
   class RelationshipsController < ApplicationController
+    # Includes
+    include UserDefinedFields::Queryable
+
     protected
 
     def base_query
