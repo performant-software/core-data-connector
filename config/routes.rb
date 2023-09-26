@@ -1,4 +1,5 @@
 CoreDataConnector::Engine.routes.draw do
+  resources :media_contents
   resources :organizations
   resources :people
   resources :places
