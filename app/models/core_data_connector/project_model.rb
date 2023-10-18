@@ -31,7 +31,7 @@ module CoreDataConnector
 
     # Returns a human readable model class name.
     def model_class_view
-      model_class&.safe_constantize&.model_name&.human
+      model_class&.safe_constantize&.model_name&.human&.titleize
     end
 
     # Returns the singular version of the name.

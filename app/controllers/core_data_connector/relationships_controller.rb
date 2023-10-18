@@ -1,6 +1,7 @@
 module CoreDataConnector
   class RelationshipsController < ApplicationController
     # Includes
+    include Api::Uploadable
     include UserDefinedFields::Queryable
 
     protected
