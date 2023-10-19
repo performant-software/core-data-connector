@@ -12,7 +12,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      [ *ownable_attributes, :name, :content ]
+      [ *ownable_attributes, :name, :content, user_defined: {} ]
     end
 
     # Include default ownable scope.
