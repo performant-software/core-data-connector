@@ -11,7 +11,7 @@ module CoreDataConnector
     end
 
     def permitted_attributes
-      [:project_model_relationship_id, :primary_record_id, :primary_record_type, :related_record_id, :related_record_type, user_defined: {}]
+      [ :project_model_relationship_id, :primary_record_id, :primary_record_type, :related_record_id, :related_record_type, user_defined: {} ]
     end
 
     class Scope < BaseScope
