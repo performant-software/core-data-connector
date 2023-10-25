@@ -14,5 +14,6 @@ module CoreDataConnector
 
     # Validations
     validates :name, presence: true
+    validates :inverse_name, presence: true, if: :allow_inverse?
   end
 end
