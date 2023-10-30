@@ -11,6 +11,7 @@ module CoreDataConnector
                                                   user_defined_fields: UserDefinedFields::UserDefinedFieldsSerializer],
                     inverse_project_model_relationships: [:id, :primary_model_id, :name, :multiple, :slug, :allow_inverse,
                                                           :inverse_name, :inverse_multiple, primary_model: ProjectModelsSerializer,
-                                                          user_defined_fields: UserDefinedFields::UserDefinedFieldsSerializer]
+                                                          user_defined_fields: UserDefinedFields::UserDefinedFieldsSerializer],
+                    project_model_accesses: [:id, :project_id, project: ProjectsSerializer]
   end
 end
