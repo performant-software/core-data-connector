@@ -43,7 +43,9 @@ module CoreDataConnector
        inverse_project_model_relationships_attributes: [:id, :primary_model_id, :related_model_id, :name, :multiple, :slug,
                                                 :allow_inverse, :inverse_name, :inverse_multiple, :_destroy,
                                                 *ProjectModelRelationship.permitted_params],
-       project_model_accesses_attributes: [:id, :project_id, :_destroy]]
+       project_model_accesses_attributes: [:id, :project_id, :_destroy],
+       project_model_shares_attributes: [:id, :project_model_access_id, :_destroy]
+      ]
     end
 
     private

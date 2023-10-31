@@ -11,6 +11,7 @@ module CoreDataConnector
     has_many :people, dependent: :destroy
     has_many :places, dependent: :destroy
     has_many :project_model_accesses, dependent: :destroy
+    has_many :project_model_shares, dependent: :destroy
 
     has_many :project_model_relationships, dependent: :destroy, foreign_key: :primary_model_id
     has_many :inverse_project_model_relationships, -> { where(allow_inverse: true) }, dependent: :destroy, class_name: ProjectModelRelationship.to_s, foreign_key: :related_model_id
@@ -19,6 +20,7 @@ module CoreDataConnector
     accepts_nested_attributes_for :project_model_relationships, allow_destroy: true
     accepts_nested_attributes_for :inverse_project_model_relationships, allow_destroy: true
     accepts_nested_attributes_for :project_model_accesses, allow_destroy: true
+    accepts_nested_attributes_for :project_model_shares, allow_destroy: true
 
     # Validations
     validates :name, presence: true
