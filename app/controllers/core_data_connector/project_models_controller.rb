@@ -4,7 +4,8 @@ module CoreDataConnector
     search_attributes :name
 
     # Preloads
-    preloads :project_model_relationships
+    preloads project_model_relationships: :related_model
+    preloads inverse_project_model_relationships: :primary_model
 
     # Returns a list of valid model classes
     def model_classes

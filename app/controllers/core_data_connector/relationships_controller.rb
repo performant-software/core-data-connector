@@ -19,32 +19,49 @@ module CoreDataConnector
 
       # For an index view, scope the list of relationships to those owned by the project_model_relationship,
       # for the given record type.
-      required_params = %i(project_model_relationship_id primary_record_id primary_record_type)
-      return Relationship.none unless required_params.all?{ |p| params[p].present? }
+      return Relationship.none unless params[:project_model_relationship_id].present? && params[:record_id].present? && params[:record_type].present?
 
-      # Relationships should always to scoped to a project model relationship and a primary record.
-      query = Relationship.where(
-        project_model_relationship_id: params[:project_model_relationship_id],
-        primary_record_id: params[:primary_record_id],
-        primary_record_type: params[:primary_record_type]
-      )
+      # Relationships should always to scoped to a project model relationship. For inverse relationships, we'll
+      # use the related record.
+      if params[:inverse]
+        query = Relationship.where(
+          project_model_relationship_id: params[:project_model_relationship_id],
+          related_record_id: params[:record_id],
+          related_record_type: params[:record_type]
+        )
+      else
+        query = Relationship.where(
+          project_model_relationship_id: params[:project_model_relationship_id],
+          primary_record_id: params[:record_id],
+          primary_record_type: params[:record_type]
+        )
+      end
 
       # For sorting, left join the polymorphic model we're currently looking at.
-      case @project_model_relationship.related_model.model_class
+      case model_class
       when MediaContent.to_s
-        query = query.joins(:related_media_content)
+        query = query.joins(params[:inverse] ? :inverse_related_media_content : :related_media_content)
       when Organization.to_s
-        query = query.joins(related_organization: :primary_name)
+        query = query.joins(params[:inverse] ? { inverse_related_organization: :primary_name } : { related_organization: :primary_name })
       when Person.to_s
-        query = query.joins(related_person: :primary_name)
+        query = query.joins(params[:inverse] ? { inverse_related_person: :primary_name } : { related_person: :primary_name })
       when Place.to_s
-        query = query.joins(related_place: :primary_name)
+        query = query.joins(params[:inverse] ? { inverse_related_place: :primary_name } : { related_place: :primary_name })
       end
 
       query
     end
 
     private
+
+    # Returns the related model class for filtering and sorting.
+    def model_class
+      if params[:inverse]
+        @project_model_relationship.primary_model.model_class
+      else
+        @project_model_relationship.related_model.model_class
+      end
+    end
 
     def resolve_person_query
       query = nil
@@ -74,7 +91,7 @@ module CoreDataConnector
     def search_related_records(query)
       or_query = nil
 
-      case @project_model_relationship.related_model.model_class
+      case model_class
       when MediaContent.to_s
         attribute = "#{MediaContent.arel_table.name}.#{MediaContent.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
