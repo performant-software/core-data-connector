@@ -1,7 +1,5 @@
 module CoreDataConnector
   class RelationshipPolicy < BasePolicy
-    include OwnablePolicy
-
     attr_reader :current_user, :relationship, :project_id
 
     def initialize(current_user, relationship)
@@ -10,8 +8,50 @@ module CoreDataConnector
       @project_id = relationship&.project_id
     end
 
+    # A user can create a relationship if they are an admin or a member of the owning project.
+    def create?
+      return true if current_user.admin?
+
+      member?
+    end
+
+    # A user can create a relationship if they are an admin or a member of the owning project.
+    def destroy?
+      return true if current_user.admin?
+
+      member?
+    end
+
+    # A user can view a relationship if they are an admin or a member of the owning project.
+    def show?
+      return true if current_user.admin?
+
+      member?
+    end
+
+    # A user can update a relationship if they are an admin or a member of the owning project.
+    def update?
+      return true if current_user.admin?
+
+      member?
+    end
+
+    # Returns true if the current user has a `user_projects` record for the project that owns the current record.
+    def member?
+      current_user
+        .user_projects
+        .where(project_id: project_id)
+        .exists?
+    end
+
     def permitted_attributes
-      [ :project_model_relationship_id, :primary_record_id, :primary_record_type, :related_record_id, :related_record_type, user_defined: {} ]
+      [ :project_model_relationship_id,
+        :primary_record_id,
+        :primary_record_type,
+        :related_record_id,
+        :related_record_type,
+        user_defined: {}
+      ]
     end
 
     class Scope < BaseScope

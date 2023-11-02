@@ -12,15 +12,18 @@ module CoreDataConnector
           ownable_table = scope.klass.arel_table
         end
 
-        scope
-          .where(
-            UserProject
-              .joins(project: :project_models)
-              .where(ProjectModel.arel_table[:id].eq(ownable_table[:project_model_id]))
-              .where(user_id: current_user.id)
-              .arel
-              .exists
-          )
+        owned_records_query = UserProject
+                                .joins(project: :project_models)
+                                .where(ProjectModel.arel_table[:id].eq(ownable_table[:project_model_id]))
+                                .where(user_id: current_user.id)
+
+        shared_records_query = ProjectModelShare
+                                 .joins(project_model_access: [project: :user_projects])
+                                 .where(ProjectModelAccess.arel_table[:project_model_id].eq(ownable_table[:project_model_id]))
+                                 .where(core_data_connector_user_projects: { user_id: current_user.id })
+
+        scope.where(owned_records_query.arel.exists)
+             .or(scope.where(shared_records_query.arel.exists))
       end
     end
   end
