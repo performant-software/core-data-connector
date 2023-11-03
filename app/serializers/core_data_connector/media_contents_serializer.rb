@@ -1,5 +1,6 @@
 module CoreDataConnector
   class MediaContentsSerializer < BaseSerializer
+    include OwnableSerializer
     include TripleEyeEffable::ResourceableSerializer
     include UserDefinedFields::FieldableSerializer
 

@@ -1,5 +1,6 @@
 module CoreDataConnector
   class PeopleSerializer < BaseSerializer
+    include OwnableSerializer
     include UserDefinedFields::FieldableSerializer
 
     index_attributes :id, :first_name, :middle_name, :last_name
