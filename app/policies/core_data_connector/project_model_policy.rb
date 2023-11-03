@@ -14,11 +14,12 @@ module CoreDataConnector
       owner?
     end
 
-    # A user can delete project models if they are the owner of the project.
+    # A user can delete project models if they are the owner of the project and the model is not shared with
+    # another project.
     def destroy?
       return true if current_user.admin?
 
-      owner?
+      owner? && !shared?
     end
 
     # A user can view project models if they are the owner of the project.
@@ -65,6 +66,11 @@ module CoreDataConnector
         .where(project_id: project_model.project_id)
         .where(role: UserProject::ROLE_OWNER)
         .exists?
+    end
+
+    # Returns true if the current project_model is shared with other projects.
+    def shared?
+      project_model.project_model_accesses.any?
     end
 
     # A user can view project models for any project they own.
