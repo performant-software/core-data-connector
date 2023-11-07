@@ -8,6 +8,9 @@ module CoreDataConnector
     include Relateable
     include UserDefinedFields::Fieldable
 
+    # Relationships
+    has_one :place_geometry, dependent: :destroy
+
     # Delegates
     delegate :name, to: :primary_name
 
