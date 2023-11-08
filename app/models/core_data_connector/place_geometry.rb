@@ -9,6 +9,7 @@ module CoreDataConnector
     # Callbacks
     before_save :set_geometry
 
+    # Returns the "geometry" as GeoJSON
     def to_geojson
       Geometry.to_geojson(self.geometry)
     end
@@ -19,7 +20,8 @@ module CoreDataConnector
     def set_geometry
       return unless self.geometry_json.present?
 
-      self.geometry = Geometry.to_postgis(self.geometry_json)
+      json = JSON.parse(self.geometry_json)
+      self.geometry = Geometry.to_postgis(json)
     end
   end
 end
