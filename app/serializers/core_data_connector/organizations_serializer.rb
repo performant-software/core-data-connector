@@ -1,5 +1,6 @@
 module CoreDataConnector
   class OrganizationsSerializer < BaseSerializer
+    include OwnableSerializer
     include UserDefinedFields::FieldableSerializer
 
     index_attributes :id, :name

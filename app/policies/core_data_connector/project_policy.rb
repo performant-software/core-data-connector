@@ -35,7 +35,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      [:name, :description]
+      [:name, :description, :discoverable]
     end
 
     private

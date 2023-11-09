@@ -6,6 +6,7 @@ CoreDataConnector::Engine.routes.draw do
   resources :project_models do
     get :model_classes, on: :collection
   end
+  resources :project_model_accesses, only: :index
   resources :projects
   resources :relationships do
     post :upload, on: :collection
