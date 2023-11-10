@@ -1,6 +1,7 @@
 module CoreDataConnector
   class PlacesController < ApplicationController
     # Includes
+    include ImportableController
     include NameableController
     include OwnableController
     include UserDefinedFields::Queryable
