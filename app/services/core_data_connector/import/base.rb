@@ -93,7 +93,7 @@ module CoreDataConnector
           expression << column[:name]
         end
 
-        return '{}' if expression.empty?
+        return "'{}'" if expression.empty?
 
         "json_build_object(#{expression.join(', ')})"
       end
