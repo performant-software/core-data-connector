@@ -8,6 +8,12 @@ module CoreDataConnector
     include Relateable
     include UserDefinedFields::Fieldable
 
+    # Relationships
+    has_one :place_geometry, dependent: :destroy
+
+    # Nested attributes
+    accepts_nested_attributes_for :place_geometry, allow_destroy: true
+
     # Delegates
     delegate :name, to: :primary_name
 
