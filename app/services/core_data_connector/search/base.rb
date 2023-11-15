@@ -25,6 +25,20 @@ module CoreDataConnector
           Preloader.new(
             records: records,
             associations: [
+              instance_relationships: [
+                related_record: [
+                  primary_name: :name,
+                  source_titles: :name,
+                  project_model: :user_defined_fields
+                ]
+              ],
+              item_relationships: [
+                related_record: [
+                  primary_name: :name,
+                  source_titles: :name,
+                  project_model: :user_defined_fields
+                ]
+              ],
               media_content_relationships: [
                 related_record: [
                   project_model: :user_defined_fields
@@ -62,6 +76,14 @@ module CoreDataConnector
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: :user_defined_fields
+              ],
+              work_relationships: [
+                related_record: [
+                  primary_name: :name,
+                  source_titles: :name,
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: :user_defined_fields
               ]
             ],
             scope: (
@@ -75,6 +97,22 @@ module CoreDataConnector
           Preloader.new(
             records: records,
             associations: [
+              instance_related_relationships: [
+                primary_record: [
+                  primary_name: :name,
+                  source_titles: :name,
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: :user_defined_fields
+              ],
+              item_related_relationships: [
+                primary_record: [
+                  primary_name: :name,
+                  source_titles: :name,
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: :user_defined_fields
+              ],
               media_content_related_relationships: [
                 primary_record: [
                   project_model: :user_defined_fields
@@ -112,7 +150,15 @@ module CoreDataConnector
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: :user_defined_fields
-              ]
+              ],
+              work_related_relationships: [
+                primary_record: [
+                  primary_name: :name,
+                  source_titles: :name,
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: :user_defined_fields
+              ],
             ],
             scope: (
               Relationship
@@ -152,6 +198,14 @@ module CoreDataConnector
 
       included do
         # Primary relationships
+        has_many :instance_relationships, -> {
+          where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Instance.to_s })
+        }, as: :primary_record, class_name: Relationship.to_s
+
+        has_many :item_relationships, -> {
+          where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Item.to_s })
+        }, as: :primary_record, class_name: Relationship.to_s
+
         has_many :media_content_relationships, -> {
           where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::MediaContent.to_s })
         }, as: :primary_record, class_name: Relationship.to_s
@@ -172,7 +226,23 @@ module CoreDataConnector
           where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Taxonomy.to_s })
         }, as: :primary_record, class_name: Relationship.to_s
 
+        has_many :work_relationships, -> {
+          where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Work.to_s })
+        }, as: :primary_record, class_name: Relationship.to_s
+
         # Related relationships
+        has_many :instance_related_relationships, -> {
+          joins(:project_model_relationship)
+            .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Instance.to_s })
+            .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
+        }, as: :related_record, class_name: Relationship.to_s
+
+        has_many :item_related_relationships, -> {
+          joins(:project_model_relationship)
+            .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Item.to_s })
+            .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
+        }, as: :related_record, class_name: Relationship.to_s
+
         has_many :media_content_related_relationships, -> {
           joins(:project_model_relationship)
             .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::MediaContent.to_s })
@@ -200,6 +270,12 @@ module CoreDataConnector
         has_many :taxonomy_related_relationships, -> {
           joins(:project_model_relationship)
             .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Taxonomy.to_s })
+            .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
+        }, as: :related_record, class_name: Relationship.to_s
+
+        has_many :work_related_relationships, -> {
+          joins(:project_model_relationship)
+            .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Work.to_s })
             .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
         }, as: :related_record, class_name: Relationship.to_s
 
