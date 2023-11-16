@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Ownable
     include Relateable
+    include Search::MediaContent
     include TripleEyeEffable::Resourceable
     include UserDefinedFields::Fieldable
 

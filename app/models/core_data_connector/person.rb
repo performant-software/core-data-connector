@@ -4,6 +4,7 @@ module CoreDataConnector
     include Nameable
     include Ownable
     include Relateable
+    include Search::Person
     include UserDefinedFields::Fieldable
 
     # Delegates
