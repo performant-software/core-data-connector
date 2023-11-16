@@ -177,7 +177,7 @@ module CoreDataConnector
         }, as: :related_record, class_name: Relationship.to_s
 
         # Include the ID attribute as a string by default
-        search_attribute(:id) do
+        search_attribute(:record_id) do
           id.to_s
         end
 

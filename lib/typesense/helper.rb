@@ -47,14 +47,30 @@ module Typesense
     end
 
     def index(project_model_ids)
-      project_models = CoreDataConnector::ProjectModel.where(id: project_model_ids)
-      klass = project_models.first.model_class.constantize
-
       collection = client.collections[collection_name]
 
-      klass.for_search(project_model_ids) do |records|
-        documents = records.map { |r| r.to_search_json(false) }
-        collection.documents.import(documents, action: 'upsert')
+      # Query project_models and build a hash of class names to arrays if project_model IDs
+      model_classes = CoreDataConnector::ProjectModel
+                        .where(id: project_model_ids)
+                        .pluck(:id, :model_class)
+                        .inject({}) do |hash, record|
+                          id, model_class = record
+
+                          hash[model_class] ||= []
+                          hash[model_class] << id
+
+                          hash
+                        end
+
+      # Iterate over the keys and query the records belonging to each project model
+      model_classes.keys.each do |model_class|
+        klass = model_class.constantize
+        ids = model_classes[model_class]
+
+        klass.for_search(ids) do |records|
+          documents = records.map { |r| r.to_search_json(false) }
+          collection.documents.import(documents, action: 'upsert')
+        end
       end
     end
   end
