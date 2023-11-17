@@ -55,6 +55,13 @@ module CoreDataConnector
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: :user_defined_fields
+              ],
+              taxonomy_relationships: [
+                related_record: [
+                  :name,
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: :user_defined_fields
               ]
             ],
             scope: (
@@ -95,6 +102,13 @@ module CoreDataConnector
                   :place_geometry,
                   :primary_name,
                   :place_names,
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: :user_defined_fields
+              ],
+              taxonomy_related_relationships: [
+                primary_record: [
+                  :name,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: :user_defined_fields
@@ -154,6 +168,10 @@ module CoreDataConnector
           where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Place.to_s })
         }, as: :primary_record, class_name: Relationship.to_s
 
+        has_many :taxonomy_relationships, -> {
+          where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Taxonomy.to_s })
+        }, as: :primary_record, class_name: Relationship.to_s
+
         # Related relationships
         has_many :media_content_related_relationships, -> {
           joins(:project_model_relationship)
@@ -176,6 +194,12 @@ module CoreDataConnector
         has_many :place_related_relationships, -> {
           joins(:project_model_relationship)
             .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Place.to_s })
+            .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
+        }, as: :related_record, class_name: Relationship.to_s
+
+        has_many :taxonomy_related_relationships, -> {
+          joins(:project_model_relationship)
+            .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Taxonomy.to_s })
             .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
         }, as: :related_record, class_name: Relationship.to_s
 
@@ -252,11 +276,13 @@ module CoreDataConnector
           organization_relationships.each { |r| build_relationship(r, hash, :related_organizations) }
           person_relationships.each { |r| build_relationship(r, hash, :related_people) }
           place_relationships.each { |r| build_relationship(r, hash, :related_places) }
+          taxonomy_relationships.each { |r| build_relationship(r, hash, :related_taxonomies) }
 
           media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_media) }
           organization_related_relationships.each { |r| build_inverse_relationship(r,hash, :related_organizations) }
           person_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_people) }
           place_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_places) }
+          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_taxonomies) }
         end
 
         def build_user_defined(record, user_defined_fields)
