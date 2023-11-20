@@ -48,12 +48,14 @@ module CoreDataConnector
         columns = [*column_names, *user_defined_columns]
         column_names = columns.map{ |column| column[:name] }.join(', ')
 
-        execute <<-SQL.squish
-          COPY #{table_name} ( #{column_names} )
-          FROM '#{filepath}'
-          DELIMITER ','
-          CSV HEADER
-        SQL
+        options = "FORMAT CSV, DELIMITER ',', HEADER true"
+        copy_command = "COPY #{table_name} (#{column_names}) FROM STDIN WITH (#{options})"
+
+        @connection.raw_connection.copy_data(copy_command)  do
+          CSV.foreach(filepath, headers: true) do |row|
+            @connection.raw_connection.put_copy_data(row.to_csv)
+          end
+        end
       end
 
       def load
