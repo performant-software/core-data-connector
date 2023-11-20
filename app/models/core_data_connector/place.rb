@@ -6,6 +6,7 @@ module CoreDataConnector
     include Nameable
     include Ownable
     include Relateable
+    include Search::Place
     include UserDefinedFields::Fieldable
 
     # Relationships

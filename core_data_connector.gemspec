@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'resource_api'
   spec.add_dependency 'user_defined_fields'
   spec.add_dependency 'triple_eye_effable'
+  spec.add_dependency 'typesense', '~> 0.14'
 end
