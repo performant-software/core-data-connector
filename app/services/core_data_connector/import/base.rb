@@ -108,7 +108,7 @@ module CoreDataConnector
 
       def load_user_defined_fields
         UserDefinedFields::UserDefinedField
-          .where(defineable_id: 30)
+          .where(defineable_id: project_model_id)
           .where(defineable_type: CoreDataConnector::ProjectModel.to_s)
           .pluck(:column_name, :id, :uuid)
           .inject({}) do |hash, element|
