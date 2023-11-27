@@ -3,15 +3,13 @@ require 'csv'
 module CoreDataConnector
   module Import
     class Base
-      attr_reader :filepath, :project_model_id, :table_name, :user_defined_columns, :user_defined_fields
+      attr_reader :filepath, :table_name, :user_defined_columns
 
-      def initialize(project_model_id, filepath)
-        @project_model_id = project_model_id
+      def initialize(filepath)
         @filepath = filepath
 
         @connection = ActiveRecord::Base.connection
         @table_name = create_table_name
-        @user_defined_fields = load_user_defined_fields
         @user_defined_columns = load_user_defined_columns
       end
 
@@ -45,8 +43,9 @@ module CoreDataConnector
       end
 
       def extract
-        columns = [*column_names, *user_defined_columns]
-        column_names = columns.map{ |column| column[:name] }.join(', ')
+        column_names = columns
+                         .select{ |c| c[:copy] == true }
+                         .map{ |column| column[:name] }.join(', ')
 
         options = "FORMAT CSV, DELIMITER ',', HEADER true"
         copy_command = "COPY #{table_name} (#{column_names}) FROM STDIN WITH (#{options})"
@@ -63,8 +62,9 @@ module CoreDataConnector
       end
 
       def setup
-        columns = [*column_names, *user_defined_columns]
-        column_names = columns.map{ |column| "#{column[:name]} #{column[:type]}" }.join(', ')
+        column_names = columns
+                         .map{ |column| "#{column[:name]} #{column[:type]}" }
+                         .join(', ')
 
         execute <<-SQL.squish
           CREATE TABLE #{table_name} (
@@ -79,44 +79,41 @@ module CoreDataConnector
       end
 
       def transform
-        # Implemented in sub-classes
-      end
+        # Sets the user_defined column based on any included user-defined fields
+        expression = user_defined_columns
+                       .map{ |c| ["'#{column_name_to_uuid(c[:name])}'", c[:name]] }
+                       .flatten
+                       .join(', ')
 
-      def user_defined_expression
-        expression = []
-
-        user_defined_columns.each do |column|
-          key = column[:name].gsub('udf_', '')
-          user_defined_field = user_defined_fields[key]
-
-          next if user_defined_field.nil?
-
-          expression << "'#{user_defined_field[:uuid]}'"
-          expression << column[:name]
-        end
-
-        return "'{}'" if expression.empty?
-
-        "json_build_object(#{expression.join(', ')})"
+        execute <<-SQL.squish
+          UPDATE #{table_name}
+             SET user_defined = json_strip_nulls(json_build_object(#{expression}))
+        SQL
       end
 
       private
 
-      def create_table_name
-        "#{table_name_prefix}_#{Random.rand(1000..9999)}"
+      def columns
+        [{
+           name: 'project_model_id',
+           type: 'INTEGER',
+           copy: true
+        }, {
+           name: 'user_defined',
+           type: 'JSONB'
+         },
+         *column_names,
+         *user_defined_columns
+        ]
       end
 
-      def load_user_defined_fields
-        UserDefinedFields::UserDefinedField
-          .where(defineable_id: project_model_id)
-          .where(defineable_type: CoreDataConnector::ProjectModel.to_s)
-          .pluck(:column_name, :id, :uuid)
-          .inject({}) do |hash, element|
-            key = element[0].parameterize(separator: '_')
-            value = { id: element[1], uuid: element[2] }
+      # Converts the passed colum name to a UUID value.
+      def column_name_to_uuid(column_name)
+        column_name.gsub('_', '-')[1..-1]
+      end
 
-            hash.merge!(key => value)
-          end
+      def create_table_name
+        "#{table_name_prefix}_#{Random.rand(1000..9999)}"
       end
 
       def load_user_defined_columns
@@ -125,15 +122,22 @@ module CoreDataConnector
         headers = CSV.foreach(filepath).first
 
         headers.each do |header|
-          next unless header.starts_with?('udf_')
+          next unless header.starts_with?('udf-')
+          uuid = header.gsub('udf-', '')
 
           columns << {
-            name: header,
-            type: 'VARCHAR'
+            name: uuid_to_column_name(uuid),
+            type: 'VARCHAR',
+            copy: true
           }
         end
 
         columns
+      end
+
+      # Converts the passed UUID value to a database-safe column name
+      def uuid_to_column_name(uuid)
+        "_#{uuid.gsub('-', '_')}"
       end
     end
   end
