@@ -8,6 +8,10 @@ module CoreDataConnector
            name: 'person_id',
            type: 'INTEGER'
          }, {
+           name: 'uuid',
+           type: 'UUID',
+           copy: true
+         }, {
            name: 'last_name',
            type: 'VARCHAR',
            copy: true

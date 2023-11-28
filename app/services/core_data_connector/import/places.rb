@@ -7,7 +7,11 @@ module CoreDataConnector
         [{
            name: 'place_id',
            type: 'INTEGER',
-         },{
+         }, {
+           name: 'uuid',
+           type: 'UUID',
+           copy: true
+         }, {
            name: 'name',
            type: 'VARCHAR',
            copy: true
