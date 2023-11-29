@@ -1,40 +1,58 @@
 module CoreDataConnector
   module Import
     class Places < Base
-      protected
+      def cleanup
+        super
 
-      def column_names
-        [{
-           name: 'place_id',
-           type: 'INTEGER',
-         }, {
-           name: 'uuid',
-           type: 'UUID',
-           copy: true
-         }, {
-           name: 'name',
-           type: 'VARCHAR',
-           copy: true
-        }, {
-           name: 'latitude',
-           type: 'DECIMAL',
-           copy: true
-         }, {
-           name: 'longitude',
-           type: 'DECIMAL',
-           copy: true
-         }]
+        execute <<-SQL.squish
+          UPDATE core_data_connector_places
+             SET z_place_id = NULL
+        SQL
       end
 
       def load
+        super
+
+        execute <<-SQL.squish
+          WITH
+              
+          update_places AS (
+          
+            UPDATE core_data_connector_places places
+               SET z_place_id = z_places.id,
+                   user_defined = z_places.user_defined,
+                   updated_at = current_timestamp
+              FROM #{table_name} z_places
+             WHERE z_places.place_id = places.id
+              
+          ),
+
+          update_place_names AS (
+
+            UPDATE core_data_connector_place_names place_names
+               SET name = z_places.name,
+                   updated_at = current_timestamp
+              FROM #{table_name} z_places
+             WHERE z_places.place_id = place_names.place_id
+
+          )
+
+          UPDATE core_data_connector_place_geometries place_geometries
+             SET geometry = st_makepoint(z_places.longitude, z_places.latitude),
+                 updated_at = current_timestamp
+            FROM #{table_name} z_places
+           WHERE z_places.place_id = place_geometries.place_id
+        SQL
+
         execute <<-SQL.squish
           WITH 
 
           insert_places AS (
 
-          INSERT INTO core_data_connector_places (project_model_id, z_place_id, user_defined, created_at, updated_at)
-          SELECT z_places.project_model_id, z_places.id, user_defined, current_timestamp, current_timestamp
+          INSERT INTO core_data_connector_places (project_model_id, uuid, z_place_id, user_defined, created_at, updated_at)
+          SELECT z_places.project_model_id, z_places.uuid, z_places.id, z_places.user_defined, current_timestamp, current_timestamp
             FROM #{table_name} z_places
+           WHERE z_places.place_id IS NULL
           RETURNING id AS place_id, z_place_id
 
           ),
@@ -64,11 +82,49 @@ module CoreDataConnector
             FROM insert_places
            WHERE insert_places.z_place_id = z_places.id
         SQL
+      end
+
+      def transform
+        super
 
         execute <<-SQL.squish
-          UPDATE core_data_connector_places
-             SET z_place_id = NULL
+          UPDATE #{table_name} z_places
+             SET place_id = places.id
+            FROM core_data_connector_places places
+           WHERE places.uuid = z_places.uuid
         SQL
+      end
+
+      protected
+
+      def column_names
+        [{
+           name: 'project_model_id',
+           type: 'INTEGER',
+           copy: true
+         }, {
+           name: 'uuid',
+           type: 'UUID',
+           copy: true
+         }, {
+           name: 'name',
+           type: 'VARCHAR',
+           copy: true
+        }, {
+           name: 'latitude',
+           type: 'DECIMAL',
+           copy: true
+         }, {
+           name: 'longitude',
+           type: 'DECIMAL',
+           copy: true
+         }, {
+           name: 'place_id',
+           type: 'INTEGER',
+        }, {
+           name: 'user_defined',
+           type: 'JSONB'
+        }]
       end
 
       def table_name_prefix

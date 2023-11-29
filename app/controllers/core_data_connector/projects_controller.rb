@@ -14,14 +14,12 @@ module CoreDataConnector
       authorize project, :import?
 
       begin
-        filepath = params[:file].tempfile.path
-
         # Create the target directory
         destination = "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
         FileUtils.mkdir_p(destination) unless File.exist? destination
 
         # Extract the zip file to the directory
-        Zip::File.open(filepath) do |zipfile|
+        Zip::File.open(params[:file].tempfile.path) do |zipfile|
           zipfile.each do |entry|
             # Ignore directories
             next unless entry.file?
@@ -34,14 +32,10 @@ module CoreDataConnector
           end
         end
 
-        # Iterate over each file and import the contents
+        # Create a new importer with the temp directory and run it
         ActiveRecord::Base.transaction do
-          Dir.foreach(destination) do |filename|
-            next if filename == '.' || filename == '..'
-
-            importer = create_importer("#{destination}/#{filename}")
-            importer.run
-          end
+          importer = Import::Importer.new(destination)
+          importer.run
         end
 
         # Remove the temporary directory

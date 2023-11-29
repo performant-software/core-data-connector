@@ -13,33 +13,10 @@ module CoreDataConnector
         @user_defined_columns = load_user_defined_columns
       end
 
-      def run
-        # Setup the temporary table
-        setup
-
-        # Extract the CSV to the temporary table
-        extract
-
-        # Transform any columns
-        transform
-
-        # Load the data into the target table
-        load
-
-        # Drop the temporary table
-        cleanup
-      end
-
-      protected
-
       def cleanup
         execute <<-SQL.squish
           DROP TABLE IF EXISTS #{table_name}
         SQL
-      end
-
-      def execute(sql)
-        @connection.execute sql
       end
 
       def extract
@@ -47,7 +24,7 @@ module CoreDataConnector
                          .select{ |c| c[:copy] == true }
                          .map{ |column| column[:name] }.join(', ')
 
-        options = "FORMAT CSV, DELIMITER ',', HEADER true"
+        options = "FORMAT CSV, DELIMITER ','"
         copy_command = "COPY #{table_name} (#{column_names}) FROM STDIN WITH (#{options})"
 
         @connection.raw_connection.copy_data(copy_command)  do
@@ -74,10 +51,6 @@ module CoreDataConnector
         SQL
       end
 
-      def table_name_prefix
-        # Implemented in sub-classes
-      end
-
       def transform
         # Sets the user_defined column based on any included user-defined fields
         expression = user_defined_columns
@@ -91,20 +64,20 @@ module CoreDataConnector
         SQL
       end
 
+      protected
+
+      def execute(sql)
+        @connection.execute sql
+      end
+
+      def table_name_prefix
+        # Implemented in sub-classes
+      end
+
       private
 
       def columns
-        [{
-           name: 'project_model_id',
-           type: 'INTEGER',
-           copy: true
-        }, {
-           name: 'user_defined',
-           type: 'JSONB'
-         },
-         *column_names,
-         *user_defined_columns
-        ]
+        [ *column_names, *user_defined_columns ]
       end
 
       # Converts the passed colum name to a UUID value.
