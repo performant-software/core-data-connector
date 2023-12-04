@@ -95,8 +95,8 @@ module CoreDataConnector
         headers = CSV.foreach(filepath).first
 
         headers.each do |header|
-          next unless header.starts_with?('udf-')
-          uuid = header.gsub('udf-', '')
+          next unless header.starts_with?('udf_')
+          uuid = header.gsub('udf_', '')
 
           columns << {
             name: uuid_to_column_name(uuid),
