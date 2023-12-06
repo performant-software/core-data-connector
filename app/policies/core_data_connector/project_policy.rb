@@ -26,6 +26,13 @@ module CoreDataConnector
       project_owner?
     end
 
+    # A user can import data into a project if they are an admin.
+    def import?
+      return true if current_user.admin?
+
+      false
+    end
+
     # A user can update a project if they are an admin or an owner of the project.
     def update?
       return true if current_user.admin?

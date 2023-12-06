@@ -7,6 +7,10 @@ module CoreDataConnector
         def preloads
           [:primary_name, :place_names, :place_geometry]
         end
+
+        def search_query(query)
+          query.merge(self.with_centroid)
+        end
       end
 
       included do
@@ -24,6 +28,17 @@ module CoreDataConnector
 
         search_attribute(:geometry) do
           Geometry.to_geojson(place_geometry&.geometry)
+        end
+
+        search_attribute(:coordinates) do
+          # Since the "geometry_center" attribute is defined in the select statement above, ensure that it exists
+          # before calling.
+          next unless self.respond_to?(:geometry_center)
+
+          # Return if the "geometry_center" attribute is not defined
+          next unless geometry_center.present?
+
+          [geometry_center.y, geometry_center.x]
         end
       end
 

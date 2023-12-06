@@ -112,6 +112,9 @@ module CoreDataConnector
           # Base query
           query = all_records_by_project_model(project_model_ids)
 
+          # Concrete class query
+          query = search_query(query) if self.respond_to?(:search_query)
+
           query.find_in_batches(batch_size: 1000) do |records|
             # Apply the preloads for the current batch
             apply_preloads records, project_model_ids
@@ -214,7 +217,7 @@ module CoreDataConnector
 
           # Add user-defined fields
           user_defined_fields = build_user_defined(self, project_model.user_defined_fields)
-          hash.merge!({ user_defined: user_defined_fields })
+          hash.merge!(user_defined_fields)
 
           # Include related records
           build_relationships hash unless skip_relationships
@@ -227,10 +230,8 @@ module CoreDataConnector
         def build_inverse_relationship(relationship, hash, key)
           project_model_relationship = relationship.project_model_relationship
 
-          attributes = {
-            type: project_model_relationship.inverse_name,
-            user_defined: build_user_defined(relationship, project_model_relationship.user_defined_fields)
-          }
+          user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
+          attributes = user_defined.merge({ type: project_model_relationship.inverse_name })
 
           hash[key] ||= []
           hash[key] << relationship.primary_record.to_search_json.merge(attributes)
@@ -239,10 +240,8 @@ module CoreDataConnector
         def build_relationship(relationship, hash, key)
           project_model_relationship = relationship.project_model_relationship
 
-          attributes = {
-            type: project_model_relationship.name,
-            user_defined: build_user_defined(relationship, project_model_relationship.user_defined_fields)
-          }
+          user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
+          attributes = user_defined.merge({ type: project_model_relationship.name })
 
           hash[key] ||= []
           hash[key] << relationship.related_record.to_search_json.merge(attributes)
@@ -261,21 +260,22 @@ module CoreDataConnector
         end
 
         def build_user_defined(record, user_defined_fields)
-          fields = []
+          hash = {}
 
           user_defined_fields.each do |field|
             value = record.user_defined[field.uuid]
             next unless value.present?
 
-            hash = { label: field.column_name, value: value }
-
             facet = %(Date Number Select Boolean).include?(field.data_type)
-            hash = hash.merge({ value_facet: value }) if facet
+            payload = { uuid: field.uuid, label: field.column_name, facet: facet }
 
-            fields << hash
+            jwt = JWT.encode(payload, nil, 'none')
+            key = "#{jwt}#{facet ? '_facet' : ''}"
+
+            hash[key] = value
           end
 
-          fields
+          hash
         end
       end
     end
