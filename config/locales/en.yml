@@ -1,4 +1,12 @@
 en:
+
+  authorization:
+    core_data_connector/project_policy:
+      create?: "You do not have permission to create a project."
+      delete?: "You do not have permission to delete this project."
+      import?: "You do not have permission to import data into this project."
+      update?: "You do not have permission to update this project."
+
   errors:
     nameable:
       primary_name: "This record must have a primary name"

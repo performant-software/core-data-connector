@@ -1,7 +1,57 @@
+require 'zip'
+
+IGNORE_PATTERN = /\.DS_Store|__MACOSX|(^|\/)\._/
+
 module CoreDataConnector
   class ProjectsController < ApplicationController
     # Search attributes
     search_attributes :name
+
+    def import
+      render json: { errors: ['Importable contents required'] }, status: :bad_request and return unless params[:file].present?
+
+      project = Project.find(params[:id])
+      authorize project, :import?
+
+      begin
+        # Create the target directory
+        destination = "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
+        FileUtils.mkdir_p(destination) unless File.exist? destination
+
+        # Extract the zip file to the directory
+        Zip::File.open(params[:file].tempfile.path) do |zipfile|
+          zipfile.each do |entry|
+            # Ignore directories
+            next unless entry.file?
+
+            # Ignore MacOS archive
+            next if entry.name =~ IGNORE_PATTERN
+
+            # Extract the file
+            zipfile.extract(entry, File.join(destination, entry.name))
+          end
+        end
+
+        # Create a new importer with the temp directory and run it
+        ActiveRecord::Base.transaction do
+          importer = Import::Importer.new(destination)
+          importer.run
+        end
+
+        # Remove the temporary directory
+        FileUtils.rm_rf(destination)
+      rescue ActiveRecord::RecordInvalid => exception
+        errors = [exception]
+      rescue StandardError => exception
+        errors = [exception]
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: 422
+      end
+    end
 
     protected
 
@@ -24,6 +74,15 @@ module CoreDataConnector
         user_id: current_user.id,
         role: UserProject::ROLE_OWNER
       )
+    end
+
+    private
+
+    def create_importer(filepath)
+      filename = File.basename(filepath, '.csv')
+
+      importer_class = "CoreDataConnector::Import::#{filename.capitalize}".constantize
+      importer_class.new(filepath)
     end
   end
 end
