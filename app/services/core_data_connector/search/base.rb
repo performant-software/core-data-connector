@@ -112,6 +112,9 @@ module CoreDataConnector
           # Base query
           query = all_records_by_project_model(project_model_ids)
 
+          # Concrete class query
+          query = search_query(query) if self.respond_to?(:search_query)
+
           query.find_in_batches(batch_size: 1000) do |records|
             # Apply the preloads for the current batch
             apply_preloads records, project_model_ids
