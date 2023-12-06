@@ -30,6 +30,22 @@ module Typesense
         name: collection_name,
         enable_nested_fields: true,
         fields: [{
+          name: 'related_media_contents.*',
+          type: 'auto',
+          facet: true
+        }, {
+          name: 'related_organizations.*',
+          type: 'auto',
+          facet: true
+        }, {
+          name: 'related_people.*',
+          type: 'auto',
+          facet: true
+        }, {
+          name: 'related_places.*',
+          type: 'auto',
+          facet: true
+        }, {
           name: '.*_facet',
           type: 'auto',
           facet: true
