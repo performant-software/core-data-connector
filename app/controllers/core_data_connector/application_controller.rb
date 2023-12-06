@@ -1,10 +1,7 @@
 module CoreDataConnector
-  class ApplicationController < CoreDataConnector.config.base_controller_class.constantize
-    def current_user
-      return super if defined?(super)
-
-      nil
-    end
+  class ApplicationController < Api::ResourceController
+    # Includes
+    include JwtAuth::Authenticateable
 
     def item_class
       "CoreDataConnector::#{controller_name.singularize.classify}".constantize

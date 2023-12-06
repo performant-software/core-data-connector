@@ -1,4 +1,6 @@
 CoreDataConnector::Engine.routes.draw do
+  mount JwtAuth::Engine => '/auth'
+
   resources :media_contents
   resources :organizations
   resources :people
@@ -15,4 +17,11 @@ CoreDataConnector::Engine.routes.draw do
   end
   resources :user_projects
   resources :users
+
+  namespace :public, only: [:index, :show] do
+    resources :people, only: :show
+    resources :places, only: :show do
+      resources :people, only: :index
+    end
+  end
 end

@@ -1,12 +1,11 @@
 GIT
-  remote: https://github.com/performant-software/resource-api.git
-  revision: f1092734efc2f1e86c9d7bd3a0c5b70e57c3b3ca
-  tag: v0.5.3
+  remote: https://github.com/performant-software/jwt-auth.git
+  revision: fa54af0cdcad6122fad10d9ad745b814c2918853
+  tag: v0.1.2
   specs:
-    resource_api (0.1.0)
-      pagy (~> 5.10)
-      pundit (~> 2.3.1)
-      rails (>= 7.0, < 8)
+    jwt_auth (0.1.0)
+      jwt (~> 2.7.1)
+      rails (~> 7.0.7)
 
 GIT
   remote: https://github.com/performant-software/triple-eye-effable.git
@@ -27,11 +26,20 @@ GIT
       resource_api
 
 PATH
+  remote: ../resource-api
+  specs:
+    resource_api (0.1.0)
+      pagy (~> 5.10)
+      pundit (~> 2.3.1)
+      rails (>= 7.0, < 8)
+
+PATH
   remote: .
   specs:
     core_data_connector (0.1.0)
       activerecord-postgis-adapter (~> 8.0)
       faker
+      jwt_auth
       rails (>= 6.0.3.2, < 8)
       resource_api
       rgeo-geojson (~> 2.1)
@@ -127,6 +135,7 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    jwt (2.7.1)
     loofah (2.21.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -224,6 +233,7 @@ PLATFORMS
 DEPENDENCIES
   core_data_connector!
   faker (~> 3.2.1)
+  jwt_auth!
   resource_api!
   sqlite3
   triple_eye_effable!

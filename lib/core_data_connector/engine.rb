@@ -3,6 +3,14 @@ module CoreDataConnector
     isolate_namespace CoreDataConnector
     config.generators.api_only = true
 
+    initializer :jwt_auth do
+      JwtAuth.configure do |config|
+        config.model_class = 'CoreDataConnector::User'
+        config.login_attribute = 'email'
+        config.user_serializer = 'CoreDataConnector::UsersSerializer'
+      end
+    end
+
     initializer :core_data_connector do
       TripleEyeEffable.configure do |config|
         config.api_key = ENV['IIIF_CLOUD_API_KEY']
