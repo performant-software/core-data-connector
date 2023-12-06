@@ -32,6 +32,7 @@ PATH
     core_data_connector (0.1.0)
       activerecord-postgis-adapter (~> 8.0)
       faker
+      jwt (~> 2.7.1)
       rails (>= 6.0.3.2, < 8)
       resource_api
       rgeo-geojson (~> 2.1)
@@ -128,6 +129,7 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    jwt (2.7.1)
     loofah (2.21.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
