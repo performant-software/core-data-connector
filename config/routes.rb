@@ -21,7 +21,10 @@ CoreDataConnector::Engine.routes.draw do
   namespace :public, only: [:index, :show] do
     resources :people, only: :show
     resources :places, only: :show do
+      resources :media_contents, only: :index
+      resources :organizations, only: :index
       resources :people, only: :index
+      resources :places, only: :index
     end
   end
 end

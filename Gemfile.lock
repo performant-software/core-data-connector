@@ -39,11 +39,8 @@ PATH
     core_data_connector (0.1.0)
       activerecord-postgis-adapter (~> 8.0)
       faker
-<<<<<<< HEAD
-      jwt_auth
-=======
       jwt (~> 2.7.1)
->>>>>>> e7dcaa6b828c13244e8905efd1c212b3463dc9e8
+      jwt_auth
       rails (>= 6.0.3.2, < 8)
       resource_api
       rgeo-geojson (~> 2.1)

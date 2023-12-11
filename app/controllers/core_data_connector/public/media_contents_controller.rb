@@ -1,18 +1,14 @@
 module CoreDataConnector
   module Public
-    class PeopleController < ApplicationController
+    class MediaContentsController < ApplicationController
       # Includes
-      include NameableController
       include OwnableController
       include RelateableController
       include UnauthenticateableController
       include UserDefinedFields::Queryable
 
-      # Preloads
-      preloads :person_names, only: :show
-
       # Search attributes
-      search_attributes :first_name, :middle_name, :last_name
+      search_attributes :name
     end
   end
 end

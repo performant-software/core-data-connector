@@ -19,17 +19,22 @@ module CoreDataConnector
           item_class.where(build_base_sql)
         end
 
+        # Sets the additional attributes that are needed in the serializer
+        def load_records(items)
+          options = {
+            target: load_current_record,
+            url: request.url,
+            user_defined_fields: load_user_defined_fields
+          }
+
+          options
+        end
+
+        # Preloads the relationships records scoped to the passed project_ids
         def preloads(query)
           super
 
           return unless params_valid?
-
-          Preloader.new(
-            records: query,
-            associations: [
-              project_model: :user_defined_fields
-            ]
-          ).call
 
           Preloader.new(
             records: query,
@@ -53,7 +58,6 @@ module CoreDataConnector
                   }
                 )
             )
-
           ).call
 
           Preloader.new(
@@ -113,12 +117,35 @@ module CoreDataConnector
                             )
 
           <<-SQL.squish
-          EXISTS (
-            #{primary_query.to_sql}
-            UNION
-            #{related_query.to_sql}
-          )
-        SQL
+            EXISTS (
+              #{primary_query.to_sql}
+              UNION
+              #{related_query.to_sql}
+            )
+          SQL
+        end
+
+        def load_current_record
+          if params[:place_id]
+            Place
+              .preload(:primary_name)
+              .find(params[:place_id])
+          end
+        end
+
+        def load_user_defined_fields
+          return nil unless params[:project_ids].present?
+
+          UserDefinedFields::UserDefinedField
+            .where(table_name: item_class.to_s)
+            .where(
+              ProjectModel
+                .where(ProjectModel.arel_table[:id].eq(UserDefinedFields::UserDefinedField.arel_table[:defineable_id]))
+                .where(UserDefinedFields::UserDefinedField.arel_table[:defineable_type].eq(ProjectModel.to_s))
+                .where(project_id: params[:project_ids])
+                .arel
+                .exists
+            )
         end
 
         def params_valid?

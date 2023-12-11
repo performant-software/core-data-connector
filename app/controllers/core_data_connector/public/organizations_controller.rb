@@ -1,6 +1,6 @@
 module CoreDataConnector
   module Public
-    class PeopleController < ApplicationController
+    class OrganizationsController < ApplicationController
       # Includes
       include NameableController
       include OwnableController
@@ -9,10 +9,10 @@ module CoreDataConnector
       include UserDefinedFields::Queryable
 
       # Preloads
-      preloads :person_names, only: :show
+      preloads :organization_names, only: :show
 
       # Search attributes
-      search_attributes :first_name, :middle_name, :last_name
+      search_attributes :name, :description
     end
   end
 end
