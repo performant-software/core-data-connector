@@ -12,6 +12,7 @@ module CoreDataConnector
     has_many :places, dependent: :destroy
     has_many :project_model_accesses, dependent: :destroy
     has_many :project_model_shares, dependent: :destroy
+    has_many :taxonomies, dependent: :destroy
 
     has_many :project_model_relationships, dependent: :destroy, foreign_key: :primary_model_id
     has_many :related_project_model_relationships, dependent: :destroy, class_name: ProjectModelRelationship.to_s, foreign_key: :related_model_id
