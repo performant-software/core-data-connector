@@ -26,6 +26,7 @@ CoreDataConnector::Engine.routes.draw do
       resources :organizations, only: :index
       resources :people, only: :index
       resources :places, only: :index
+      resources :taxonomies, only: :index
     end
   end
 end
