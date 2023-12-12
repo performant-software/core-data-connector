@@ -30,6 +30,11 @@ module Typesense
         name: collection_name,
         enable_nested_fields: true,
         fields: [{
+          name: 'coordinates',
+          type: 'geopoint',
+          facet: false,
+          optional: true
+        }, {
           name: 'related_media_contents.*',
           type: 'auto',
           facet: true
