@@ -47,6 +47,8 @@ module CoreDataConnector
         query = query.joins(params[:inverse] ? { inverse_related_person: :primary_name } : { related_person: :primary_name })
       when Place.to_s
         query = query.joins(params[:inverse] ? { inverse_related_place: :primary_name } : { related_place: :primary_name })
+      when Taxonomy.to_s
+        query = query.joins(params[:inverse] ? :inverse_related_taxonomy : :related_taxonomy)
       end
 
       query
@@ -102,6 +104,9 @@ module CoreDataConnector
         or_query = resolve_person_query
       when Place.to_s
         attribute = "#{PlaceName.arel_table.name}.#{PlaceName.arel_table[:name].name}"
+        or_query = resolve_search_query(attribute)
+      when Taxonomy.to_s
+        attribute = "#{Taxonomy.arel_table.name}.#{Taxonomy.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
       end
 

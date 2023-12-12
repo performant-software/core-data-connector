@@ -15,6 +15,7 @@ CoreDataConnector::Engine.routes.draw do
   resources :relationships do
     post :upload, on: :collection
   end
+  resources :taxonomies
   resources :user_projects
   resources :users
 
