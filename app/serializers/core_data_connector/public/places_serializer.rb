@@ -2,7 +2,8 @@ module CoreDataConnector
   module Public
     class PlacesSerializer < LinkedOpenDataSerializer
       index_attributes(:id) { |place| "#{ENV['HOSTNAME']}/public/places/#{place.uuid}" }
-      index_attributes :title, user_defined: UserDefinedSerializer
+      index_attributes(:title) { |place| place.name }
+      index_attributes user_defined: UserDefinedSerializer
 
       show_attributes(:@id) { |place| "#{ENV['HOSTNAME']}/public/places/#{place.uuid}" }
       show_attributes(:type) { 'Feature' }
