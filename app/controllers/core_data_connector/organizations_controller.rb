@@ -5,6 +5,9 @@ module CoreDataConnector
     include OwnableController
     include UserDefinedFields::Queryable
 
+    # Preloads
+    preloads :organization_names, only: :show
+
     # Search attributes
     search_attributes :name
   end
