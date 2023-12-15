@@ -10,3 +10,7 @@ en:
   errors:
     nameable:
       primary_name: "This record must have a primary name"
+
+  serialization:
+    linked_open_data:
+      annotation_page_label: "Related %{klass}: %{target}"
