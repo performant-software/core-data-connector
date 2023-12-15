@@ -3,6 +3,15 @@ module CoreDataConnector
     isolate_namespace CoreDataConnector
     config.generators.api_only = true
 
+    initializer :rack_cors do |app|
+      app.config.app_middleware.insert_before 0, Rack::Cors do
+        allow do
+          origins '*'
+          resource '/core_data/public/*', methods: :get
+        end
+      end
+    end
+
     initializer :jwt_auth do
       JwtAuth.configure do |config|
         config.model_class = 'CoreDataConnector::User'
