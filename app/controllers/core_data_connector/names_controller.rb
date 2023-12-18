@@ -6,26 +6,38 @@ module CoreDataConnector
     def base_query
       query = super
 
-      return query.none unless params[:project_id] && params[:nameable_model]
+      return query.none unless params[:project_id]
 
-      nameable_table = params[:nameable_model].to_sym
-      nameable_model = "CoreDataConnector::#{params[:nameable_model].classify}".constantize
+      nameable_models = [
+        :instance,
+        :item,
+        :work
+      ]
 
-      polymorphic_table = nameable_model.get_names_table
-      polymorphic_table_class = "CoreDataConnector::#{polymorphic_table.to_s.classify}".constantize
+      queries = nameable_models.map do |nm|
+        model_name = "CoreDataConnector::#{nm.to_s.classify}".constantize
+
+        CoreDataConnector::SourceTitle
+          .joins(nm => :project_model)
+          .where(
+            CoreDataConnector::ProjectModel.arel_table[:project_id].eq(params[:project_id])
+            )
+          .where(CoreDataConnector::SourceTitle.arel_table[:nameable_type].eq(model_name))
+          .where(CoreDataConnector::SourceTitle.arel_table[:name_id].eq(CoreDataConnector::Name.arel_table[:id]))
+      end
+
+      raw_sql = <<-SQL.squish
+        EXISTS (
+          #{queries[0].to_sql}
+          UNION
+          #{queries[1].to_sql}
+          UNION
+          #{queries[2].to_sql}
+        )
+      SQL
 
       query
-        .where(
-          polymorphic_table_class
-            .joins(nameable_table.to_s.singularize.to_sym => :project_model)
-            .where(
-              CoreDataConnector::ProjectModel.arel_table[:project_id].eq(params[:project_id])
-              )
-            .where(polymorphic_table_class.arel_table[:nameable_type].eq(nameable_model.to_s))
-            .where(polymorphic_table_class.arel_table[:name_id].eq(CoreDataConnector::Name.arel_table[:id]))
-            .arel
-            .exists
-        )
+        .where(raw_sql)
     end
   end
 end
