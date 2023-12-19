@@ -37,19 +37,6 @@ module CoreDataConnector
         }
       end
 
-      private
-
-      def render_annotation(item, index, target)
-        {
-          type: 'Annotation',
-          id: index,
-          created: DateTime.now.to_s,
-          motivation: 'linking',
-          target: target,
-          body: item
-        }
-      end
-
       def render_target(item)
         return {} if item.nil?
 
@@ -61,6 +48,19 @@ module CoreDataConnector
         end
 
         serialized
+      end
+
+      private
+
+      def render_annotation(item, index, target)
+        {
+          type: 'Annotation',
+          id: index,
+          created: DateTime.now.to_s,
+          motivation: 'linking',
+          target: target,
+          body: item
+        }
       end
 
       def resolve_target
