@@ -19,6 +19,18 @@ module CoreDataConnector
           item_class.where(build_base_sql)
         end
 
+        def build_index_response(items, metadata)
+          options = load_records(items).merge({ count: metadata[:count] })
+          serializer = serializer_class.new(current_user, options)
+          serializer.render_index(items)
+        end
+
+        def build_show_response(item)
+          options = load_records(item)
+          serializer = serializer_class.new(current_user, options)
+          serializer.render_show(item)
+        end
+
         # Sets the additional attributes that are needed in the serializer
         def load_records(items)
           options = {

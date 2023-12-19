@@ -18,19 +18,35 @@ module CoreDataConnector
 
       def render_index(items)
         value = super
+        target = resolve_target
 
         {
           '@context': 'http://www.w3.org/ns/anno.jsonld',
-          body: {
-            format: 'application/json',
-            type: 'Dataset',
-            value: value
-          },
-          created: Time.now.strftime('%Y-%m-%d'),
           id: options[:url],
-          motivation: 'describing',
-          target: resolve_target,
-          type: 'Annotation'
+          type: 'AnnotationPage',
+          partOf: {
+            id: options[:url],
+            label: I18n.t(
+              'serialization.linked_open_data.annotation_page_label',
+              klass: items.klass.to_s.demodulize.pluralize,
+              target: target[:name]
+            ),
+            total: options[:count]
+          },
+          items: value.each_with_index.map{ |item, index| render_annotation(item, index, target) }
+        }
+      end
+
+      private
+
+      def render_annotation(item, index, target)
+        {
+          type: 'Annotation',
+          id: index,
+          created: DateTime.now.to_s,
+          motivation: 'linking',
+          target: target,
+          body: item
         }
       end
 
