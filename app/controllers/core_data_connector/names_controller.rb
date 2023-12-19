@@ -17,23 +17,15 @@ module CoreDataConnector
       queries = nameable_models.map do |nm|
         model_name = "CoreDataConnector::#{nm.to_s.classify}".constantize
 
-        CoreDataConnector::SourceTitle
+        SourceTitle
           .joins(nm => :project_model)
-          .where(
-            CoreDataConnector::ProjectModel.arel_table[:project_id].eq(params[:project_id])
-            )
-          .where(CoreDataConnector::SourceTitle.arel_table[:nameable_type].eq(model_name))
-          .where(CoreDataConnector::SourceTitle.arel_table[:name_id].eq(CoreDataConnector::Name.arel_table[:id]))
+          .where(ProjectModel.arel_table[:project_id].eq(params[:project_id]))
+          .where(SourceTitle.arel_table[:nameable_type].eq(model_name))
+          .where(SourceTitle.arel_table[:name_id].eq(Name.arel_table[:id]))
       end
 
       raw_sql = <<-SQL.squish
-        EXISTS (
-          #{queries[0].to_sql}
-          UNION
-          #{queries[1].to_sql}
-          UNION
-          #{queries[2].to_sql}
-        )
+        EXISTS (#{queries.map(&:to_sql).join(' UNION ')})
       SQL
 
       query
