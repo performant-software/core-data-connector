@@ -39,6 +39,10 @@ module CoreDataConnector
 
       # For sorting, left join the polymorphic model we're currently looking at.
       case model_class
+      when Instance.to_s
+        query = query.joins(params[:inverse] ? :inverse_related_instance : :related_instance)
+      when Item.to_s
+        query = query.joins(params[:inverse] ? :inverse_related_item : :related_item)
       when MediaContent.to_s
         query = query.joins(params[:inverse] ? :inverse_related_media_content : :related_media_content)
       when Organization.to_s
@@ -49,6 +53,8 @@ module CoreDataConnector
         query = query.joins(params[:inverse] ? { inverse_related_place: :primary_name } : { related_place: :primary_name })
       when Taxonomy.to_s
         query = query.joins(params[:inverse] ? :inverse_related_taxonomy : :related_taxonomy)
+      when Work.to_s
+        query = query.joins(params[:inverse] ? :inverse_related_work : :related_work)
       end
 
       query
@@ -108,6 +114,16 @@ module CoreDataConnector
       when Taxonomy.to_s
         attribute = "#{Taxonomy.arel_table.name}.#{Taxonomy.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
+      when Work.to_s
+        or_query = Work.where(
+          Name
+            .joins(:source_titles)
+            .where(SourceTitle.arel_table[:primary].eq(true))
+            .where(SourceTitle.arel_table[:nameable_id].eq(Work.arel_table[:id]))
+            .where(SourceTitle.arel_table[:nameable_type].eq(Work.to_s))
+            .where('core_data_connector_names.name ILIKE ?', "%#{params[:search]}%")
+            .arel.exists
+          )
       end
 
       return query if or_query.nil?
