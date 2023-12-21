@@ -40,9 +40,9 @@ module CoreDataConnector
       # For sorting, left join the polymorphic model we're currently looking at.
       case model_class
       when Instance.to_s
-        query = query.joins(params[:inverse] ? :inverse_related_instance : :related_instance)
+        query = query.joins(params[:inverse] ? { inverse_related_instance: [primary_name: :name] } : { related_instance: [primary_name: :name] })
       when Item.to_s
-        query = query.joins(params[:inverse] ? :inverse_related_item : :related_item)
+        query = query.joins(params[:inverse] ? { inverse_related_item: [primary_name: :name] } : { related_item: [primary_name: :name] })
       when MediaContent.to_s
         query = query.joins(params[:inverse] ? :inverse_related_media_content : :related_media_content)
       when Organization.to_s
@@ -54,7 +54,7 @@ module CoreDataConnector
       when Taxonomy.to_s
         query = query.joins(params[:inverse] ? :inverse_related_taxonomy : :related_taxonomy)
       when Work.to_s
-        query = query.joins(params[:inverse] ? :inverse_related_work : :related_work)
+        query = query.joins(params[:inverse] ? { inverse_related_work: [primary_name: :name] } : { related_work: [primary_name: :name] })
       end
 
       query
