@@ -100,6 +100,26 @@ module CoreDataConnector
       or_query = nil
 
       case model_class
+      when Instance.to_s
+        or_query = Instance.where(
+          Name
+            .joins(:source_titles)
+            .where(SourceTitle.arel_table[:primary].eq(true))
+            .where(SourceTitle.arel_table[:nameable_id].eq(Instance.arel_table[:id]))
+            .where(SourceTitle.arel_table[:nameable_type].eq(Instance.to_s))
+            .where('core_data_connector_names.name ILIKE ?', "%#{params[:search]}%")
+            .arel.exists
+          )
+      when Item.to_s
+        or_query = Item.where(
+          Name
+            .joins(:source_titles)
+            .where(SourceTitle.arel_table[:primary].eq(true))
+            .where(SourceTitle.arel_table[:nameable_id].eq(Item.arel_table[:id]))
+            .where(SourceTitle.arel_table[:nameable_type].eq(Item.to_s))
+            .where('core_data_connector_names.name ILIKE ?', "%#{params[:search]}%")
+            .arel.exists
+          )
       when MediaContent.to_s
         attribute = "#{MediaContent.arel_table.name}.#{MediaContent.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
