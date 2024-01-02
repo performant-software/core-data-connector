@@ -15,6 +15,8 @@ module CoreDataConnector
     # Nested attributes
     accepts_nested_attributes_for :place_geometry, allow_destroy: true
 
+    name_table :place_names
+
     # Delegates
     delegate :name, to: :primary_name
 

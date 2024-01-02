@@ -35,6 +35,14 @@ module Typesense
           facet: false,
           optional: true
         }, {
+          name: 'related_instances.*',
+          type: 'auto',
+          facet: true
+        }, {
+          name: 'related_items.*',
+          type: 'auto',
+          facet: true
+        }, {
           name: 'related_media_contents.*',
           type: 'auto',
           facet: true
@@ -48,6 +56,10 @@ module Typesense
           facet: true
         }, {
           name: 'related_places.*',
+          type: 'auto',
+          facet: true
+        }, {
+          name: 'related_works.*',
           type: 'auto',
           facet: true
         }, {
