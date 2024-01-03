@@ -279,6 +279,8 @@ module CoreDataConnector
             .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
         }, as: :related_record, class_name: Relationship.to_s
 
+        search_attribute :uuid
+
         # Include the ID attribute as a string by default
         search_attribute(:record_id) do
           id.to_s
