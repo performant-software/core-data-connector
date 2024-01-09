@@ -5,6 +5,7 @@ module CoreDataConnector
       index_attributes(:record_id) { |place| place.id }
       index_attributes(:title) { |place| place.name }
       index_attributes(:type) { 'Place' }
+      index_attributes(:geometry) { |place| place.place_geometry&.to_geojson }
       index_attributes user_defined: UserDefinedSerializer
 
       show_attributes(:@id) { |place| "#{ENV['HOSTNAME']}/public/places/#{place.uuid}" }
