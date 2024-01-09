@@ -5,14 +5,12 @@ module CoreDataConnector
         super
 
         execute <<-SQL.squish
-          UPDATE
-          core_data_connector_works
+          UPDATE core_data_connector_works
             SET z_work_id = NULL
         SQL
 
         execute <<-SQL.squish
-          UPDATE
-          core_data_connector_names
+          UPDATE core_data_connector_names
             SET z_source_id = NULL,
                 z_source_type = NULL
         SQL
