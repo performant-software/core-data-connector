@@ -5,12 +5,12 @@ module CoreDataConnector
         super
 
         execute <<-SQL.squish
-          WITH update_items AS (
-            UPDATE
-            core_data_connector_items
-              SET z_item_id = NULL
-          )
+          UPDATE
+          core_data_connector_items
+            SET z_item_id = NULL
+        SQL
 
+        execute <<-SQL.squish
           UPDATE
           core_data_connector_names
             SET z_source_id = NULL,
@@ -34,6 +34,7 @@ module CoreDataConnector
         WITH
 
         insert_items AS (
+
           INSERT INTO core_data_connector_items (
             project_model_id,
             uuid,
@@ -48,32 +49,39 @@ module CoreDataConnector
                  z_items.user_defined, 
                  current_timestamp, 
                  current_timestamp
-          FROM #{table_name} z_items
-          WHERE z_items.item_id IS NULL
+            FROM #{table_name} z_items
+            WHERE z_items.item_id IS NULL
           RETURNING id AS item_id, z_item_id
 
         ),
 
         insert_names AS (
+
           INSERT INTO core_data_connector_names
             ("name", z_source_id, z_source_type, created_at, updated_at)
-          SELECT z_items.name,
-                 insert_items.item_id,
-                 'CoreDataConnector::Item',
-                 current_timestamp,
-                 current_timestamp
-          FROM insert_items
-          JOIN #{table_name} z_items ON z_items.id = insert_items.z_item_id
+            SELECT z_items.name,
+                   insert_items.item_id,
+                   'CoreDataConnector::Item',
+                   current_timestamp,
+                   current_timestamp
+              FROM insert_items
+              JOIN #{table_name} z_items ON z_items.id = insert_items.z_item_id
           RETURNING id AS name_id, z_source_id, z_source_type, "name"
+
         )
 
         INSERT INTO core_data_connector_source_titles
           (nameable_type, nameable_id, name_id, "primary", created_at, updated_at)
-          SELECT 'CoreDataConnector::Item', insert_items.item_id, insert_names.name_id, TRUE, current_timestamp, current_timestamp
-          FROM insert_items
-          JOIN insert_names
-            ON insert_names.z_source_id = insert_items.item_id
-            AND insert_names.z_source_type = 'CoreDataConnector::Item'
+          SELECT 'CoreDataConnector::Item',
+                 insert_items.item_id,
+                 insert_names.name_id,
+                 TRUE,
+                 current_timestamp,
+                 current_timestamp
+            FROM insert_items
+            JOIN insert_names
+              ON insert_names.z_source_id = insert_items.item_id
+             AND insert_names.z_source_type = 'CoreDataConnector::Item'
         SQL
       end
 
@@ -82,9 +90,9 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_items
-            SET item_id = items.id
+             SET item_id = items.id
             FROM core_data_connector_items items
-            WHERE items.uuid = z_items.uuid
+           WHERE items.uuid = z_items.uuid
         SQL
       end
 
