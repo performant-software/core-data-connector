@@ -56,6 +56,14 @@ module CoreDataConnector
         execute <<-SQL.squish
           WITH all_related_types AS (
         
+          SELECT id, uuid, 'CoreDataConnector::Instance' AS type
+            FROM core_data_connector_instances instances
+           WHERE instances.z_instance_id IS NOT NULL
+           UNION
+          SELECT id, uuid, 'CoreDataConnector::Item' AS type
+            FROM core_data_connector_items items
+           WHERE items.z_item_id IS NOT NULL
+           UNION
           SELECT id, uuid, 'CoreDataConnector::Organization' AS type
             FROM core_data_connector_organizations organizations
            WHERE organizations.z_organization_id IS NOT NULL
@@ -67,6 +75,10 @@ module CoreDataConnector
           SELECT id, uuid, 'CoreDataConnector::Place' AS type
             FROM core_data_connector_places places
            WHERE places.z_place_id IS NOT NULL
+           UNION
+          SELECT id, uuid, 'CoreDataConnector::Work' AS type
+            FROM core_data_connector_works works
+           WHERE works.z_work_id IS NOT NULL
               
           )
               
