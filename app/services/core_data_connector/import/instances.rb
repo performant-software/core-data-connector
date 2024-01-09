@@ -57,31 +57,42 @@ module CoreDataConnector
 
         insert_names AS (
 
-          INSERT INTO core_data_connector_names
-            ("name", z_source_id, z_source_type, created_at, updated_at)
-            SELECT z_instances.name,
-                   insert_instances.instance_id,
-                   'CoreDataConnector::Instance',
-                   current_timestamp,
-                   current_timestamp
-              FROM insert_instances
-              JOIN #{table_name} z_instances ON z_instances.id = insert_instances.z_instance_id
-          RETURNING id AS name_id, z_source_id, z_source_type, "name"
-
-        )
-
-        INSERT INTO core_data_connector_source_titles
-          (nameable_type, nameable_id, name_id, "primary", created_at, updated_at)
-          SELECT 'CoreDataConnector::Instance',
+          INSERT INTO core_data_connector_names (
+            name,
+            z_source_id,
+            z_source_type,
+            created_at,
+            updated_at
+          )
+          SELECT z_instances.name,
                  insert_instances.instance_id,
-                 insert_names.name_id,
-                 TRUE,
+                 'CoreDataConnector::Instance',
                  current_timestamp,
                  current_timestamp
             FROM insert_instances
-            JOIN insert_names
-              ON insert_names.z_source_id = insert_instances.instance_id
-             AND insert_names.z_source_type = 'CoreDataConnector::Instance'
+            JOIN #{table_name} z_instances ON z_instances.id = insert_instances.z_instance_id
+          RETURNING id AS name_id, z_source_id, z_source_type, name
+
+        )
+
+        INSERT INTO core_data_connector_source_titles (
+          nameable_type,
+          nameable_id,
+          name_id,
+          "primary",
+          created_at,
+          updated_at
+        )
+        SELECT 'CoreDataConnector::Instance',
+                insert_instances.instance_id,
+                insert_names.name_id,
+                TRUE,
+                current_timestamp,
+                current_timestamp
+           FROM insert_instances
+           JOIN insert_names
+             ON insert_names.z_source_id = insert_instances.instance_id
+            AND insert_names.z_source_type = 'CoreDataConnector::Instance'
         SQL
       end
 

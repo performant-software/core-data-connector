@@ -57,31 +57,42 @@ module CoreDataConnector
 
         insert_names AS (
 
-          INSERT INTO core_data_connector_names
-            ("name", z_source_id, z_source_type, created_at, updated_at)
-            SELECT z_works.name,
-                   insert_works.work_id,
-                   'CoreDataConnector::Work',
-                   current_timestamp,
-                   current_timestamp
-              FROM insert_works
-              JOIN #{table_name} z_works ON z_works.id = insert_works.z_work_id
-          RETURNING id AS name_id, z_source_id, z_source_type, "name"
-
-        )
-
-        INSERT INTO core_data_connector_source_titles
-          (nameable_type, nameable_id, name_id, "primary", created_at, updated_at)
-          SELECT 'CoreDataConnector::Work',
+          INSERT INTO core_data_connector_names (
+            name,
+            z_source_id,
+            z_source_type,
+            created_at,
+            updated_at
+          )
+          SELECT z_works.name,
                  insert_works.work_id,
-                 insert_names.name_id,
-                 TRUE,
+                 'CoreDataConnector::Work',
                  current_timestamp,
                  current_timestamp
             FROM insert_works
-            JOIN insert_names
-              ON insert_names.z_source_id = insert_works.work_id
-             AND insert_names.z_source_type = 'CoreDataConnector::Work'
+            JOIN #{table_name} z_works ON z_works.id = insert_works.z_work_id
+          RETURNING id AS name_id, z_source_id, z_source_type, name
+
+        )
+
+        INSERT INTO core_data_connector_source_titles (
+          nameable_type,
+          nameable_id,
+          name_id,
+          "primary",
+          created_at,
+          updated_at
+        )
+        SELECT 'CoreDataConnector::Work',
+                insert_works.work_id,
+                insert_names.name_id,
+                TRUE,
+                current_timestamp,
+                current_timestamp
+           FROM insert_works
+           JOIN insert_names
+             ON insert_names.z_source_id = insert_works.work_id
+            AND insert_names.z_source_type = 'CoreDataConnector::Work'
         SQL
       end
 

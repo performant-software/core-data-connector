@@ -57,31 +57,42 @@ module CoreDataConnector
 
         insert_names AS (
 
-          INSERT INTO core_data_connector_names
-            ("name", z_source_id, z_source_type, created_at, updated_at)
-            SELECT z_items.name,
-                   insert_items.item_id,
-                   'CoreDataConnector::Item',
-                   current_timestamp,
-                   current_timestamp
-              FROM insert_items
-              JOIN #{table_name} z_items ON z_items.id = insert_items.z_item_id
-          RETURNING id AS name_id, z_source_id, z_source_type, "name"
-
-        )
-
-        INSERT INTO core_data_connector_source_titles
-          (nameable_type, nameable_id, name_id, "primary", created_at, updated_at)
-          SELECT 'CoreDataConnector::Item',
+          INSERT INTO core_data_connector_names (
+            name,
+            z_source_id,
+            z_source_type,
+            created_at,
+            updated_at
+          )
+          SELECT z_items.name,
                  insert_items.item_id,
-                 insert_names.name_id,
-                 TRUE,
+                 'CoreDataConnector::Item',
                  current_timestamp,
                  current_timestamp
             FROM insert_items
-            JOIN insert_names
-              ON insert_names.z_source_id = insert_items.item_id
-             AND insert_names.z_source_type = 'CoreDataConnector::Item'
+            JOIN #{table_name} z_items ON z_items.id = insert_items.z_item_id
+          RETURNING id AS name_id, z_source_id, z_source_type, name
+
+        )
+
+        INSERT INTO core_data_connector_source_titles (
+          nameable_type,
+          nameable_id,
+          name_id,
+          "primary",
+          created_at,
+          updated_at
+        )
+        SELECT 'CoreDataConnector::Item',
+                insert_items.item_id,
+                insert_names.name_id,
+                TRUE,
+                current_timestamp,
+                current_timestamp
+           FROM insert_items
+           JOIN insert_names
+             ON insert_names.z_source_id = insert_items.item_id
+            AND insert_names.z_source_type = 'CoreDataConnector::Item'
         SQL
       end
 
