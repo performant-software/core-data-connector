@@ -60,6 +60,19 @@ module CoreDataConnector
       name&.singularize
     end
 
+    # Returns a query to find project_models records that are not shared with other projects.
+    def self.unshared
+      model_table = ProjectModel.arel_table
+      access_table = ProjectModelAccess.arel_table
+
+      where.not(
+        ProjectModelAccess
+          .where(access_table[:project_model_id].eq(model_table[:id]))
+          .arel
+          .exists
+      )
+    end
+
     private
 
     # Returns a list of valid model class names.

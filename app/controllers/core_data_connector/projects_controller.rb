@@ -11,8 +11,13 @@ module CoreDataConnector
       project = Project.find(params[:id])
       authorize project, :clear?
 
+      # Query for models that are not shared with other projects
+      project_models = ProjectModel
+                         .unshared
+                         .where(project_id: project.id)
+
       begin
-        project.project_models.map(&:clear)
+        project_models.map(&:clear)
       rescue StandardError => exception
         errors = [exception]
       end
