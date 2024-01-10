@@ -13,6 +13,7 @@ CoreDataConnector::Engine.routes.draw do
   end
   resources :project_model_accesses, only: :index
   resources :projects do
+    post :clear, on: :member
     post :import, on: :member
   end
   resources :relationships do

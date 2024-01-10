@@ -31,6 +31,14 @@ module CoreDataConnector
     validates :name, presence: true
     validates :model_class, inclusion: { in: :valid_model_classes }
 
+    # Destroys any records owned by the project_model
+    def clear
+      model_class
+        .constantize
+        .where(project_model_id: id)
+        .destroy_all
+    end
+
     # Returns a list of models that include the Ownable concern.
     def self.model_classes
       # Eager load all of the models in development mode

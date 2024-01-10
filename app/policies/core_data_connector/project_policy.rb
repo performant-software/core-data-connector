@@ -7,6 +7,13 @@ module CoreDataConnector
       @project = project
     end
 
+    # A user can clear data from a project if they are an admin or an owner of the project.
+    def clear?
+      return true if current_user.admin?
+
+      project_owner?
+    end
+
     # Any user can create a new project.
     def create?
       true
