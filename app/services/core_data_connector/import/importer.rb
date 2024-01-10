@@ -4,6 +4,12 @@ module CoreDataConnector
       attr_reader :importers
 
       IMPORTERS = [{
+        importer_class: Instances,
+        filename: 'instances.csv'
+      }, {
+        importer_class: Items,
+        filename: 'items.csv'
+      }, {
         importer_class: Organizations,
         filename: 'organizations.csv'
       }, {
@@ -15,6 +21,9 @@ module CoreDataConnector
       }, {
         importer_class: Relationships,
         filename: 'relationships.csv'
+      }, {
+        importer_class: Works,
+        filename: 'works.csv'
       }]
 
       def initialize(directory)

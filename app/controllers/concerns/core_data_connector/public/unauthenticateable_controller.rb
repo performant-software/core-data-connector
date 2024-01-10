@@ -9,6 +9,12 @@ module CoreDataConnector
 
         # No Pundit authorization
         before_action :bypass_authorization
+
+        protected
+
+        def find_record(query)
+          query.find_by_uuid(params[:id])
+        end
       end
 
     end
