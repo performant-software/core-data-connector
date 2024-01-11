@@ -10,6 +10,9 @@ en:
   errors:
     nameable:
       primary_name: "This record must have a primary name"
+    projects:
+      import_configuration: "Configuration file required"
+      import_data: "Importable contents required"
 
   serialization:
     linked_open_data:

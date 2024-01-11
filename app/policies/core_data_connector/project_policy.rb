@@ -26,8 +26,21 @@ module CoreDataConnector
       project_owner?
     end
 
+    # A user can export a project's configuration if they are an admin or an owner of the project.
+    def export_configuration?
+      return true if current_user.admin?
+
+      project_owner?
+    end
+
+    def import_configuration?
+      return true if current_user.admin?
+
+      project_owner?
+    end
+
     # A user can import data into a project if they are an admin.
-    def import?
+    def import_data?
       return true if current_user.admin?
 
       false

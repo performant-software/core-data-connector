@@ -7,11 +7,42 @@ module CoreDataConnector
     # Search attributes
     search_attributes :name
 
-    def import
-      render json: { errors: ['Importable contents required'] }, status: :bad_request and return unless params[:file].present?
+    def export_configuration
+      project = Project.find(params[:id])
+      authorize project, :export_configuration?
+
+      options = load_records(project)
+      serializer = ProjectSettingsSerializer.new(current_user, options)
+
+      json = { param_name.to_sym => serializer.render_show(project) }
+      render json: json, status: :ok
+    end
+
+    def import_configuration
+      render json: { errors: [I18n.t('errors.projects.import_configuration')] }, status: :bad_request and return unless params[:file].present?
 
       project = Project.find(params[:id])
-      authorize project, :import?
+      authorize project, :import_configuration?
+
+      begin
+        service = Settings.new(project, params[:file])
+        service.import_configuration
+      rescue StandardError => exception
+        errors = [exception]
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: :unprocessable_entity
+      end
+    end
+
+    def import_data
+      render json: { errors: [I18n.t('errors.projects.import_data')] }, status: :bad_request and return unless params[:file].present?
+
+      project = Project.find(params[:id])
+      authorize project, :import_data?
 
       begin
         # Create the target directory
@@ -49,7 +80,7 @@ module CoreDataConnector
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
       else
-        render json: { errors: errors }, status: 422
+        render json: { errors: errors }, status: :unprocessable_entity
       end
     end
 
