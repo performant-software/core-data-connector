@@ -14,7 +14,9 @@ CoreDataConnector::Engine.routes.draw do
   resources :project_model_accesses, only: :index
   resources :projects do
     post :clear, on: :member
-    post :import, on: :member
+    get :export_configuration, on: :member
+    post :import_configuration, on: :member
+    post :import_data, on: :member
   end
   resources :relationships do
     post :upload, on: :collection
