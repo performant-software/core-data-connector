@@ -7,6 +7,28 @@ module CoreDataConnector
     # Search attributes
     search_attributes :name
 
+    def clear
+      project = Project.find(params[:id])
+      authorize project, :clear?
+
+      # Query for models that are not shared with other projects
+      project_models = ProjectModel
+                         .unshared
+                         .where(project_id: project.id)
+
+      begin
+        project_models.map(&:clear)
+      rescue StandardError => exception
+        errors = [exception]
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: :bad_request
+      end
+    end
+
     def export_configuration
       project = Project.find(params[:id])
       authorize project, :export_configuration?
