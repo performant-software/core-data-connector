@@ -7,6 +7,28 @@ module CoreDataConnector
     # Search attributes
     search_attributes :name
 
+    def clear
+      project = Project.find(params[:id])
+      authorize project, :clear?
+
+      # Query for models that are not shared with other projects
+      project_models = ProjectModel
+                         .unshared
+                         .where(project_id: project.id)
+
+      begin
+        project_models.map(&:clear)
+      rescue StandardError => exception
+        errors = [exception]
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: 422
+      end
+    end
+
     def import
       render json: { errors: ['Importable contents required'] }, status: :bad_request and return unless params[:file].present?
 

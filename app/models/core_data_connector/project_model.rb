@@ -31,6 +31,14 @@ module CoreDataConnector
     validates :name, presence: true
     validates :model_class, inclusion: { in: :valid_model_classes }
 
+    # Destroys any records owned by the project_model
+    def clear
+      model_class
+        .constantize
+        .where(project_model_id: id)
+        .destroy_all
+    end
+
     # Returns a list of models that include the Ownable concern.
     def self.model_classes
       # Eager load all of the models in development mode
@@ -50,6 +58,19 @@ module CoreDataConnector
     # Returns the singular version of the name.
     def name_singular
       name&.singularize
+    end
+
+    # Returns a query to find project_models records that are not shared with other projects.
+    def self.unshared
+      model_table = ProjectModel.arel_table
+      access_table = ProjectModelAccess.arel_table
+
+      where.not(
+        ProjectModelAccess
+          .where(access_table[:project_model_id].eq(model_table[:id]))
+          .arel
+          .exists
+      )
     end
 
     private
