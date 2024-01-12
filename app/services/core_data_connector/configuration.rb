@@ -1,5 +1,5 @@
 module CoreDataConnector
-  class Settings
+  class Configuration
     attr_reader :project, :settings
 
     def initialize(project, file)

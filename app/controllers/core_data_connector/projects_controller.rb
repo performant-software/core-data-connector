@@ -12,7 +12,7 @@ module CoreDataConnector
       authorize project, :export_configuration?
 
       options = load_records(project)
-      serializer = ProjectSettingsSerializer.new(current_user, options)
+      serializer = ProjectConfigurationsSerializer.new(current_user, options)
 
       json = { param_name.to_sym => serializer.render_show(project) }
       render json: json, status: :ok
@@ -25,7 +25,7 @@ module CoreDataConnector
       authorize project, :import_configuration?
 
       begin
-        service = Settings.new(project, params[:file])
+        service = Configuration.new(project, params[:file])
         service.import_configuration
       rescue StandardError => exception
         errors = [exception]

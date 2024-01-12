@@ -1,5 +1,5 @@
 module CoreDataConnector
-  class ProjectSettingsSerializer < BaseSerializer
+  class ProjectConfigurationsSerializer < BaseSerializer
     show_attributes project_models: [:id, :name, :model_class,
                                      user_defined_fields: UserDefinedFields::UserDefinedFieldsSerializer,
                                      project_model_relationships: [
