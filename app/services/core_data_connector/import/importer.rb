@@ -57,7 +57,7 @@ module CoreDataConnector
 
         # Iterate over each importer and perform any cleanup
         importers.each do |importer|
-          # importer.cleanup
+          importer.cleanup
         end
       end
     end
