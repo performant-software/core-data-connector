@@ -14,27 +14,29 @@ module CoreDataConnector
         super
 
         execute <<-SQL.squish
-          WITH 
-              
+          WITH
+
           insert_relationships AS (
-          
-          INSERT INTO core_data_connector_relationships ( 
-            project_model_relationship_id, 
-            z_relationship_id, 
-            primary_record_id, 
-            primary_record_type, 
-            related_record_id, 
-            related_record_type, 
-            created_at, 
+
+          INSERT INTO core_data_connector_relationships (
+            project_model_relationship_id,
+            z_relationship_id,
+            primary_record_id,
+            primary_record_type,
+            related_record_id,
+            related_record_type,
+            user_defined,
+            created_at,
             updated_at
           )
-          SELECT z_relationships.project_model_relationship_id, 
-                 z_relationships.id, 
-                 z_relationships.primary_record_id, 
-                 z_relationships.primary_record_type, 
-                 z_relationships.related_record_id, 
-                 z_relationships.related_record_type, 
-                 current_timestamp, 
+          SELECT z_relationships.project_model_relationship_id,
+                 z_relationships.id,
+                 z_relationships.primary_record_id,
+                 z_relationships.primary_record_type,
+                 z_relationships.related_record_id,
+                 z_relationships.related_record_type,
+                 z_relationships.user_defined,
+                 current_timestamp,
                  current_timestamp
             FROM #{table_name} z_relationships
            WHERE z_relationships.primary_record_id IS NOT NULL
@@ -55,7 +57,7 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           WITH all_related_types AS (
-        
+
           SELECT id, uuid, 'CoreDataConnector::Instance' AS type
             FROM core_data_connector_instances instances
            WHERE instances.z_instance_id IS NOT NULL
@@ -67,7 +69,7 @@ module CoreDataConnector
           SELECT id, uuid, 'CoreDataConnector::Organization' AS type
             FROM core_data_connector_organizations organizations
            WHERE organizations.z_organization_id IS NOT NULL
-           UNION 
+           UNION
           SELECT id, uuid, 'CoreDataConnector::Person' AS type
             FROM core_data_connector_people people
            WHERE people.z_person_id IS NOT NULL
@@ -79,9 +81,9 @@ module CoreDataConnector
           SELECT id, uuid, 'CoreDataConnector::Work' AS type
             FROM core_data_connector_works works
            WHERE works.z_work_id IS NOT NULL
-              
+
           )
-              
+
           UPDATE #{table_name} z_relationships
              SET primary_record_id = primary_types.id,
                  related_record_id = related_types.id

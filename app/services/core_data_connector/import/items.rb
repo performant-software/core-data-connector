@@ -41,11 +41,11 @@ module CoreDataConnector
             created_at,
             updated_at
           )
-          SELECT z_items.project_model_id, 
-                 z_items.uuid, 
-                 z_items.id, 
-                 z_items.user_defined, 
-                 current_timestamp, 
+          SELECT z_items.project_model_id,
+                 z_items.uuid,
+                 z_items.id,
+                 z_items.user_defined,
+                 current_timestamp,
                  current_timestamp
             FROM #{table_name} z_items
             WHERE z_items.item_id IS NULL
@@ -127,6 +127,10 @@ module CoreDataConnector
           name: 'user_defined',
           type: 'JSONB'
         }]
+      end
+
+      def table_name_prefix
+        'z_items'
       end
     end
   end
