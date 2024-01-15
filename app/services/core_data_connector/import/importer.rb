@@ -19,11 +19,11 @@ module CoreDataConnector
         importer_class: Places,
         filename: 'places.csv'
       }, {
-        importer_class: Relationships,
-        filename: 'relationships.csv'
-      }, {
         importer_class: Works,
         filename: 'works.csv'
+      }, {
+        importer_class: Relationships,
+        filename: 'relationships.csv'
       }]
 
       def initialize(directory)
@@ -57,7 +57,7 @@ module CoreDataConnector
 
         # Iterate over each importer and perform any cleanup
         importers.each do |importer|
-          importer.cleanup
+          # importer.cleanup
         end
       end
     end
