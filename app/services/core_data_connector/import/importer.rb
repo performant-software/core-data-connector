@@ -21,9 +21,6 @@ module CoreDataConnector
       }, {
         importer_class: Works,
         filename: 'works.csv'
-      }, {
-        importer_class: Relationships,
-        filename: 'relationships.csv'
       }]
 
       def initialize(directory)
@@ -37,6 +34,12 @@ module CoreDataConnector
           next unless File.exist? filepath
 
           @importers << klass.new(filepath)
+        end
+
+        # Import relationships last
+        relations_filepath = "#{directory}/relationships.csv"
+        if File.exist? relations_filepath
+          @importers << Relationships.new(relations_filepath)
         end
       end
 
