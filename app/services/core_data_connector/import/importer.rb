@@ -23,24 +23,31 @@ module CoreDataConnector
         filename: 'works.csv'
       }]
 
+      RELATIONSHIP_IMPORTER = {
+        importer_class: Relationships,
+        filename: 'relationships.csv'
+      }
+
+      def populate_importers(importer, directory)
+        filename = importer[:filename]
+        klass = importer[:importer_class]
+
+        filepath = "#{directory}/#{filename}"
+
+        if File.exist? filepath
+          @importers << klass.new(filepath)
+        end
+      end
+
       def initialize(directory)
         @importers = []
 
         IMPORTERS.each do |importer|
-          filename = importer[:filename]
-          klass = importer[:importer_class]
-
-          filepath = "#{directory}/#{filename}"
-          next unless File.exist? filepath
-
-          @importers << klass.new(filepath)
+          populate_importers(importer, directory)
         end
 
         # Import relationships last
-        relations_filepath = "#{directory}/relationships.csv"
-        if File.exist? relations_filepath
-          @importers << Relationships.new(relations_filepath)
-        end
+        populate_importers(RELATIONSHIP_IMPORTER, directory)
       end
 
       def run
