@@ -24,6 +24,8 @@ CoreDataConnector::Engine.routes.draw do
   resources :taxonomies
   resources :user_projects
   resources :users
+  resources :web_authorities
+  resources :web_identifiers
   resources :works
 
   namespace :public, only: [:index, :show] do

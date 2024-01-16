@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Person < ApplicationRecord
     # Includes
+    include Identifiable
     include Nameable
     include Ownable
     include Relateable

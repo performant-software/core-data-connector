@@ -13,6 +13,8 @@ en:
     projects:
       import_configuration: "Configuration file required"
       import_data: "Importable contents required"
+    web_authority:
+      source_type_unique: "Only one authority per type is allowed per project"
 
   serialization:
     linked_open_data:

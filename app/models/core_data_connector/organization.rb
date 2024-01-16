@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Organization < ApplicationRecord
     # Includes
+    include Identifiable
     include Nameable
     include Ownable
     include Relateable

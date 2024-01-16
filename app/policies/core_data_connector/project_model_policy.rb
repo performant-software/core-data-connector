@@ -37,7 +37,7 @@ module CoreDataConnector
     end
 
     def permitted_attributes
-      [:project_id, :name, :model_class, :slug, *ProjectModel.permitted_params,
+      [:project_id, :name, :model_class, :slug, :allow_identifiers, *ProjectModel.permitted_params,
        project_model_relationships_attributes: [:id, :primary_model_id, :related_model_id, :name, :multiple, :slug,
                                                 :allow_inverse, :inverse_name, :inverse_multiple, :_destroy,
                                                 *ProjectModelRelationship.permitted_params],

@@ -1,5 +1,6 @@
 module CoreDataConnector
   class Instance < ApplicationRecord
+    include Identifiable
     include Nameable
     include Ownable
     include Relateable
