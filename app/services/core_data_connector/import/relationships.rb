@@ -78,6 +78,10 @@ module CoreDataConnector
             FROM core_data_connector_places places
            WHERE places.z_place_id IS NOT NULL
            UNION
+          SELECT id, uuid, 'CoreDataConnector::Taxonomy' AS type
+            FROM core_data_connector_taxonomies taxonomies
+           WHERE taxonomies.z_taxonomy_id IS NOT NULL
+           UNION
           SELECT id, uuid, 'CoreDataConnector::Work' AS type
             FROM core_data_connector_works works
            WHERE works.z_work_id IS NOT NULL

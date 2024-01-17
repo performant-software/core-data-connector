@@ -58,10 +58,12 @@ module CoreDataConnector
                        .flatten
                        .join(', ')
 
-        execute <<-SQL.squish
-          UPDATE #{table_name}
-             SET user_defined = json_strip_nulls(json_build_object(#{expression}))
-        SQL
+        if !expression.empty?
+          execute <<-SQL.squish
+            UPDATE #{table_name}
+               SET user_defined = json_strip_nulls(json_build_object(#{expression}))
+          SQL
+        end
       end
 
       protected
