@@ -15,17 +15,17 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE core_data_connector_taxonomies taxonomies
-            SET z_taxonomy_id = z_taxonomies.id,
-              name = z_taxonomies.name,
-              updated_at = current_timestamp
-            FROM #{table_name} z_taxonomies
+            SET  z_taxonomy_id = z_taxonomies.id,
+                 name = z_taxonomies.name,
+                 updated_at = current_timestamp
+           FROM #{table_name} z_taxonomies
           WHERE z_taxonomies.taxonomy_id = taxonomies.id
         SQL
 
         execute <<-SQL.squish
-        WITH
+          WITH
 
-        insert_taxonomies AS (
+          insert_taxonomies AS (
 
           INSERT INTO core_data_connector_taxonomies (
             project_model_id,
@@ -45,11 +45,11 @@ module CoreDataConnector
           WHERE  z_taxonomies.taxonomy_id IS NULL
           RETURNING id AS taxonomy_id, z_taxonomy_id
 
-        )
+          )
 
-        UPDATE #{table_name} z_taxonomies
-            SET taxonomy_id = insert_taxonomies.taxonomy_id
-            FROM insert_taxonomies
+          UPDATE #{table_name} z_taxonomies
+              SET taxonomy_id = insert_taxonomies.taxonomy_id
+             FROM insert_taxonomies
             WHERE insert_taxonomies.z_taxonomy_id = z_taxonomies.id
         SQL
       end
