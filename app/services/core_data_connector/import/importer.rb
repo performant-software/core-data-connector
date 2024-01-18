@@ -19,6 +19,9 @@ module CoreDataConnector
         importer_class: Places,
         filename: 'places.csv'
       }, {
+        importer_class: Taxonomies,
+        filename: 'taxonomies.csv'
+      }, {
         importer_class: Works,
         filename: 'works.csv'
       }]
