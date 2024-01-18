@@ -8,11 +8,20 @@ en:
       update?: "You do not have permission to update this project."
 
   errors:
+    http:
+      general: "An error occurred when making your request"
+      no_response: "No response from the server"
+      timeout: "Your request has timed out"
     nameable:
       primary_name: "This record must have a primary name"
     projects:
       import_configuration: "Configuration file required"
       import_data: "Importable contents required"
+    web_authorities_controller:
+      find:
+        identifier: "An identifier is required"
+      search:
+        query: "A search query is required"
     web_authority:
       source_type_unique: "Only one authority per type is allowed per project"
 

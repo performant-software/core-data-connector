@@ -24,7 +24,10 @@ CoreDataConnector::Engine.routes.draw do
   resources :taxonomies
   resources :user_projects
   resources :users
-  resources :web_authorities
+  resources :web_authorities do
+    get :find, on: :member
+    get :search, on: :member
+  end
   resources :web_identifiers
   resources :works
 

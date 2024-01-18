@@ -15,11 +15,25 @@ module CoreDataConnector
       owner?
     end
 
+    # A user can find a web authority entity if they are an admin user or a member of the project.
+    def find?
+      return true if current_user.admin?
+
+      member?
+    end
+
     # A user can delete a web authority if they are an admin user or the owner of the project.
     def destroy?
       return true if current_user.admin?
 
       owner?
+    end
+
+    # A user can search a web authority if they are an admin user or a member of the project.
+    def search?
+      return true if current_user.admin?
+
+      member?
     end
 
     # A user can view a web authority if they are an admin user or the owner of the project.
@@ -41,6 +55,14 @@ module CoreDataConnector
     end
 
     private
+
+    # Returns true if the current user has a `user_projects` record for the web authority's project.
+    def member?
+      current_user
+        .user_projects
+        .where(project_id: project_id)
+        .exists?
+    end
 
     # Returns true if the current user has an owner `user_projects` record for the web authority's project.
     def owner?
