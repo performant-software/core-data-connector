@@ -38,7 +38,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes
     def permitted_attributes
-      [:web_authority_id, :identifiable_id, :identifiable_type, :identifier]
+      [:web_authority_id, :identifiable_id, :identifiable_type, :identifier, extra: {}]
     end
 
     private
