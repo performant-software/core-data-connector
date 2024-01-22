@@ -1,3 +1,5 @@
+require 'typhoeus'
+
 module CoreDataConnector
   module Authority
     module Http
