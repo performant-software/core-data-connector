@@ -3,6 +3,7 @@ module CoreDataConnector
     self.primary_key = :id
 
     # Includes
+    include Identifiable
     include Nameable
     include Ownable
     include Relateable

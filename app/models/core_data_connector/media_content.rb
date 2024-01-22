@@ -1,6 +1,7 @@
 module CoreDataConnector
   class MediaContent < ApplicationRecord
     # Includes
+    include Identifiable
     include Ownable
     include Relateable
     include Search::MediaContent

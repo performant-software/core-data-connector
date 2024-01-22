@@ -1,5 +1,6 @@
 module CoreDataConnector
   class Item < ApplicationRecord
+    include Identifiable
     include Nameable
     include Ownable
     include Relateable
