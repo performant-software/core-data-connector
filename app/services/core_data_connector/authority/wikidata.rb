@@ -1,5 +1,3 @@
-require 'typhoeus'
-
 module CoreDataConnector
   module Authority
     BASE_URL = 'https://www.wikidata.org/w/api.php'
