@@ -1,6 +1,6 @@
 module CoreDataConnector
   class WebAuthority < ApplicationRecord
-    SOURCE_TYPES = %w(atom wikidata)
+    SOURCE_TYPES = %w(atom jisc wikidata)
 
     # Relationships
     belongs_to :project
