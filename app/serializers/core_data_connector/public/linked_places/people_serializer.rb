@@ -6,7 +6,7 @@ module CoreDataConnector
         annotation_attributes(:record_id) { |person| person.id }
         annotation_attributes(:title) { |person| person.full_name }
         annotation_attributes(:type){ 'Person' }
-        annotation_attributes :biography, user_defined: UserDefinedSerializer
+        annotation_attributes :uuid, :biography, user_defined: UserDefinedSerializer
       end
     end
   end

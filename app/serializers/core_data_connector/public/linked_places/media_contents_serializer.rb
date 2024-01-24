@@ -6,7 +6,7 @@ module CoreDataConnector
         annotation_attributes(:record_id) { |media_content| media_content.id }
         annotation_attributes(:title) { |media_content| media_content.name }
         annotation_attributes(:type) { 'MediaContent' }
-        annotation_attributes :content_url, :content_download_url, :content_iiif_url, :content_preview_url,
+        annotation_attributes :uuid, :content_url, :content_download_url, :content_iiif_url, :content_preview_url,
                               :content_thumbnail_url, :manifest_url, user_defined: UserDefinedSerializer
       end
     end

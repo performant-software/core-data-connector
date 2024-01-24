@@ -27,6 +27,7 @@ module CoreDataConnector
         target_attributes(:record_id) { |place| place.id }
         target_attributes(:name) { |place| place.primary_name&.name }
         target_attributes(:type) { 'Place' }
+        target_attributes :uuid
 
         def self.identifier(place)
           "#{base_url}/places/#{place.uuid}"

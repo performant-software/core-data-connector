@@ -6,6 +6,7 @@ module CoreDataConnector
         annotation_attributes(:record_id) { |taxonomy| taxonomy.id }
         annotation_attributes(:title) { |taxonomy| taxonomy.name }
         annotation_attributes(:type) { 'Taxonomy' }
+        annotation_attributes :uuid
       end
     end
   end
