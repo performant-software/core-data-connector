@@ -10,3 +10,5 @@ gem 'sqlite3'
 
 # Specify your gem's dependencies in core_data_connector.gemspec.
 gemspec
+
+gem "rexml", "~> 3.2"

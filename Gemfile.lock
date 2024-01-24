@@ -212,6 +212,7 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
+    rexml (3.2.6)
     rgeo (3.0.0)
     rgeo-activerecord (7.0.1)
       activerecord (>= 5.0)
@@ -244,6 +245,7 @@ DEPENDENCIES
   faker (~> 3.2.1)
   jwt_auth!
   resource_api!
+  rexml (~> 3.2)
   sqlite3
   triple_eye_effable!
   user_defined_fields!

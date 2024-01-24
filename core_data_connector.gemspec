@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rack-cors', '~> 2.0.1'
   spec.add_dependency 'rgeo-geojson', '~> 2.1'
   spec.add_dependency 'resource_api'
+  spec.add_dependency 'rexml', '~> 3.2'
   spec.add_dependency 'rubyzip', '~> 2.3.2'
   spec.add_dependency 'user_defined_fields'
   spec.add_dependency 'triple_eye_effable'
