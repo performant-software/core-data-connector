@@ -32,13 +32,12 @@ CoreDataConnector::Engine.routes.draw do
   resources :works
 
   namespace :public, only: [:index, :show] do
-    resources :people, only: :show
-    resources :places, only: :show do
-      resources :media_contents, only: :index
-      resources :organizations, only: :index
-      resources :people, only: :index
-      resources :places, only: :index
-      resources :taxonomies, only: :index
+    resources :places, controller: 'linked_places/places' do
+      resources :media_contents, only: :index, controller: 'linked_places/media_contents'
+      resources :organizations, only: :index, controller: 'linked_places/organizations'
+      resources :people, only: :index, controller: 'linked_places/people'
+      resources :places, only: :index, controller: 'linked_places/places'
+      resources :taxonomies, only: :index, controller: 'linked_places/taxonomies'
     end
   end
 end
