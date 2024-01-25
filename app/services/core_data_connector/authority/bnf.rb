@@ -1,7 +1,3 @@
-require 'json'
-require 'active_support/core_ext'
-require 'typhoeus'
-
 module CoreDataConnector
   module Authority
     class Bnf
