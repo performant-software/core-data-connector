@@ -12,7 +12,9 @@ module CoreDataConnector
           api_key: options[:api_key]
         }
 
-        send_request("#{BASE_URL}/#{id}", method: :get, params: params)
+        send_request("#{BASE_URL}/#{id}", method: :get, params: params) do |body|
+          JSON.parse(body)
+        end
       end
 
       def search(query, options = {})
@@ -22,7 +24,9 @@ module CoreDataConnector
           q: query
         }
 
-        send_request(BASE_URL, method: :get, params: params)
+        send_request(BASE_URL, method: :get, params: params) do |body|
+          JSON.parse(body)
+        end
       end
     end
   end

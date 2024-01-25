@@ -1,11 +1,11 @@
 module CoreDataConnector
   module Authority
-    BASE_URL = 'https://discover.libraryhub.jisc.ac.uk/search'
-
-    DEFAULT_LIMIT = 20
-
     class Jisc
       include Http
+
+      BASE_URL = 'https://discover.libraryhub.jisc.ac.uk/search'
+  
+      DEFAULT_LIMIT = 20
 
       def find(id, options = {})
         params = {
@@ -13,7 +13,9 @@ module CoreDataConnector
           id: id
         }
 
-        send_request(BASE_URL, method: :get, params: params)
+        send_request(BASE_URL, method: :get, params: params) do |body|
+          JSON.parse(body)
+        end
       end
 
       def search(query, options = {})
@@ -22,7 +24,9 @@ module CoreDataConnector
           keyword: query
         }
 
-        send_request(BASE_URL, method: :get, params: params)
+        send_request(BASE_URL, method: :get, params: params) do |body|
+          JSON.parse(body)
+        end
       end
     end
   end
