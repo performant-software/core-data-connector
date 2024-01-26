@@ -1,11 +1,11 @@
 module CoreDataConnector
   module Authority
-    BASE_URL = 'https://www.wikidata.org/w/api.php'
-
-    DEFAULT_LIMIT = 20
-
     class Wikidata
       include Http
+
+      BASE_URL = 'https://www.wikidata.org/w/api.php'
+
+      DEFAULT_LIMIT = 20
 
       def find(id, options = {})
         params = {
@@ -16,7 +16,9 @@ module CoreDataConnector
           type: 'item',
         }
 
-        send_request(BASE_URL, method: :get, params: params)
+        send_request(BASE_URL, method: :get, params: params) do |body|
+          JSON.parse(body)
+        end
       end
 
       def search(query, options = {})
@@ -30,7 +32,9 @@ module CoreDataConnector
           uselang: 'en'
         }
 
-        send_request(BASE_URL, method: :get, params: params)
+        send_request(BASE_URL, method: :get, params: params) do |body|
+          JSON.parse(body)
+        end
       end
     end
   end
