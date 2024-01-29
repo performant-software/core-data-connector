@@ -22,7 +22,7 @@ module CoreDataConnector
         importer_class: Taxonomies,
         filename: 'taxonomies.csv'
       }, {
-        importer_class: WebIdentifier,
+        importer_class: WebIdentifiers,
         filename: 'web_identifiers.csv'
       }, {
         importer_class: Works,
