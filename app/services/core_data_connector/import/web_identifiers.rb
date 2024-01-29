@@ -1,6 +1,6 @@
 module CoreDataConnector
   module Import
-    class ExternalIdentifiers < Base
+    class WebIdentifiers < Base
       def cleanup
         super
 
