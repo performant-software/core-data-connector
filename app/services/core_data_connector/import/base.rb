@@ -14,9 +14,9 @@ module CoreDataConnector
       end
 
       def cleanup
-        # execute <<-SQL.squish
-        #   DROP TABLE IF EXISTS #{table_name}
-        # SQL
+        execute <<-SQL.squish
+          DROP TABLE IF EXISTS #{table_name}
+        SQL
       end
 
       def extract
