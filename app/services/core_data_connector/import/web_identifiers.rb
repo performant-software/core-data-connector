@@ -85,7 +85,8 @@ module CoreDataConnector
            WHERE works.z_work_id IS NOT NULL
           )
           UPDATE #{table_name} z_web_identifiers
-             SET web_identifier_id = web_identifiers.id
+             SET web_identifier_id = web_identifiers.id,
+                 identifiable_id = related_types.id
             FROM related_types, core_data_connector_web_identifiers web_identifiers
            WHERE related_types.uuid = z_web_identifiers.identifiable_uuid
              AND related_types.type = z_web_identifiers.identifiable_type
