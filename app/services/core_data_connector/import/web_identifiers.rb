@@ -23,7 +23,9 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           WITH
+
           insert_web_identifiers AS (
+
           INSERT INTO core_data_connector_web_identifiers (
             z_web_identifier_id,
             identifiable_id,
@@ -43,11 +45,13 @@ module CoreDataConnector
           FROM   #{table_name} z_web_identifiers
           WHERE  z_web_identifiers.web_identifier_id IS NULL
           RETURNING id AS web_identifier_id, z_web_identifier_id
+
           )
+
           UPDATE #{table_name} z_web_identifiers
-              SET web_identifier_id = insert_web_identifiers.web_identifier_id
-             FROM insert_web_identifiers
-            WHERE insert_web_identifiers.z_web_identifier_id = z_web_identifiers.id
+             SET web_identifier_id = insert_web_identifiers.web_identifier_id
+            FROM insert_web_identifiers
+           WHERE insert_web_identifiers.z_web_identifier_id = z_web_identifiers.id
         SQL
       end
 
@@ -55,7 +59,10 @@ module CoreDataConnector
         super
 
         execute <<-SQL.squish
-          WITH related_types AS (
+          WITH
+          
+          related_types AS (
+
           SELECT id, uuid, 'CoreDataConnector::Instance' AS type
             FROM core_data_connector_instances instances
            WHERE instances.z_instance_id IS NOT NULL
@@ -83,7 +90,9 @@ module CoreDataConnector
           SELECT id, uuid, 'CoreDataConnector::Work' AS type
             FROM core_data_connector_works works
            WHERE works.z_work_id IS NOT NULL
+
           )
+
           UPDATE #{table_name} z_web_identifiers
              SET web_identifier_id = web_identifiers.id,
                  identifiable_id = related_types.id
