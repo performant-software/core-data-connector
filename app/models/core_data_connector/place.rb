@@ -12,9 +12,11 @@ module CoreDataConnector
 
     # Relationships
     has_one :place_geometry, dependent: :destroy
+    has_many :place_layers, dependent: :destroy
 
     # Nested attributes
     accepts_nested_attributes_for :place_geometry, allow_destroy: true
+    accepts_nested_attributes_for :place_layers, allow_destroy: true
 
     name_table :place_names
 
