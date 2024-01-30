@@ -65,6 +65,28 @@ Rails.application.config.to_prepare do
 end
 ```
 
+## Public API
+
+In addition to the authenticated API, the `core_data_connector` gem also provides a public API for the following endpoints:
+
+```
+GET /core_data/public/places
+GET /core_data/public/places/:uuid
+GET /core_data/public/places/:uuid/media_contents
+GET /core_data/public/places/:uuid/organizations
+GET /core_data/public/places/:uuid/people
+GET /core_data/public/places/:uuid/places
+GET /core_data/public/places/:uuid/taxonomies
+```
+
+The following query parameters can be used to further modify the results:
+
+| Parameter   | Description                                      | Required |
+|-------------|--------------------------------------------------|----------|
+| project_ids | An array of project IDs                          | Yes      |
+| search      | Search text used to filter the records           | No       |
+| sort_by     | A database colum name to use for sorting records | No       |
+
 ## Release
 
 To release a new version of the `core_data_connector` gem in GitHub, use the following steps:

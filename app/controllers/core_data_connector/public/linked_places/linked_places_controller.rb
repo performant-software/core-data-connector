@@ -1,9 +1,7 @@
 module CoreDataConnector
   module Public
-    module RelateableController
-      extend ActiveSupport::Concern
-
-      included do
+    module LinkedPlaces
+      class LinkedPlacesController < ApplicationController
         # Member attributes
         attr_reader :current_record
 
@@ -13,19 +11,25 @@ module CoreDataConnector
         protected
 
         def base_query
-          # If we're not in the context of a nested route, call the "super" method
-          return super unless current_record.present?
-
-          # Return no records if the appropriate parameters are not passed
-          return item_class.none unless params_valid?
-
-          item_class.where(build_base_sql)
+          if nested_resource?
+            item_class.where(build_base_sql)
+          elsif params[:project_ids].present?
+            item_class.all_records_by_project(params[:project_ids])
+          else
+            item_class.none
+          end
         end
 
         def build_index_response(items, metadata)
-          options = load_records(items).merge({ count: metadata[:count] })
+          options = load_records(items).merge({ count: metadata[:count], page: metadata[:page], pages: metadata[:pages] })
           serializer = serializer_class.new(current_user, options)
-          serializer.render_index(items)
+
+          # For nested resources, we'll render the annotation attributes. Otherwise, we'll render the index attributes.
+          if nested_resource?
+            serializer.render_annotation(items)
+          else
+            serializer.render_index(items)
+          end
         end
 
         def build_show_response(item)
@@ -49,7 +53,7 @@ module CoreDataConnector
         def preloads(query)
           super
 
-          return unless params_valid?
+          return unless nested_resource?
 
           Preloader.new(
             records: query,
@@ -96,7 +100,7 @@ module CoreDataConnector
         end
 
         def serializer_class
-          "CoreDataConnector::Public::#{item_class.to_s.demodulize.pluralize}Serializer".constantize
+          "CoreDataConnector::Public::LinkedPlaces::#{"#{controller_name}_serializer".classify}".constantize
         end
 
         private
@@ -155,22 +159,18 @@ module CoreDataConnector
             )
         end
 
-        def params_valid?
-          return false unless current_record.present?
+        def nested_resource?
+          return true if current_record.present? && params[:project_ids].present?
 
-          return false unless params[:project_ids].present?
-
-          true
+          false
         end
 
         def set_current_record
-          if params[:place_id].present?
-            @current_record = (
-              Place
-                .preload(:primary_name)
-                .find_by_uuid(params[:place_id])
-            )
-          end
+          return unless params[:place_id].present?
+
+          @current_record = Place
+                              .preload(:primary_name)
+                              .find_by_uuid(params[:place_id])
         end
       end
     end

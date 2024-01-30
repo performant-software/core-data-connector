@@ -14,7 +14,7 @@ module CoreDataConnector
           response = request.run
 
           if response.success?
-            JSON.parse(response.body)
+            yield response.body
           elsif response.timed_out?
             render_errors I18n.t('errors.http.timeout')
           elsif response.code == CODE_NO_RESPONSE

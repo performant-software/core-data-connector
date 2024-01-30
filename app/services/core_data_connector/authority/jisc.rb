@@ -1,19 +1,16 @@
 module CoreDataConnector
   module Authority
-    class Wikidata
+    class Jisc
       include Http
 
-      BASE_URL = 'https://www.wikidata.org/w/api.php'
-
+      BASE_URL = 'https://discover.libraryhub.jisc.ac.uk/search'
+  
       DEFAULT_LIMIT = 20
 
       def find(id, options = {})
         params = {
-          action: 'wbgetentities',
           format: 'json',
-          ids: id,
-          languages: 'en',
-          type: 'item',
+          id: id
         }
 
         send_request(BASE_URL, method: :get, params: params) do |body|
@@ -23,13 +20,8 @@ module CoreDataConnector
 
       def search(query, options = {})
         params = {
-          action: 'wbsearchentities',
           format: 'json',
-          language: 'en',
-          limit: options[:limit] || DEFAULT_LIMIT,
-          search: query,
-          type: 'item',
-          uselang: 'en'
+          keyword: query
         }
 
         send_request(BASE_URL, method: :get, params: params) do |body|
