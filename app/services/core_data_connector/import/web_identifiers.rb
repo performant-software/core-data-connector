@@ -32,7 +32,7 @@ module CoreDataConnector
             identifiable_type,
             web_authority_id,
             identifier,
-            created_at, 
+            created_at,
             updated_at
             )
           SELECT z_web_identifiers.id,
@@ -46,6 +46,16 @@ module CoreDataConnector
           WHERE  z_web_identifiers.web_identifier_id IS NULL
           RETURNING id AS web_identifier_id, z_web_identifier_id
 
+          ),
+
+          update_web_identifiers AS (
+
+          UPDATE core_data_connector_web_identifiers
+             SET identifiable_id = z_web_identifiers.identifiable_id,
+                 identifiable_type = z_web_identifiers.identifiable_type,
+                 identifier = z_web_identifiers.identifier
+            FROM #{table_name} z_web_identifiers
+           WHERE z_web_identifiers.web_identifier_id IS NOT NULL
           )
 
           UPDATE #{table_name} z_web_identifiers
@@ -98,7 +108,7 @@ module CoreDataConnector
                  identifiable_id = related_types.id
             FROM related_types, core_data_connector_web_identifiers web_identifiers
            WHERE related_types.uuid = z_web_identifiers.identifiable_uuid
-             AND related_types.type = z_web_identifiers.identifiable_type
+             AND web_identifiers.identifiable_type = z_web_identifiers.identifiable_type
              AND web_identifiers.identifier = z_web_identifiers.identifier
              AND web_identifiers.web_authority_id = z_web_identifiers.web_authority_id
         SQL
