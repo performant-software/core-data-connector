@@ -13,6 +13,7 @@ module CoreDataConnector
         # Preloads
         preloads :person_names
         preloads :primary_name
+        preloads project_model: :user_defined_fields
 
         # Search attributes
         search_attributes :first_name, :middle_name, :last_name

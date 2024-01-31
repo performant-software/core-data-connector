@@ -13,6 +13,7 @@ module CoreDataConnector
         # Preloads
         preloads :primary_name
         preloads :place_names, :place_geometry
+        preloads project_model: :user_defined_fields
 
         # Search attributes
         search_attributes :name
