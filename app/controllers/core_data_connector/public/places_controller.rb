@@ -7,7 +7,8 @@ module CoreDataConnector
       include UserDefinedFields::Queryable
 
       # Preloads
-      preloads :place_names, :place_geometry, only: :show
+      preloads :place_names, only: :show
+      preloads :place_geometry
       preloads project_model: :user_defined_fields
 
       # Search attributes
