@@ -103,15 +103,23 @@ module CoreDataConnector
 
           )
 
+        UPDATE #{table_name} z_web_identifiers
+           SET identifiable_id = related_types.id
+          FROM related_types
+         WHERE related_types.uuid = z_web_identifiers.identifiable_uuid
+           AND related_types.type = z_web_identifiers.identifiable_type
+        SQL
+
+        execute <<-SQL.squish
           UPDATE #{table_name} z_web_identifiers
-             SET web_identifier_id = web_identifiers.id,
-                 identifiable_id = related_types.id
-            FROM related_types, core_data_connector_web_identifiers web_identifiers
-           WHERE related_types.uuid = z_web_identifiers.identifiable_uuid
-             AND web_identifiers.identifiable_type = z_web_identifiers.identifiable_type
+             SET web_identifier_id = web_identifiers.id
+            FROM core_data_connector_web_identifiers web_identifiers
+           WHERE web_identifiers.identifiable_type = z_web_identifiers.identifiable_type
              AND web_identifiers.identifier = z_web_identifiers.identifier
              AND web_identifiers.web_authority_id = z_web_identifiers.web_authority_id
+             AND web_identifiers.identifiable_id = z_web_identifiers.identifiable_id
         SQL
+
       end
 
       protected
