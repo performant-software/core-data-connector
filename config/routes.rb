@@ -55,11 +55,14 @@ CoreDataConnector::Engine.routes.draw do
     end
 
     resources :places, controller: 'linked_places/places' do
+      resources :instances, only: :index, controller: 'linked_places/instances'
+      resources :items, only: :index, controller: 'linked_places/items'
       resources :media_contents, only: :index, controller: 'linked_places/media_contents'
       resources :organizations, only: :index, controller: 'linked_places/organizations'
       resources :people, only: :index, controller: 'linked_places/people'
       resources :places, only: :index, controller: 'linked_places/places'
       resources :taxonomies, only: :index, controller: 'linked_places/taxonomies'
+      resources :works, only: :index, controller: 'linked_places/works'
     end
 
     resources :works do

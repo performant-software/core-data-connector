@@ -4,7 +4,11 @@ module CoreDataConnector
       extend ActiveSupport::Concern
 
       included do
-        index_attributes(:relationship_type) do |item, current_user, options|
+        index_attributes(:relationship_type) { |item, current_user, options| relationship_type(item, options) }
+
+        protected
+
+        def self.relationship_type(item, options)
           if options[:nested_resource].to_s.to_bool
             if !item.relationships.empty?
               item.relationships.map{ |r| r.project_model_relationship.inverse_name }.first
