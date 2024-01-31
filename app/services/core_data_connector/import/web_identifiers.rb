@@ -46,16 +46,6 @@ module CoreDataConnector
           WHERE  z_web_identifiers.web_identifier_id IS NULL
           RETURNING id AS web_identifier_id, z_web_identifier_id
 
-          ),
-
-          update_web_identifiers AS (
-
-          UPDATE core_data_connector_web_identifiers
-             SET identifiable_id = z_web_identifiers.identifiable_id,
-                 identifiable_type = z_web_identifiers.identifiable_type,
-                 identifier = z_web_identifiers.identifier
-            FROM #{table_name} z_web_identifiers
-           WHERE z_web_identifiers.web_identifier_id IS NOT NULL
           )
 
           UPDATE #{table_name} z_web_identifiers
