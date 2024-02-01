@@ -32,12 +32,48 @@ CoreDataConnector::Engine.routes.draw do
   resources :works
 
   namespace :public, only: [:index, :show] do
+    resources :instances do
+      resources :instances, only: :index
+      resources :items, only: :index
+      resources :media_contents, only: :index
+      resources :organizations, only: :index
+      resources :people, only: :index
+      resources :places, only: :index
+      resources :taxonomies, only: :index
+      resources :works, only: :index
+    end
+
+    resources :items do
+      resources :instances, only: :index
+      resources :items, only: :index
+      resources :media_contents, only: :index
+      resources :organizations, only: :index
+      resources :people, only: :index
+      resources :places, only: :index
+      resources :taxonomies, only: :index
+      resources :works, only: :index
+    end
+
     resources :places, controller: 'linked_places/places' do
+      resources :instances, only: :index, controller: 'linked_places/instances'
+      resources :items, only: :index, controller: 'linked_places/items'
       resources :media_contents, only: :index, controller: 'linked_places/media_contents'
       resources :organizations, only: :index, controller: 'linked_places/organizations'
       resources :people, only: :index, controller: 'linked_places/people'
       resources :places, only: :index, controller: 'linked_places/places'
       resources :taxonomies, only: :index, controller: 'linked_places/taxonomies'
+      resources :works, only: :index, controller: 'linked_places/works'
+    end
+
+    resources :works do
+      resources :instances, only: :index
+      resources :items, only: :index
+      resources :media_contents, only: :index
+      resources :organizations, only: :index
+      resources :people, only: :index
+      resources :places, only: :index
+      resources :taxonomies, only: :index
+      resources :works, only: :index
     end
   end
 end

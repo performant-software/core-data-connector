@@ -1,16 +1,19 @@
 module CoreDataConnector
   module Public
     module LinkedPlaces
-      class MediaContentsController < LinkedPlacesController
+      class WorksController < LinkedPlacesController
         # Includes
+        include NameableController
         include UnauthenticateableController
         include UserDefinedFields::Queryable
 
-        # Preloads
-        preloads project_model: :user_defined_fields
+        # Joins
+        joins :primary_name
 
-        # Search attributes
-        search_attributes :name
+        # Preloads
+        preloads primary_name: :name
+        preloads project_model: :user_defined_fields
+        preloads source_titles: :name
       end
     end
   end
