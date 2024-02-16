@@ -35,6 +35,7 @@ CoreDataConnector::Engine.routes.draw do
     resources :instances do
       resources :instances, only: :index
       resources :items, only: :index
+      resources :manifests
       resources :media_contents, only: :index
       resources :organizations, only: :index
       resources :people, only: :index
@@ -46,6 +47,7 @@ CoreDataConnector::Engine.routes.draw do
     resources :items do
       resources :instances, only: :index
       resources :items, only: :index
+      resources :manifests
       resources :media_contents, only: :index
       resources :organizations, only: :index
       resources :people, only: :index
@@ -57,6 +59,7 @@ CoreDataConnector::Engine.routes.draw do
     resources :places, controller: 'linked_places/places' do
       resources :instances, only: :index, controller: 'linked_places/instances'
       resources :items, only: :index, controller: 'linked_places/items'
+      resources :manifests, controller: 'manifests'
       resources :media_contents, only: :index, controller: 'linked_places/media_contents'
       resources :organizations, only: :index, controller: 'linked_places/organizations'
       resources :people, only: :index, controller: 'linked_places/people'
@@ -68,6 +71,7 @@ CoreDataConnector::Engine.routes.draw do
     resources :works do
       resources :instances, only: :index
       resources :items, only: :index
+      resources :manifests
       resources :media_contents, only: :index
       resources :organizations, only: :index
       resources :people, only: :index

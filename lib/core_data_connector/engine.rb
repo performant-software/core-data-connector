@@ -20,7 +20,7 @@ module CoreDataConnector
       end
     end
 
-    initializer :core_data_connector do
+    initializer :triple_eye_effable do
       TripleEyeEffable.configure do |config|
         config.api_key = ENV['IIIF_CLOUD_API_KEY']
         config.url = ENV['IIIF_CLOUD_URL']

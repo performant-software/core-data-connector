@@ -4,6 +4,7 @@ module CoreDataConnector
 
     # Includes
     include Identifiable
+    include Manifestable
     include Nameable
     include Ownable
     include Relateable
