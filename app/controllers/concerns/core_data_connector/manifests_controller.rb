@@ -41,7 +41,8 @@ module CoreDataConnector
         service = Iiif::Manifest.new
         service.reset_manifests_by_type(@record.class, {
           id: @record.id,
-          project_model_relationship_id: @project_model_relationship_id
+          project_model_relationship_id: @project_model_relationship_id,
+          limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
         })
       end
 
@@ -67,7 +68,8 @@ module CoreDataConnector
           service = Iiif::Manifest.new
           service.reset_manifests_by_type(record.class, {
             id: record.id,
-            project_model_relationship_id: relationship.project_model_relationship_id
+            project_model_relationship_id: relationship.project_model_relationship_id,
+            limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
           })
         end
       end
