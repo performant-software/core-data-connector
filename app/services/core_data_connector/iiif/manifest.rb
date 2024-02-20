@@ -78,10 +78,14 @@ module CoreDataConnector
                 )
               end
 
+              # If a limit is provided, limit the number of resources
+              resource_ids = info[:resources]
+              resource_ids = info[:resources].take(options[:limit].to_i) if options[:limit].present?
+
               manifest.content = service.create_manifest(
                 id: "#{ENV['HOSTNAME']}/#{identifier}",
                 label: I18n.t('services.iiif.manifest.label', name: label, relationship: info[:name]),
-                resource_ids: info[:resources]
+                resource_ids: resource_ids
               )
 
               manifest.save
@@ -114,10 +118,6 @@ module CoreDataConnector
           )
         end
 
-        if options[:limit].present?
-          relationships_scope = relationships_scope.limit(options[:limit])
-        end
-
         Preloader.new(
           records: query,
           associations: [
@@ -137,10 +137,6 @@ module CoreDataConnector
           related_relationships_scope = related_relationships_scope.where(
             project_model_relationship_id: options[:project_model_relationship_id]
           )
-        end
-
-        if options[:limit].present?
-          related_relationships_scope = related_relationships_scope.limit(options[:limit])
         end
 
         Preloader.new(
