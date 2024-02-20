@@ -373,6 +373,8 @@ module CoreDataConnector
           hash = {}
 
           user_defined_fields.each do |field|
+            next unless record.user_defined
+
             value = record.user_defined[field.uuid]
             next unless value.present?
 
