@@ -29,6 +29,8 @@ module CoreDataConnector
         return if fields.nil?
 
         fields.each do |field|
+          next unless item.user_defined
+
           value = item.user_defined[field.uuid]
           next if value.nil?
 
