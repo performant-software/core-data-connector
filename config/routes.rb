@@ -65,6 +65,10 @@ CoreDataConnector::Engine.routes.draw do
       resources :works, only: :index, controller: 'linked_places/works'
     end
 
+    resources :projects, only: [] do
+      get :descriptors, on: :member
+    end
+
     resources :works do
       resources :instances, only: :index
       resources :items, only: :index
