@@ -350,23 +350,31 @@ module CoreDataConnector
         end
 
         def build_relationships(hash)
+          instance_relationships.each { |r| build_relationship(r, hash, :related_instances) }
+          item_relationships.each { |r| build_relationship(r, hash, :related_items) }
           media_content_relationships.each { |r| build_relationship(r, hash, :related_media) }
           organization_relationships.each { |r| build_relationship(r, hash, :related_organizations) }
           person_relationships.each { |r| build_relationship(r, hash, :related_people) }
           place_relationships.each { |r| build_relationship(r, hash, :related_places) }
           taxonomy_relationships.each { |r| build_relationship(r, hash, :related_taxonomies) }
+          work_relationships.each { |r| build_relationship(r, hash, :related_works) }
 
+          instance_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_instances) }
+          item_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_items) }
           media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_media) }
           organization_related_relationships.each { |r| build_inverse_relationship(r,hash, :related_organizations) }
           person_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_people) }
           place_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_places) }
           taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_taxonomies) }
+          work_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_works) }
         end
 
         def build_user_defined(record, user_defined_fields)
           hash = {}
 
           user_defined_fields.each do |field|
+            next unless record.user_defined
+
             value = record.user_defined[field.uuid]
             next unless value.present?
 

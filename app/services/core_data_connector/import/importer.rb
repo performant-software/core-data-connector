@@ -26,12 +26,16 @@ module CoreDataConnector
         filename: 'works.csv'
       }]
 
-      RELATIONSHIP_IMPORTER = {
+      # Importers that reference any of the above models
+      RELATIONSHIP_IMPORTERS = [{
         importer_class: Relationships,
         filename: 'relationships.csv'
-      }
+      }, {
+        importer_class: WebIdentifiers,
+        filename: 'web_identifiers.csv'
+      }]
 
-      def populate_importers(importer, directory)
+      def populate_importer(importer, directory)
         filename = importer[:filename]
         klass = importer[:importer_class]
 
@@ -46,11 +50,12 @@ module CoreDataConnector
         @importers = []
 
         IMPORTERS.each do |importer|
-          populate_importers(importer, directory)
+          populate_importer(importer, directory)
         end
 
-        # Import relationships last
-        populate_importers(RELATIONSHIP_IMPORTER, directory)
+        RELATIONSHIP_IMPORTERS.each do |importer|
+          populate_importer(importer, directory)
+        end
       end
 
       def run
