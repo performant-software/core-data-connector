@@ -70,13 +70,63 @@ end
 In addition to the authenticated API, the `core_data_connector` gem also provides a public API for the following endpoints:
 
 ```
+GET /core_data/public/instances
+GET /core_data/public/instances/:uuid
+GET /core_data/public/instances/:uuid/instances
+GET /core_data/public/instances/:uuid/items
+GET /core_data/public/instances/:uuid/manifests
+GET /core_data/public/instances/:uuid/manifests/:uuid
+GET /core_data/public/instances/:uuid/media_contents
+GET /core_data/public/instances/:uuid/organizations
+GET /core_data/public/instances/:uuid/people
+GET /core_data/public/instances/:uuid/places
+GET /core_data/public/instances/:uuid/taxonomies
+GET /core_data/public/instances/:uuid/works
+```
+
+```
+GET /core_data/public/items
+GET /core_data/public/items/:uuid
+GET /core_data/public/items/:uuid/instances
+GET /core_data/public/items/:uuid/items
+GET /core_data/public/items/:uuid/manifests
+GET /core_data/public/items/:uuid/manifests/:uuid
+GET /core_data/public/items/:uuid/media_contents
+GET /core_data/public/items/:uuid/organizations
+GET /core_data/public/items/:uuid/people
+GET /core_data/public/items/:uuid/places
+GET /core_data/public/items/:uuid/taxonomies
+GET /core_data/public/items/:uuid/works
+```
+
+```
 GET /core_data/public/places
 GET /core_data/public/places/:uuid
+GET /core_data/public/places/:uuid/instances
+GET /core_data/public/places/:uuid/items
+GET /core_data/public/places/:uuid/manifests
+GET /core_data/public/places/:uuid/manifests/:uuid
 GET /core_data/public/places/:uuid/media_contents
 GET /core_data/public/places/:uuid/organizations
 GET /core_data/public/places/:uuid/people
 GET /core_data/public/places/:uuid/places
 GET /core_data/public/places/:uuid/taxonomies
+GET /core_data/public/places/:uuid/works
+```
+
+```
+GET /core_data/public/works
+GET /core_data/public/works/:uuid
+GET /core_data/public/works/:uuid/instances
+GET /core_data/public/works/:uuid/items
+GET /core_data/public/works/:uuid/manifests
+GET /core_data/public/works/:uuid/manifests/:uuid
+GET /core_data/public/works/:uuid/media_contents
+GET /core_data/public/works/:uuid/organizations
+GET /core_data/public/works/:uuid/people
+GET /core_data/public/works/:uuid/places
+GET /core_data/public/works/:uuid/taxonomies
+GET /core_data/public/works/:uuid/works
 ```
 
 The following query parameters can be used to further modify the results:
