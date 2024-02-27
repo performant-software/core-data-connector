@@ -65,6 +65,33 @@ Rails.application.config.to_prepare do
 end
 ```
 
+## Search
+
+Data can be indexed into a Typesense search index using the following commands:
+
+#### Create a new collection
+```bash
+bundle exec rake typesense:create -- -h host -p port -r protocol -a api_key -c collection_name
+```
+
+#### Delete a collection
+```bash
+bundle exec rake typesense:delete -- -h host -p port -r protocol -a api_key -c collection_name
+```
+
+#### Add documents to a collection
+```bash
+bundle exec rake typesense:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids
+```
+
+#### Update a collection
+```bash
+bundle exec rake typesense:update -- -h host -p port -r protocol -a api_key -c collection_name
+```
+
+**Note**: This task was added as a workaround for an issue in Typesense indexing nested facetable fields using auto-detection schema. This task should be run _after_ the indexing process to update the "facet" attribute on any fields that should be facetable.
+
+
 ## Public API
 
 In addition to the authenticated API, the `core_data_connector` gem also provides a public API for the following endpoints:

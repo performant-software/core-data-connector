@@ -20,7 +20,7 @@ module CoreDataConnector
           create_name primary_name
         end
 
-        search_attribute(:names) do
+        search_attribute(:names, facet: true) do
           person_names.map { |n| create_name(n) }
         end
 

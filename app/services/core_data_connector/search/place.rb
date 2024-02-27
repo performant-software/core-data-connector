@@ -22,7 +22,7 @@ module CoreDataConnector
           primary_name.name
         end
 
-        search_attribute(:names) do
+        search_attribute(:names, facet: true) do
           place_names.map(&:name)
         end
 
