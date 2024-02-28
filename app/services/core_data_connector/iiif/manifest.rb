@@ -149,14 +149,17 @@ module CoreDataConnector
       end
 
       def build_query(model_class, options)
+        primary_model_table = Arel::Table.new('primary_model')
+        related_model_table = Arel::Table.new('related_model')
+
         primary_query = ProjectModel
                           .joins(project_model_relationships: [:primary_model, :related_model])
-                          .where(ProjectModel.arel_table[:id].eq(model_class.arel_table[:project_model_id]))
+                          .where(primary_model_table[:id].eq(model_class.arel_table[:project_model_id]))
                           .where(related_model: { model_class: MediaContent.to_s })
 
         related_query = ProjectModel
                           .joins(project_model_relationships: [:primary_model, :related_model])
-                          .where(ProjectModel.arel_table[:id].eq(model_class.arel_table[:project_model_id]))
+                          .where(related_model_table[:id].eq(model_class.arel_table[:project_model_id]))
                           .where(project_model_relationships: { allow_inverse: true })
                           .where(primary_model: { model_class: MediaContent.to_s })
 
