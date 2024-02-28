@@ -20,4 +20,12 @@ namespace :core_data_connector do
       remote_password: ENV['CORE_DATA_CLOUD_PASSWORD']
     )
   end
+
+  namespace :iiif do
+    desc 'Resets IIIF manifests for all records.'
+    task :reset_manifests => :environment do
+      service = CoreDataConnector::Iiif::Manifest.new
+      service.reset_manifests
+    end
+  end
 end

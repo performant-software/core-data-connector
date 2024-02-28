@@ -2,6 +2,7 @@ module CoreDataConnector
   class RelationshipsController < ApplicationController
     # Includes
     include Api::Uploadable
+    include ManifestsController
     include UserDefinedFields::Queryable
 
     # Actions
