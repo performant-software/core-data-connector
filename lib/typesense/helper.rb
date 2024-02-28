@@ -35,34 +35,6 @@ module Typesense
           facet: false,
           optional: true
         }, {
-          name: 'related_instances.*',
-          type: 'auto',
-          facet: true
-        }, {
-          name: 'related_items.*',
-          type: 'auto',
-          facet: true
-        }, {
-          name: 'related_media_contents.*',
-          type: 'auto',
-          facet: true
-        }, {
-          name: 'related_organizations.*',
-          type: 'auto',
-          facet: true
-        }, {
-          name: 'related_people.*',
-          type: 'auto',
-          facet: true
-        }, {
-          name: 'related_places.*',
-          type: 'auto',
-          facet: true
-        }, {
-          name: 'related_works.*',
-          type: 'auto',
-          facet: true
-        }, {
           name: '.*_facet',
           type: 'auto',
           facet: true
@@ -104,6 +76,27 @@ module Typesense
           documents = records.map { |r| r.to_search_json(false) }
           collection.documents.import(documents, action: 'upsert')
         end
+      end
+    end
+
+    def update
+      collection_schema = client.collections[collection_name]
+
+      collection = collection_schema.retrieve
+      fields = collection['fields']
+
+      # Update any fields where the name ends with "_facet" and are not flagged as facetable.
+      fields.each do |field|
+        next unless field['name'].end_with?('_facet') && !field['facet']
+
+        collection_schema.update({
+          fields: [{
+            name: field['name'],
+            drop: true
+          },
+          field.merge({ facet: true })
+          ]
+        })
       end
     end
   end

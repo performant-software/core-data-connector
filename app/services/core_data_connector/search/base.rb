@@ -286,11 +286,6 @@ module CoreDataConnector
           id.to_s
         end
 
-        # Include the project model name as the record "type"
-        search_attribute(:type, facet: true) do
-          project_model.name
-        end
-
         # Uses the specified attributes to create a JSON object. We'll skip relationships by default as to
         # not create an infinite loop while serializing related records.
         def to_search_json(skip_relationships = true)
@@ -329,44 +324,44 @@ module CoreDataConnector
 
         private
 
-        def build_inverse_relationship(relationship, hash, key)
+        def build_inverse_relationship(relationship, hash)
           project_model_relationship = relationship.project_model_relationship
+          key = project_model_relationship.uuid
 
           user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
-          attributes = user_defined.merge({ type: project_model_relationship.inverse_name })
 
           hash[key] ||= []
-          hash[key] << relationship.primary_record.to_search_json.merge(attributes)
+          hash[key] << relationship.primary_record.to_search_json.merge(user_defined)
         end
 
-        def build_relationship(relationship, hash, key)
+        def build_relationship(relationship, hash)
           project_model_relationship = relationship.project_model_relationship
+          key = project_model_relationship.uuid
 
           user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
-          attributes = user_defined.merge({ type: project_model_relationship.name })
 
           hash[key] ||= []
-          hash[key] << relationship.related_record.to_search_json.merge(attributes)
+          hash[key] << relationship.related_record.to_search_json.merge(user_defined)
         end
 
         def build_relationships(hash)
-          instance_relationships.each { |r| build_relationship(r, hash, :related_instances) }
-          item_relationships.each { |r| build_relationship(r, hash, :related_items) }
-          media_content_relationships.each { |r| build_relationship(r, hash, :related_media) }
-          organization_relationships.each { |r| build_relationship(r, hash, :related_organizations) }
-          person_relationships.each { |r| build_relationship(r, hash, :related_people) }
-          place_relationships.each { |r| build_relationship(r, hash, :related_places) }
-          taxonomy_relationships.each { |r| build_relationship(r, hash, :related_taxonomies) }
-          work_relationships.each { |r| build_relationship(r, hash, :related_works) }
+          instance_relationships.each { |r| build_relationship(r, hash) }
+          item_relationships.each { |r| build_relationship(r, hash) }
+          media_content_relationships.each { |r| build_relationship(r, hash) }
+          organization_relationships.each { |r| build_relationship(r, hash) }
+          person_relationships.each { |r| build_relationship(r, hash) }
+          place_relationships.each { |r| build_relationship(r, hash) }
+          taxonomy_relationships.each { |r| build_relationship(r, hash) }
+          work_relationships.each { |r| build_relationship(r, hash) }
 
-          instance_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_instances) }
-          item_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_items) }
-          media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_media) }
-          organization_related_relationships.each { |r| build_inverse_relationship(r,hash, :related_organizations) }
-          person_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_people) }
-          place_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_places) }
-          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_taxonomies) }
-          work_related_relationships.each { |r| build_inverse_relationship(r, hash, :related_works) }
+          instance_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          item_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          media_content_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          organization_related_relationships.each { |r| build_inverse_relationship(r,hash) }
+          person_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          place_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          work_related_relationships.each { |r| build_inverse_relationship(r, hash) }
         end
 
         def build_user_defined(record, user_defined_fields)
@@ -378,13 +373,11 @@ module CoreDataConnector
             value = record.user_defined[field.uuid]
             next unless value.present?
 
-            facet = %(Date Number Select Boolean).include?(field.data_type)
-            payload = { uuid: field.uuid, label: field.column_name, facet: facet }
-
-            jwt = JWT.encode(payload, nil, 'none')
-            key = "#{jwt}#{facet ? '_facet' : ''}"
-
+            key = field.uuid
             hash[key] = value
+
+            facet = %(Date Number Select Boolean).include?(field.data_type)
+            hash["#{key}_facet"] = value if facet
           end
 
           hash

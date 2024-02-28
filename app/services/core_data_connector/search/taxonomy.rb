@@ -8,7 +8,7 @@ module CoreDataConnector
         include Base
 
         # Search attributes
-        search_attribute :name
+        search_attribute :name, facet: true
       end
     end
   end

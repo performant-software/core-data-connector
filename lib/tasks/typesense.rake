@@ -57,4 +57,21 @@ namespace :typesense do
 
     helper.index options[:project_model_ids]
   end
+
+  desc 'Updates the Typesense collection'
+  task update: :environment do
+    options = Typesense::Options.parse(ARGV) do |opts|
+      opts.banner = 'Usage: typesense:create -- --host --port --protocol --api-key --collection-name'
+    end
+
+    helper = Typesense::Helper.new(
+      host: options[:host],
+      port: options[:port],
+      protocol: options[:protocol],
+      api_key: options[:api_key],
+      collection_name: options[:collection_name]
+    )
+
+    helper.update
+  end
 end
