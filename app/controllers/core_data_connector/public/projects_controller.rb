@@ -25,7 +25,7 @@ module CoreDataConnector
 
         query.find_each do |project_model_relationship|
           descriptors << {
-            identifier: project_model_relationship.id, # TODO: No UUIDs yet, need to merge PR
+            identifier: project_model_relationship.uuid,
             label: project_model_relationship.name
           }
 
@@ -50,7 +50,7 @@ module CoreDataConnector
 
         query.find_each do |project_model|
           descriptors << {
-            identifier: project_model.id, # TODO: No UUIDs yet, need to merge PR
+            identifier: project_model.uuid,
             label: project_model.name
           }
 
