@@ -32,6 +32,26 @@ module CoreDataConnector
 
         return unless nested_resource?
 
+        primary_scope = Relationship
+                          .joins(project_model_relationship: :related_model)
+                          .where(
+                            primary_record_type: item_class.to_s,
+                            related_record_id: current_record.id,
+                            related_record_type: current_record.class.to_s,
+                            related_model: {
+                              project_id: params[:project_ids]
+                            },
+                            project_model_relationship: {
+                              allow_inverse: true
+                            }
+                          )
+
+        if params[:project_model_relationship_uuid].present?
+          primary_scope = primary_scope.where(project_model_relationship: {
+            uuid: params[:project_model_relationship_uuid]
+          })
+        end
+
         Preloader.new(
           records: query,
           associations: [
@@ -39,40 +59,32 @@ module CoreDataConnector
               project_model_relationship: :user_defined_fields
             ]
           ],
-          scope: (
-            Relationship
-              .joins(project_model_relationship: :related_model)
-              .where(
-                primary_record_type: item_class.to_s,
-                related_record_id: current_record.id,
-                related_record_type: current_record.class.to_s,
-                core_data_connector_project_models: {
-                  project_id: params[:project_ids]
-                },
-                core_data_connector_project_model_relationships: {
-                  allow_inverse: true
-                }
-              )
-          )
+          scope: primary_scope
         ).call
+
+        related_scope = Relationship
+                          .joins(project_model_relationship: :primary_model)
+                          .where(
+                            related_record_type: item_class.to_s,
+                            primary_record_id: current_record.id,
+                            primary_record_type: current_record.class.to_s,
+                            primary_model: {
+                              project_id: params[:project_ids]
+                            }
+                          )
+
+        if params[:project_model_relationship_uuid].present?
+          related_scope = related_scope.where(project_model_relationship: {
+            uuid: params[:project_model_relationship_uuid]
+          })
+        end
 
         Preloader.new(
           records: query,
           associations: [
             related_relationships: [project_model_relationship: :user_defined_fields]
           ],
-          scope: (
-            Relationship
-              .joins(project_model_relationship: :primary_model)
-              .where(
-                related_record_type: item_class.to_s,
-                primary_record_id: current_record.id,
-                primary_record_type: current_record.class.to_s,
-                core_data_connector_project_models: {
-                  project_id: params[:project_ids]
-                }
-              )
-          )
+          scope: related_scope
         ).call
       end
 
@@ -91,10 +103,17 @@ module CoreDataConnector
                             related_record_type: item_class.to_s,
                             primary_record_id: current_record.id,
                             primary_record_type: current_record.class.to_s,
-                            core_data_connector_project_models: {
+                            primary_model: {
                               project_id: params[:project_ids]
                             }
                           )
+
+        if params[:project_model_relationship_uuid].present?
+          primary_query = primary_query
+                            .where(project_model_relationship: {
+                              uuid: params[:project_model_relationship_uuid]
+                            })
+        end
 
         related_query = Relationship
                           .select(1)
@@ -104,13 +123,20 @@ module CoreDataConnector
                             primary_record_type: item_class.to_s,
                             related_record_id: current_record.id,
                             related_record_type: current_record.class.to_s,
-                            core_data_connector_project_models: {
+                            related_model: {
                               project_id: params[:project_ids]
                             },
-                            core_data_connector_project_model_relationships: {
+                            project_model_relationship: {
                               allow_inverse: true
                             }
                           )
+
+        if params[:project_model_relationship_uuid].present?
+          related_query = related_query
+                            .where(project_model_relationship: {
+                              uuid: params[:project_model_relationship_uuid]
+                            })
+        end
 
         <<-SQL.squish
           EXISTS (
