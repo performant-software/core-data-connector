@@ -72,11 +72,13 @@ module CoreDataConnector
                 manifest = CoreDataConnector::Manifest.new(
                   manifestable: record,
                   project_model_relationship_id: project_model_relationship_id,
-                  thumbnail: info[:resources].first,
-                  identifier: identifier,
-                  label: info[:name]
+                  identifier: identifier
                 )
               end
+
+              # Set the thumbnail and label on the manifest
+              manifest.thumbnail = info[:resources].first
+              manifest.label = info[:name]
 
               # If a limit is provided, limit the number of resources
               resource_ids = info[:resources]
