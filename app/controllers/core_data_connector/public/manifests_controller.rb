@@ -95,6 +95,7 @@ module CoreDataConnector
           id: "#{ENV['HOSTNAME']}/#{manifest.identifier}",
           type: 'Manifest',
           label: manifest.label,
+          item_count: manifest.item_count,
           thumbnail: manifest.thumbnail
         }
       end

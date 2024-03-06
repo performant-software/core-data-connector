@@ -72,20 +72,24 @@ module CoreDataConnector
                 manifest = CoreDataConnector::Manifest.new(
                   manifestable: record,
                   project_model_relationship_id: project_model_relationship_id,
-                  thumbnail: info[:resources].first,
-                  identifier: identifier,
-                  label: info[:name]
+                  identifier: identifier
                 )
               end
 
-              # If a limit is provided, limit the number of resources
-              resource_ids = info[:resources]
-              resource_ids = info[:resources].take(options[:limit].to_i) if options[:limit].present?
+              # Get the resources from the info object, limiting if required
+              resources = info[:resources]
+              resources = resources.take(options[:limit].to_i) if options[:limit].present?
 
+              # Set the thumbnail and label on the manifest
+              manifest.thumbnail = resources.first
+              manifest.label = info[:name]
+              manifest.item_count = resources.size
+
+              # Create the manifest
               manifest.content = service.create_manifest(
                 id: "#{ENV['HOSTNAME']}/#{identifier}",
                 label: I18n.t('services.iiif.manifest.label', name: label, relationship: info[:name]),
-                resource_ids: resource_ids
+                resource_ids: resources
               )
 
               manifest.save
