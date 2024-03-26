@@ -15,8 +15,9 @@ module CoreDataConnector
     # Allowed create/update attributes.
     def permitted_attributes
       [ *ownable_attributes,
+        :faircopy_cloud_id,
         user_defined: {},
-        source_titles_attributes: [:id, :primary, :name_id, :_destroy, name_attributes: [:id, :name]]
+        source_titles_attributes: [:id, :primary, :name_id, :_destroy, name_attributes: [:id, :name]],
       ]
     end
 
