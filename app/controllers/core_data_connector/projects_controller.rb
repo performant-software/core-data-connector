@@ -40,6 +40,16 @@ module CoreDataConnector
       render json: json, status: :ok
     end
 
+    def export_variables
+      project = Project.find(params[:id])
+      authorize project, :export_variables?
+
+      serializer = ProjectVariablesSerializer.new(current_user)
+
+      json = { param_name.to_sym => serializer.render_show(project) }
+      render json: json, status: :ok
+    end
+
     def import_configuration
       render json: { errors: [I18n.t('errors.projects.import_configuration')] }, status: :bad_request and return unless params[:file].present?
 
