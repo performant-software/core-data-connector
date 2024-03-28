@@ -16,6 +16,7 @@ module CoreDataConnector
     # Nameable table
     name_table :source_titles, polymorphic: true
 
+    # Generate the full URL for the item's CSV files in FairCopy.cloud
     def faircopy_cloud_url
       if !self[:faircopy_cloud_id]
         return nil
