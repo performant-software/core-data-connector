@@ -7,20 +7,18 @@ module CoreDataConnector
     extend ActiveSupport::Concern
 
     included do
-      def import(file)
+      def import(temp_file)
         begin
-          errors = []
-
           # Create the target directory
           destination = "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
           FileUtils.mkdir_p(destination) unless File.exist? destination
-  
+
           # Extract the zip file to the directory
-          Zip::File.open(file.tempfile.path) do |zipfile|
+          Zip::File.open(temp_file) do |zipfile|
             zipfile.each do |entry|
               # Ignore directories
               next unless entry.file?
-  
+
               # Ignore MacOS archive
               next if entry.name =~ IGNORE_PATTERN
   
@@ -38,11 +36,11 @@ module CoreDataConnector
           # Remove the temporary directory
           FileUtils.rm_rf(destination)
 
-          errors
+          return true, []
         rescue ActiveRecord::RecordInvalid => exception
-          errors = [exception]
+          return false, [exception]
         rescue StandardError => exception
-          errors = [exception]
+          return false, [exception]
         end
       end
     end

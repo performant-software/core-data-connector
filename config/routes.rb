@@ -2,7 +2,9 @@ CoreDataConnector::Engine.routes.draw do
   mount JwtAuth::Engine => '/auth'
 
   resources :instances
-  resources :items
+  resources :items do
+    post :fcc_import, action: 'fcc_import'
+  end
   resources :media_contents
   resources :names, only: :index
   resources :organizations

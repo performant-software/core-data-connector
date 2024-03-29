@@ -9,12 +9,24 @@ module CoreDataConnector
 
     joins primary_name: :name
 
-    # TODO: Haven't tested this yet.
-    def import_csvs(file)
-      project = Project.find(params[:project_id])
+    def fcc_import
+      item = Item.find(params[:item_id])
+      project = Project.find(item.project_id)
+
       authorize project, :import_data?
 
-      errors = import(file)
+      file_string = item.fetch_csv_zip
+
+      # file_path = "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
+
+      tempfile = Tempfile.new
+      tempfile.binmode
+      tempfile.write(file_string)
+      tempfile.rewind
+
+      puts tempfile.inspect
+
+      ok, errors = import(tempfile)
 
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
