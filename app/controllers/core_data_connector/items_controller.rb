@@ -17,14 +17,10 @@ module CoreDataConnector
 
       file_string = item.fetch_csv_zip
 
-      # file_path = "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
-
       tempfile = Tempfile.new
       tempfile.binmode
       tempfile.write(file_string)
       tempfile.rewind
-
-      puts tempfile.inspect
 
       ok, errors = import(tempfile)
 
