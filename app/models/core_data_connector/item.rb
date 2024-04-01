@@ -38,7 +38,7 @@ module CoreDataConnector
         return nil
       end
 
-      request = Typhoeus::Request.new(url)
+      request = Typhoeus::Request.new(url, followlocation: true)
 
       response = request.run
 

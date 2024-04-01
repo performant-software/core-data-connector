@@ -25,7 +25,7 @@ module CoreDataConnector
       ok, errors = import(tempfile)
 
       if errors.nil? || errors.empty?
-        render json: { }, status: :ok
+        render json: { success: true }, status: :ok
       else
         render json: { errors: errors }, status: :unprocessable_entity
       end

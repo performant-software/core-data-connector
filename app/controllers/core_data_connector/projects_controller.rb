@@ -64,7 +64,7 @@ module CoreDataConnector
       project = Project.find(params[:id])
       authorize project, :import_data?
 
-      errors = import(params[:file].tempfile)
+      ok, errors = import(params[:file].tempfile)
 
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
