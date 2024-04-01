@@ -1,7 +1,5 @@
 module CoreDataConnector
   class ProjectsController < ApplicationController
-    include ImportableController
-
     # Search attributes
     search_attributes :name
 
@@ -64,7 +62,8 @@ module CoreDataConnector
       project = Project.find(params[:id])
       authorize project, :import_data?
 
-      ok, errors = import(params[:file].tempfile)
+      zip_importer = CoreDataConnector::Import::ZipHelper.new
+      ok, errors = zip_importer.import_zip(params[:file].tempfile)
 
       if errors.nil? || errors.empty?
         render json: { }, status: :ok

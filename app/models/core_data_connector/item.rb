@@ -52,5 +52,27 @@ module CoreDataConnector
         { error: I18n.t('errors.http.general') }
       end
     end
+
+    def fcc_import
+      project = Project.find(self.project_id)
+
+      authorize project, :import_data?
+
+      file_string = self.fetch_csv_zip
+
+      tempfile = Tempfile.new
+      tempfile.binmode
+      tempfile.write(file_string)
+      tempfile.rewind
+
+      zip_importer = CoreDataConnector::Import::ZipHelper.new
+      ok, errors = zip_importer.import_zip(tempfile)
+
+      if errors.nil? || errors.empty?
+        render json: { success: true }, status: :ok
+      else
+        render json: { errors: errors }, status: :unprocessable_entity
+      end
+    end
   end
 end
