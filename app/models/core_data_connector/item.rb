@@ -11,6 +11,8 @@ module CoreDataConnector
     include UserDefinedFields::Fieldable
     include Search::Item
 
+    after_create :fcc_import
+
     CODE_NO_RESPONSE = 0
 
     # Nameable table
@@ -54,10 +56,6 @@ module CoreDataConnector
     end
 
     def fcc_import
-      project = Project.find(self.project_id)
-
-      authorize project, :import_data?
-
       file_string = self.fetch_csv_zip
 
       tempfile = Tempfile.new
@@ -68,10 +66,9 @@ module CoreDataConnector
       zip_importer = CoreDataConnector::Import::ZipHelper.new
       ok, errors = zip_importer.import_zip(tempfile)
 
-      if errors.nil? || errors.empty?
-        render json: { success: true }, status: :ok
-      else
-        render json: { errors: errors }, status: :unprocessable_entity
+      if errors && !errors.empty?
+        puts "Errors importing records for #{self.faircopy_cloud_id}:"
+        puts errors.inspect
       end
     end
   end
