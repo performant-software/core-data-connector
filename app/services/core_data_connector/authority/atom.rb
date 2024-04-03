@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Authority
     class Atom
-      include Http
+      include Http::Requestable
 
       def find(id, options = {})
         headers = {

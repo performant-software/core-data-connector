@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Authority
     class Viaf
-      include Http
+      include Http::Requestable
 
       BASE_URL = 'https://viaf.org'
 

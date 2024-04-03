@@ -1,5 +1,3 @@
-require 'typhoeus'
-
 module CoreDataConnector
   class Item < ApplicationRecord
     # Includes

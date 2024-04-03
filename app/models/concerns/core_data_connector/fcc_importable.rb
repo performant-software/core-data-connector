@@ -1,9 +1,10 @@
 module CoreDataConnector
   module FccImportable
     extend ActiveSupport::Concern
+    include Http::Requestable
 
     included do
-      after_create :fcc_import
+      after_save :fcc_import
       
       CODE_NO_RESPONSE = 0
 
@@ -22,29 +23,11 @@ module CoreDataConnector
         "#{project[:faircopy_cloud_url]}/documents/#{self[:faircopy_cloud_id]}/csv"
       end
 
-      def fetch_csv_zip
-        url = self.faircopy_cloud_url
-
-        if !url
+      def fcc_import
+        if !self.faircopy_cloud_url
           return nil
         end
 
-        request = Typhoeus::Request.new(url, followlocation: true)
-
-        response = request.run
-
-        if response.success?
-          return response.body
-        elsif response.timed_out?
-          { error: I18n.t('errors.http.timeout') }
-        elsif response.code == CODE_NO_RESPONSE
-          { error: I18n.t('errors.http.no_response') }
-        else
-          { error: I18n.t('errors.http.general') }
-        end
-      end
-
-      def fcc_import
         project = Project.find(self.project_id)
         project_model = self.project_model
 
@@ -52,19 +35,19 @@ module CoreDataConnector
           return nil
         end
 
-        file_string = self.fetch_csv_zip
-
-        tempfile = Tempfile.new
-        tempfile.binmode
-        tempfile.write(file_string)
-        tempfile.rewind
-
-        zip_importer = Import::ZipHelper.new
-        ok, errors = zip_importer.import_zip(tempfile)
-
-        if errors && !errors.empty?
-          puts "Errors importing records for #{self.faircopy_cloud_id}:"
-          puts errors.inspect
+        send_request(self.faircopy_cloud_url, followlocation: true) do |file_string|
+          tempfile = Tempfile.new
+          tempfile.binmode
+          tempfile.write(file_string)
+          tempfile.rewind
+  
+          zip_importer = Import::ZipHelper.new
+          ok, errors = zip_importer.import_zip(tempfile)
+  
+          if errors && !errors.empty?
+            puts "Errors importing records for #{self.faircopy_cloud_id}:"
+            puts errors.inspect
+          end
         end
       end
     end
