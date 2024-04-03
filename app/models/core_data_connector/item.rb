@@ -63,7 +63,7 @@ module CoreDataConnector
       tempfile.write(file_string)
       tempfile.rewind
 
-      zip_importer = CoreDataConnector::Import::ZipHelper.new
+      zip_importer = Import::ZipHelper.new
       ok, errors = zip_importer.import_zip(tempfile)
 
       if errors && !errors.empty?

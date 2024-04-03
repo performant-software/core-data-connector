@@ -62,7 +62,7 @@ module CoreDataConnector
       project = Project.find(params[:id])
       authorize project, :import_data?
 
-      zip_importer = CoreDataConnector::Import::ZipHelper.new
+      zip_importer = Import::ZipHelper.new
       ok, errors = zip_importer.import_zip(params[:file].tempfile)
 
       if errors.nil? || errors.empty?
