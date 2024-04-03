@@ -9,7 +9,7 @@ module CoreDataConnector
       !project_model.project_model_shares.empty?
     end
 
-    show_attributes :id, :uuid, :project_id, :name, :name_singular, :model_class, :model_class_view, :slug, :allow_identifiers, :allow_fcc_import,
+    show_attributes :id, :uuid, :project_id, :name, :name_singular, :model_class, :model_class_view, :slug, :allow_identifiers,
                     project: ProjectsSerializer,
                     project_model_relationships: [:id, :uuid, :related_model_id, :name, :multiple, :slug, :allow_inverse,
                                                   :inverse_name, :inverse_multiple, related_model: ProjectModelsSerializer,
