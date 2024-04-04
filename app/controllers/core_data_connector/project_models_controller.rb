@@ -31,7 +31,7 @@ module CoreDataConnector
       elsif params[:project_id].present?
         query = query.where(project_id: params[:project_id])
       else
-        return ProjectModel.none
+        query = ProjectModel.none
       end
 
       if params[:model_class].present?
