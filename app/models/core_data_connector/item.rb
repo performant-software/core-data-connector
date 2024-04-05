@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Item < ApplicationRecord
     # Includes
+    include FccImportable
     include Identifiable
     include Manifestable
     include Nameable

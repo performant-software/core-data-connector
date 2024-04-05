@@ -24,13 +24,21 @@ module CoreDataConnector
 
     # Project settings cannot be viewed outside the context of a project
     def base_query
+      query = super
+
       if params[:id].present?
-        ProjectModel.where(id: params[:id])
+        query = query.where(id: params[:id])
       elsif params[:project_id].present?
-        ProjectModel.where(project_id: params[:project_id])
+        query = query.where(project_id: params[:project_id])
       else
-        ProjectModel.none
+        query = ProjectModel.none
       end
+
+      if params[:model_class].present?
+        query = query.where(model_class: params[:model_class])
+      end
+
+      query
     end
   end
 end

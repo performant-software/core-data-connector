@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Authority
     class Bnf
-      include Http
+      include Http::Requestable
 
       BASE_URL = 'https://catalogue.bnf.fr/api/SRU'
 

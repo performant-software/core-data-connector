@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Authority
     class Dpla
-      include Http
+      include Http::Requestable
 
       BASE_URL = 'https://api.dp.la/v2/items'
 
