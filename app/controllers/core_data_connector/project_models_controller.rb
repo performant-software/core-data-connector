@@ -16,6 +16,7 @@ module CoreDataConnector
                   .model_classes
                   .map(&:model_name)
                   .map{ |mn| { label: mn.human, value: mn.name } }
+                  .sort_by{ |mn| mn[:label] }
 
       render json: { model_classes: classes }, status: :ok
     end
