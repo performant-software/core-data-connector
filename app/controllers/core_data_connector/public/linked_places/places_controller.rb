@@ -15,6 +15,7 @@ module CoreDataConnector
         preloads :place_names, :place_geometry
         preloads project_model: :user_defined_fields
         preloads :place_layers, only: :show
+        preloads web_identifiers: :web_authority, only: :show
 
         # Search attributes
         search_attributes :name

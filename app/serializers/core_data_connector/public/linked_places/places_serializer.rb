@@ -21,7 +21,7 @@ module CoreDataConnector
         show_attributes(:properties) { |place| { ccode: [], title: place.name, record_id: place.id, uuid: place.uuid } }
         show_attributes(:geometry) { |place| place.place_geometry&.to_geojson }
         show_attributes(:names) { |place| place.place_names.map{ |name| { toponym: name.name } } }
-        show_attributes user_defined: UserDefinedSerializer, place_layers: PlaceLayersSerializer
+        show_attributes user_defined: UserDefinedSerializer, place_layers: PlaceLayersSerializer, web_identifiers: WebIdentifiersSerializer
 
         target_attributes(:id) { |place| identifier place }
         target_attributes(:record_id) { |place| place.id }
