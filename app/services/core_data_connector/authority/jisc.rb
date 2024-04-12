@@ -1,6 +1,6 @@
 module CoreDataConnector
   module Authority
-    class Jisc
+    class Jisc < Base
       include Http::Requestable
 
       BASE_URL = 'https://discover.libraryhub.jisc.ac.uk/search'
