@@ -8,6 +8,8 @@ module CoreDataConnector
         options = authority.access&.symbolize_keys
 
         data = find(web_identifier.identifier, options)
+
+        web_identifier.extra ||= {}
         web_identifier.extra['title'] = data['title']
 
         parents = []
