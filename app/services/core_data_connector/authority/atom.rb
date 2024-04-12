@@ -1,7 +1,21 @@
 module CoreDataConnector
   module Authority
-    class Atom
+    class Atom < Base
       include Http::Requestable
+
+      def before_create(web_identifier)
+        authority = web_identifier.web_authority
+        options = authority.access&.symbolize_keys
+
+        data = find(web_identifier.identifier, options)
+        web_identifier.extra['title'] = data['title']
+
+        parents = []
+
+        find_parents(data['parent'], options, parents)
+
+        web_identifier.extra['parents'] = parents.reverse
+      end
 
       def find(id, options = {})
         headers = {
@@ -25,6 +39,16 @@ module CoreDataConnector
         send_request("#{options[:url]}/api/informationobjects", headers: headers, params: params) do |body|
           JSON.parse(body)
         end
+      end
+
+      private
+
+      def find_parents(identifier, options, arr)
+        data = find(identifier, options)
+
+        arr << data['title']
+
+        find_parents(data['parent'], options, arr) if data['parent'].present?
       end
     end
   end

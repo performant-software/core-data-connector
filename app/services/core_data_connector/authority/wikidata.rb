@@ -1,6 +1,6 @@
 module CoreDataConnector
   module Authority
-    class Wikidata
+    class Wikidata < Base
       include Http::Requestable
 
       BASE_URL = 'https://www.wikidata.org/w/api.php'

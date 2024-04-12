@@ -9,7 +9,7 @@ module CoreDataConnector
       authority = WebAuthority.find(params[:id])
       authorize authority, :search?
 
-      instance = authority_instance(authority)
+      instance = Authority::Base.create_service(authority)
       json = instance.find(params[:identifier], authority.access&.symbolize_keys)
 
       render json: json, status: :ok
@@ -21,7 +21,7 @@ module CoreDataConnector
       authority = WebAuthority.find(params[:id])
       authorize authority, :find?
 
-      instance = authority_instance(authority)
+      instance = Authority::Base.create_service(authority)
       json = instance.search(params[:query], authority.access&.symbolize_keys)
 
       render json: json, status: :ok
@@ -37,14 +37,6 @@ module CoreDataConnector
       return WebAuthority.none unless params[:project_id].present?
 
       WebAuthority.where(project_id: params[:project_id])
-    end
-
-    private
-
-    def authority_instance(authority)
-      class_name = "CoreDataConnector::Authority::#{authority.source_type.capitalize}"
-      klass = class_name.constantize
-      klass.new
     end
   end
 end
