@@ -6,6 +6,7 @@ namespace :core_data_connector do
       CoreDataConnector::WebIdentifier.all.find_each do |web_identifier|
         service = CoreDataConnector::Authority::Base.create_service(web_identifier.web_authority)
         service.before_create(web_identifier)
+        web_identifier.save
       end
     end
   end
