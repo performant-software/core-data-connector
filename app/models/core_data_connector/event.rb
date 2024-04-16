@@ -4,5 +4,6 @@ module CoreDataConnector
     include Identifiable
     include Ownable
     include Relateable
+    include UserDefinedFields::FieldableSerializer
   end
 end
