@@ -1,6 +1,7 @@
 CoreDataConnector::Engine.routes.draw do
   mount JwtAuth::Engine => '/auth'
 
+  resources :events
   resources :instances
   resources :items
   resources :media_contents

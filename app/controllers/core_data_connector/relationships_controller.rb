@@ -40,6 +40,8 @@ module CoreDataConnector
 
       # For sorting, left join the polymorphic model we're currently looking at.
       case model_class
+      when Event.to_s
+        query = query.joins(params[:inverse] ? :inverse_related_event : :related_event)
       when Instance.to_s
         query = query.joins(params[:inverse] ? { inverse_related_instance: [primary_name: :name] } : { related_instance: [primary_name: :name] })
       when Item.to_s
@@ -101,6 +103,9 @@ module CoreDataConnector
       or_query = nil
 
       case model_class
+      when Event.to_s
+        attribute = "#{Event.arel_table.name}.#{Event.arel_table[:name].name}"
+        or_query = resolve_search_query(attribute)
       when Instance.to_s
         or_query = Instance.where(
           Name

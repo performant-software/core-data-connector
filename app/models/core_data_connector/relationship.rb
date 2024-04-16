@@ -8,6 +8,7 @@ module CoreDataConnector
     belongs_to :primary_record, polymorphic: true
     belongs_to :related_record, polymorphic: true
 
+    belongs_to :related_event, -> { where(Relationship.arel_table.name => { related_record_type: Event.to_s }) }, class_name: Event.to_s, foreign_key: :related_record_id, optional: true
     belongs_to :related_instance, -> { where(Relationship.arel_table.name => { related_record_type: Instance.to_s }) }, class_name: Instance.to_s, foreign_key: :related_record_id, optional: true
     belongs_to :related_item, -> { where(Relationship.arel_table.name => { related_record_type: Item.to_s }) }, class_name: Item.to_s, foreign_key: :related_record_id, optional: true
     belongs_to :related_media_content, -> { where(Relationship.arel_table.name => { related_record_type: MediaContent.to_s }) }, class_name: MediaContent.to_s, foreign_key: :related_record_id, optional: true
@@ -17,6 +18,7 @@ module CoreDataConnector
     belongs_to :related_taxonomy, -> { where(Relationship.arel_table.name => { related_record_type: Taxonomy.to_s }) }, class_name: Taxonomy.to_s, foreign_key: :related_record_id, optional: true
     belongs_to :related_work, -> { where(Relationship.arel_table.name => { related_record_type: Work.to_s }) }, class_name: Work.to_s, foreign_key: :related_record_id, optional: true
 
+    belongs_to :inverse_related_event, -> { where(Relationship.arel_table.name => { primary_record_type: Event.to_s }) }, class_name: Event.to_s, foreign_key: :primary_record_id, optional: true
     belongs_to :inverse_related_instance, -> { where(Relationship.arel_table.name => { primary_record_type: Instance.to_s }) }, class_name: Instance.to_s, foreign_key: :primary_record_id, optional: true
     belongs_to :inverse_related_item, -> { where(Relationship.arel_table.name => { primary_record_type: Item.to_s }) }, class_name: Item.to_s, foreign_key: :primary_record_id, optional: true
     belongs_to :inverse_related_media_content, -> { where(Relationship.arel_table.name => { primary_record_type: MediaContent.to_s }) }, class_name: MediaContent.to_s, foreign_key: :primary_record_id, optional: true
