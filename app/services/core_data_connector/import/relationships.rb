@@ -57,7 +57,11 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           WITH all_related_types AS (
-
+         
+          SELECT id, uuid, 'CoreDataConnector::Event' AS type
+            FROM core_data_connector_events events
+           WHERE events.z_event_id IS NOT NULL
+           UNION
           SELECT id, uuid, 'CoreDataConnector::Instance' AS type
             FROM core_data_connector_instances instances
            WHERE instances.z_instance_id IS NOT NULL
