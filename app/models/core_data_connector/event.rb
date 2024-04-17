@@ -5,6 +5,7 @@ module CoreDataConnector
     include Identifiable
     include Ownable
     include Relateable
+    include Search::Event
     include UserDefinedFields::Fieldable
 
     # Fuzzy dates
