@@ -3,7 +3,7 @@ module CoreDataConnector
     include OwnableSerializer
     include UserDefinedFields::FieldableSerializer
 
-    index_attributes :id, :name, :description
-    show_attributes :id, :name, :description
+    index_attributes :id, :name, :description, start_date: FuzzyDates::FuzzyDateSerializer, end_date: FuzzyDates::FuzzyDateSerializer
+    show_attributes :id, :name, :description, start_date: FuzzyDates::FuzzyDateSerializer, end_date: FuzzyDates::FuzzyDateSerializer
   end
 end

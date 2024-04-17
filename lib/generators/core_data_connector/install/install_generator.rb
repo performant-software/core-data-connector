@@ -5,6 +5,7 @@ module CoreDataConnector
     desc "CoreDataConnector migrations"
     def copy_initializer
       rake 'core_data_connector:install:migrations'
+      rake 'fuzzy_dates:install:migrations'
       rake "triple_eye_effable:install:migrations"
       rake "user_defined_fields:install:migrations"
     end

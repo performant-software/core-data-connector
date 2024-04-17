@@ -15,6 +15,7 @@ module CoreDataConnector
     # Allowed create/update attributes.
     def permitted_attributes
       [ *ownable_attributes,
+        *Event.permitted_params,
         :name,
         :description,
         user_defined: {}

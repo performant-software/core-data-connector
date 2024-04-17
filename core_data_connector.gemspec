@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faker'
   spec.add_dependency 'rails', '>= 6.0.3.2', '< 8'
   spec.add_dependency 'activerecord-postgis-adapter', '~> 8.0'
+  spec.add_dependency 'fuzzy_dates'
   spec.add_dependency 'jwt', '~> 2.7.1'
   spec.add_dependency 'jwt_auth'
   spec.add_dependency 'rack-cors', '~> 2.0.1'

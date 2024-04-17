@@ -36,11 +36,19 @@ GIT
       resource_api
 
 PATH
+  remote: ../fuzzy-dates
+  specs:
+    fuzzy_dates (0.1.0)
+      rails (>= 6.0.3.2, < 8)
+      resource_api
+
+PATH
   remote: .
   specs:
     core_data_connector (0.1.0)
       activerecord-postgis-adapter (~> 8.0)
       faker
+      fuzzy_dates
       jwt (~> 2.7.1)
       jwt_auth
       rack-cors (~> 2.0.1)
@@ -244,6 +252,7 @@ PLATFORMS
 DEPENDENCIES
   core_data_connector!
   faker (~> 3.2.1)
+  fuzzy_dates!
   jwt_auth!
   resource_api!
   sqlite3
