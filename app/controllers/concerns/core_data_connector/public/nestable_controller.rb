@@ -13,7 +13,9 @@ module CoreDataConnector
         private
 
         def set_current_record
-          if params[:instance_id].present?
+          if params[:event_id].present?
+            @current_record = Event.find_by_uuid(params[:event_id])
+          elsif params[:instance_id].present?
             @current_record = Instance.find_by_uuid(params[:instance_id])
           elsif params[:item_id].present?
             @current_record = Item.find_by_uuid(params[:item_id])
