@@ -22,7 +22,7 @@ module CoreDataConnector
       owner? && !shared?
     end
 
-    # A user can view project models if they are the owner of the project.
+    # A user can view project models if they are a member of the project.
     def show?
       return true if current_user.admin?
 
@@ -73,7 +73,7 @@ module CoreDataConnector
       project_model.project_model_accesses.any?
     end
 
-    # A user can view project models for any project they own.
+    # A user can view project models for any project of which they are a member.
     class Scope < BaseScope
       def resolve
         return scope.all if current_user.admin?
@@ -82,7 +82,6 @@ module CoreDataConnector
           UserProject
             .where(UserProject.arel_table[:project_id].eq(ProjectModel.arel_table[:project_id]))
             .where(user_id: current_user.id)
-            .where(role: UserProject::ROLE_OWNER)
             .arel
             .exists
         )
