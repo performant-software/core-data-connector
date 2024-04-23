@@ -4,6 +4,9 @@ module CoreDataConnector
       attr_reader :importers
 
       IMPORTERS = [{
+        importer_class: Events,
+        filename: 'events.csv'
+      }, {
         importer_class: Instances,
         filename: 'instances.csv'
       }, {

@@ -198,6 +198,10 @@ module CoreDataConnector
 
       included do
         # Primary relationships
+        has_many :event_relationships, -> {
+          where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Event.to_s })
+        }, as: :primary_record, class_name: Relationship.to_s
+
         has_many :instance_relationships, -> {
           where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Instance.to_s })
         }, as: :primary_record, class_name: Relationship.to_s
@@ -231,6 +235,12 @@ module CoreDataConnector
         }, as: :primary_record, class_name: Relationship.to_s
 
         # Related relationships
+        has_many :event_related_relationships, -> {
+          joins(:project_model_relationship)
+            .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Event.to_s })
+            .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
+        }, as: :related_record, class_name: Relationship.to_s
+
         has_many :instance_related_relationships, -> {
           joins(:project_model_relationship)
             .where(Relationship.arel_table.name => { primary_record_type: CoreDataConnector::Instance.to_s })
@@ -345,6 +355,7 @@ module CoreDataConnector
         end
 
         def build_relationships(hash)
+          event_relationships.each { |r| build_relationship(r, hash) }
           instance_relationships.each { |r| build_relationship(r, hash) }
           item_relationships.each { |r| build_relationship(r, hash) }
           media_content_relationships.each { |r| build_relationship(r, hash) }
@@ -354,6 +365,7 @@ module CoreDataConnector
           taxonomy_relationships.each { |r| build_relationship(r, hash) }
           work_relationships.each { |r| build_relationship(r, hash) }
 
+          event_related_relationships.each { |r| build_inverse_relationship(r, hash) }
           instance_related_relationships.each { |r| build_inverse_relationship(r, hash) }
           item_related_relationships.each { |r| build_inverse_relationship(r, hash) }
           media_content_related_relationships.each { |r| build_inverse_relationship(r, hash) }

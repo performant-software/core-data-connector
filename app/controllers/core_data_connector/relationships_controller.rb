@@ -38,8 +38,32 @@ module CoreDataConnector
         )
       end
 
+      # Include preloads for the different model types
+      case model_class
+      when Event.to_s
+        query = query.preload(params[:inverse] ? { primary_record: [:start_date, :end_date] } : { related_record: [:start_date, :end_date] })
+      when Instance.to_s
+        query = query.preload(params[:inverse] ? { primary_record: [primary_name: :name] } : { related_record: [primary_name: :name] })
+      when Item.to_s
+        query = query.preload(params[:inverse] ? { primary_record: [primary_name: :name] } : { related_record: [primary_name: :name] })
+      when MediaContent.to_s
+        query = query.preload(params[:inverse] ? :primary_record : :related_record)
+      when Organization.to_s
+        query = query.preload(params[:inverse] ? { primary_record: :primary_name } : { related_record: :primary_name })
+      when Person.to_s
+        query = query.preload(params[:inverse] ? { primary_record: :primary_name } : { related_record: :primary_name })
+      when Place.to_s
+        query = query.preload(params[:inverse] ? { primary_record: :primary_name } : { related_record: :primary_name })
+      when Taxonomy.to_s
+        query = query.preload(params[:inverse] ? :primary_record : :related_record)
+      when Work.to_s
+        query = query.preload(params[:inverse] ? { primary_record: [primary_name: :name] } : { related_record: [primary_name: :name] })
+      end
+
       # For sorting, left join the polymorphic model we're currently looking at.
       case model_class
+      when Event.to_s
+        query = query.joins(params[:inverse] ? :inverse_related_event : :related_event).joins(Event.start_date_join, Event.end_date_join)
       when Instance.to_s
         query = query.joins(params[:inverse] ? { inverse_related_instance: [primary_name: :name] } : { related_instance: [primary_name: :name] })
       when Item.to_s
@@ -101,6 +125,9 @@ module CoreDataConnector
       or_query = nil
 
       case model_class
+      when Event.to_s
+        attribute = "#{Event.arel_table.name}.#{Event.arel_table[:name].name}"
+        or_query = resolve_search_query(attribute)
       when Instance.to_s
         or_query = Instance.where(
           Name

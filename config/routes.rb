@@ -1,6 +1,7 @@
 CoreDataConnector::Engine.routes.draw do
   mount JwtAuth::Engine => '/auth'
 
+  resources :events
   resources :instances
   resources :items
   resources :media_contents
@@ -33,7 +34,21 @@ CoreDataConnector::Engine.routes.draw do
   resources :works
 
   namespace :public, only: [:index, :show] do
+    resources :events do
+      resources :events, only: :index
+      resources :instances, only: :index
+      resources :items, only: :index
+      resources :manifests
+      resources :media_contents, only: :index
+      resources :organizations, only: :index
+      resources :people, only: :index
+      resources :places, only: :index
+      resources :taxonomies, only: :index
+      resources :works, only: :index
+    end
+
     resources :instances do
+      resources :events, only: :index
       resources :instances, only: :index
       resources :items, only: :index
       resources :manifests
@@ -46,6 +61,7 @@ CoreDataConnector::Engine.routes.draw do
     end
 
     resources :items do
+      resources :events, only: :index
       resources :instances, only: :index
       resources :items, only: :index
       resources :manifests
@@ -58,6 +74,7 @@ CoreDataConnector::Engine.routes.draw do
     end
 
     resources :places, controller: 'linked_places/places' do
+      resources :events, only: :index, controller: 'linked_places/events'
       resources :instances, only: :index, controller: 'linked_places/instances'
       resources :items, only: :index, controller: 'linked_places/items'
       resources :manifests, controller: 'manifests'
@@ -74,6 +91,7 @@ CoreDataConnector::Engine.routes.draw do
     end
 
     resources :works do
+      resources :events, only: :index
       resources :instances, only: :index
       resources :items, only: :index
       resources :manifests
