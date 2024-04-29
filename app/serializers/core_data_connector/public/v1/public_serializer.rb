@@ -3,11 +3,6 @@ module CoreDataConnector
     module V1
       class PublicSerializer < BaseSerializer
 
-        def self.context(*context)
-          @context = context unless context.nil? || context.empty?
-          @context
-        end
-
         def render_index(items)
           return super unless options[:target].present?
 
@@ -49,7 +44,6 @@ module CoreDataConnector
 
         def render_show(item)
           serialized = super
-          serialized[:@context] = self.class.context
           serialized[:id] = options[:url]
 
           serialized
