@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class EventsSerializer < PublicSerializer
+      class EventsSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 

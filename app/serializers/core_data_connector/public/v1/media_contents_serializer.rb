@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class MediaContentsSerializer < PublicSerializer
+      class MediaContentsSerializer < BaseSerializer
         include TripleEyeEffable::ResourceableSerializer
         include TypeableSerializer
         include UserDefineableSerializer

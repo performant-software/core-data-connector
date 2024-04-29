@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class PeopleSerializer < PublicSerializer
+      class PeopleSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 

@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class TaxonomiesSerializer < PublicSerializer
+      class TaxonomiesSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 

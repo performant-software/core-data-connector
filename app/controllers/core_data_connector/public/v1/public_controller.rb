@@ -12,40 +12,11 @@ module CoreDataConnector
 
           if nested_resource?
             item_class.where(build_base_sql)
-          elsif params[:project_ids].present?
-            item_class.all_records_by_project(params[:project_ids])
+          elsif params[:id].present?
+            item_class.where(uuid: params[:id])
           else
             item_class.none
           end
-        end
-
-        def build_index_response(items, metadata)
-          options = load_records(items).merge({
-            count: metadata[:count],
-            page: metadata[:page],
-            pages: metadata[:pages]
-          })
-
-          serializer = serializer_class.new(current_user, options)
-          serializer.render_index(items)
-        end
-
-        def build_show_response(item)
-          options = load_records(item)
-          serializer = serializer_class.new(current_user, options)
-          serializer.render_show(item)
-        end
-
-        # Sets the additional attributes that are needed in the serializer
-        def load_records(items)
-          opts = super
-
-          opts.merge({
-            target: current_record,
-            url: request.url,
-            project_ids: params[:project_ids],
-            nested_resource: nested_resource?
-          })
         end
 
         # Preloads the relationships records scoped to the passed project_ids

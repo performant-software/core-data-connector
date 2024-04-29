@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class InstancesSerializer < PublicSerializer
+      class InstancesSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 

@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class ItemsSerializer < PublicSerializer
+      class ItemsSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 

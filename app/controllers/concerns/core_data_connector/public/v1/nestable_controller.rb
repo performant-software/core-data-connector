@@ -4,7 +4,7 @@ module CoreDataConnector
       module NestableController
         extend ActiveSupport::Concern
 
-        NESTABLE_PARAMS = %i(event_id instance_id item_id place_id work_id)
+        NESTABLE_PARAMS = %i(event_id instance_id item_id person_id place_id work_id)
 
         included do
           # Member attributes
@@ -26,6 +26,8 @@ module CoreDataConnector
               @current_record = Instance.find_by_uuid(params[:instance_id])
             elsif params[:item_id].present?
               @current_record = Item.find_by_uuid(params[:item_id])
+            elsif params[:person_id].present?
+              @current_record = Person.find_by_uuid(params[:person_id])
             elsif params[:place_id].present?
               @current_record = Place.find_by_uuid(params[:place_id])
             elsif params[:work_id].present?

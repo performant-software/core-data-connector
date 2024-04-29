@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class WorksSerializer < PublicSerializer
+      class WorksSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 

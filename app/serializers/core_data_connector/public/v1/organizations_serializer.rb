@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Public
     module V1
-      class OrganizationsSerializer < PublicSerializer
+      class OrganizationsSerializer < BaseSerializer
         include TypeableSerializer
         include UserDefineableSerializer
 
