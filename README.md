@@ -144,6 +144,22 @@ GET /core_data/public/v1/items/:uuid/taxonomies
 GET /core_data/public/v1/items/:uuid/works
 ```
 
+### People
+```
+GET /core_data/public/v1/people/:uuid
+GET /core_data/public/v1/people/:uuid/events
+GET /core_data/public/v1/people/:uuid/instances
+GET /core_data/public/v1/people/:uuid/items
+GET /core_data/public/v1/people/:uuid/manifests
+GET /core_data/public/v1/people/:uuid/manifests/:uuid
+GET /core_data/public/v1/people/:uuid/media_contents
+GET /core_data/public/v1/people/:uuid/organizations
+GET /core_data/public/v1/people/:uuid/people
+GET /core_data/public/v1/people/:uuid/places
+GET /core_data/public/v1/people/:uuid/taxonomies
+GET /core_data/public/v1/people/:uuid/works
+```
+
 ### Places
 ```
 GET /core_data/public/v1/places/:uuid
