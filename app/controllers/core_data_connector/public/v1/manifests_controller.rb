@@ -68,7 +68,8 @@ module CoreDataConnector
         private
 
         def identifier
-          method_name = "public_v1_#{current_record.class.model_name.route_key}_manifests_path"
+          route_name = current_record.class.model_name.route_key.singularize
+          method_name = "public_v1_#{route_name}_manifests_path"
 
           router_helpers = Engine.routes.url_helpers
           pathname = router_helpers.send(method_name.to_sym, current_record.uuid)
