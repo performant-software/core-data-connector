@@ -96,64 +96,100 @@ bundle exec rake typesense:update -- -h host -p port -r protocol -a api_key -c c
 
 In addition to the authenticated API, the `core_data_connector` gem also provides a public API for the following endpoints:
 
+### Events
 ```
-GET /core_data/public/instances
-GET /core_data/public/instances/:uuid
-GET /core_data/public/instances/:uuid/instances
-GET /core_data/public/instances/:uuid/items
-GET /core_data/public/instances/:uuid/manifests
-GET /core_data/public/instances/:uuid/manifests/:uuid
-GET /core_data/public/instances/:uuid/media_contents
-GET /core_data/public/instances/:uuid/organizations
-GET /core_data/public/instances/:uuid/people
-GET /core_data/public/instances/:uuid/places
-GET /core_data/public/instances/:uuid/taxonomies
-GET /core_data/public/instances/:uuid/works
-```
-
-```
-GET /core_data/public/items
-GET /core_data/public/items/:uuid
-GET /core_data/public/items/:uuid/instances
-GET /core_data/public/items/:uuid/items
-GET /core_data/public/items/:uuid/manifests
-GET /core_data/public/items/:uuid/manifests/:uuid
-GET /core_data/public/items/:uuid/media_contents
-GET /core_data/public/items/:uuid/organizations
-GET /core_data/public/items/:uuid/people
-GET /core_data/public/items/:uuid/places
-GET /core_data/public/items/:uuid/taxonomies
-GET /core_data/public/items/:uuid/works
+GET /core_data/public/v1/events/:uuid
+GET /core_data/public/v1/events/:uuid/events
+GET /core_data/public/v1/events/:uuid/instances
+GET /core_data/public/v1/events/:uuid/items
+GET /core_data/public/v1/events/:uuid/manifests
+GET /core_data/public/v1/events/:uuid/manifests/:uuid
+GET /core_data/public/v1/events/:uuid/media_contents
+GET /core_data/public/v1/events/:uuid/organizations
+GET /core_data/public/v1/events/:uuid/people
+GET /core_data/public/v1/events/:uuid/places
+GET /core_data/public/v1/events/:uuid/taxonomies
+GET /core_data/public/v1/events/:uuid/works
 ```
 
+### Instances
 ```
-GET /core_data/public/places
-GET /core_data/public/places/:uuid
-GET /core_data/public/places/:uuid/instances
-GET /core_data/public/places/:uuid/items
-GET /core_data/public/places/:uuid/manifests
-GET /core_data/public/places/:uuid/manifests/:uuid
-GET /core_data/public/places/:uuid/media_contents
-GET /core_data/public/places/:uuid/organizations
-GET /core_data/public/places/:uuid/people
-GET /core_data/public/places/:uuid/places
-GET /core_data/public/places/:uuid/taxonomies
-GET /core_data/public/places/:uuid/works
+GET /core_data/public/v1/instances/:uuid
+GET /core_data/public/v1/instances/:uuid/events
+GET /core_data/public/v1/instances/:uuid/instances
+GET /core_data/public/v1/instances/:uuid/items
+GET /core_data/public/v1/instances/:uuid/manifests
+GET /core_data/public/v1/instances/:uuid/manifests/:uuid
+GET /core_data/public/v1/instances/:uuid/media_contents
+GET /core_data/public/v1/instances/:uuid/organizations
+GET /core_data/public/v1/instances/:uuid/people
+GET /core_data/public/v1/instances/:uuid/places
+GET /core_data/public/v1/instances/:uuid/taxonomies
+GET /core_data/public/v1/instances/:uuid/works
 ```
 
+### Items
 ```
-GET /core_data/public/works
-GET /core_data/public/works/:uuid
-GET /core_data/public/works/:uuid/instances
-GET /core_data/public/works/:uuid/items
-GET /core_data/public/works/:uuid/manifests
-GET /core_data/public/works/:uuid/manifests/:uuid
-GET /core_data/public/works/:uuid/media_contents
-GET /core_data/public/works/:uuid/organizations
-GET /core_data/public/works/:uuid/people
-GET /core_data/public/works/:uuid/places
-GET /core_data/public/works/:uuid/taxonomies
-GET /core_data/public/works/:uuid/works
+GET /core_data/public/v1/items/:uuid
+GET /core_data/public/v1/items/:uuid/events
+GET /core_data/public/v1/items/:uuid/instances
+GET /core_data/public/v1/items/:uuid/items
+GET /core_data/public/v1/items/:uuid/manifests
+GET /core_data/public/v1/items/:uuid/manifests/:uuid
+GET /core_data/public/v1/items/:uuid/media_contents
+GET /core_data/public/v1/items/:uuid/organizations
+GET /core_data/public/v1/items/:uuid/people
+GET /core_data/public/v1/items/:uuid/places
+GET /core_data/public/v1/items/:uuid/taxonomies
+GET /core_data/public/v1/items/:uuid/works
+```
+
+### People
+```
+GET /core_data/public/v1/people/:uuid
+GET /core_data/public/v1/people/:uuid/events
+GET /core_data/public/v1/people/:uuid/instances
+GET /core_data/public/v1/people/:uuid/items
+GET /core_data/public/v1/people/:uuid/manifests
+GET /core_data/public/v1/people/:uuid/manifests/:uuid
+GET /core_data/public/v1/people/:uuid/media_contents
+GET /core_data/public/v1/people/:uuid/organizations
+GET /core_data/public/v1/people/:uuid/people
+GET /core_data/public/v1/people/:uuid/places
+GET /core_data/public/v1/people/:uuid/taxonomies
+GET /core_data/public/v1/people/:uuid/works
+```
+
+### Places
+```
+GET /core_data/public/v1/places/:uuid
+GET /core_data/public/v1/places/:uuid/events
+GET /core_data/public/v1/places/:uuid/instances
+GET /core_data/public/v1/places/:uuid/items
+GET /core_data/public/v1/places/:uuid/manifests
+GET /core_data/public/v1/places/:uuid/manifests/:uuid
+GET /core_data/public/v1/places/:uuid/media_contents
+GET /core_data/public/v1/places/:uuid/organizations
+GET /core_data/public/v1/places/:uuid/people
+GET /core_data/public/v1/places/:uuid/places
+GET /core_data/public/v1/places/:uuid/taxonomies
+GET /core_data/public/v1/places/:uuid/works
+```
+
+### Works
+```
+GET /core_data/public/v1/works/:uuid
+GET /core_data/public/v1/works/:uuid/events
+GET /core_data/public/v1/works/:uuid/instances
+GET /core_data/public/v1/works/:uuid/items
+GET /core_data/public/v1/works/:uuid/manifests
+GET /core_data/public/v1/works/:uuid/manifests/:uuid
+GET /core_data/public/v1/works/:uuid/media_contents
+GET /core_data/public/v1/works/:uuid/organizations
+GET /core_data/public/v1/works/:uuid/people
+GET /core_data/public/v1/works/:uuid/places
+GET /core_data/public/v1/works/:uuid/taxonomies
+GET /core_data/public/v1/works/:uuid/works
 ```
 
 The following query parameters can be used to further modify the results:

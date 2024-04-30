@@ -1,106 +1,11 @@
+require_relative 'routes/admin'
+require_relative 'routes/public/v0'
+require_relative 'routes/public/v1'
+
 CoreDataConnector::Engine.routes.draw do
   mount JwtAuth::Engine => '/auth'
 
-  resources :events
-  resources :instances
-  resources :items
-  resources :media_contents
-  resources :names, only: :index
-  resources :organizations
-  resources :people
-  resources :places
-  resources :project_models do
-    get :model_classes, on: :collection
-  end
-  resources :project_model_accesses, only: :index
-  resources :projects do
-    post :clear, on: :member
-    get :export_configuration, on: :member
-    get :export_variables, on: :member
-    post :import_configuration, on: :member
-    post :import_data, on: :member
-  end
-  resources :relationships do
-    post :upload, on: :collection
-  end
-  resources :taxonomies
-  resources :user_projects
-  resources :users
-  resources :web_authorities do
-    get :find, on: :member
-    get :search, on: :member
-  end
-  resources :web_identifiers
-  resources :works
-
-  namespace :public, only: [:index, :show] do
-    resources :events do
-      resources :events, only: :index
-      resources :instances, only: :index
-      resources :items, only: :index
-      resources :manifests
-      resources :media_contents, only: :index
-      resources :organizations, only: :index
-      resources :people, only: :index
-      resources :places, only: :index
-      resources :taxonomies, only: :index
-      resources :works, only: :index
-    end
-
-    resources :instances do
-      resources :events, only: :index
-      resources :instances, only: :index
-      resources :items, only: :index
-      resources :manifests
-      resources :media_contents, only: :index
-      resources :organizations, only: :index
-      resources :people, only: :index
-      resources :places, only: :index
-      resources :taxonomies, only: :index
-      resources :works, only: :index
-    end
-
-    resources :items do
-      resources :events, only: :index
-      resources :instances, only: :index
-      resources :items, only: :index
-      resources :manifests
-      resources :media_contents, only: :index
-      resources :organizations, only: :index
-      resources :people, only: :index
-      resources :places, only: :index
-      resources :taxonomies, only: :index
-      resources :works, only: :index
-    end
-
-    resources :places, controller: 'linked_places/places' do
-      resources :events, only: :index, controller: 'linked_places/events'
-      resources :instances, only: :index, controller: 'linked_places/instances'
-      resources :items, only: :index, controller: 'linked_places/items'
-      resources :manifests, controller: 'manifests'
-      resources :media_contents, only: :index, controller: 'linked_places/media_contents'
-      resources :organizations, only: :index, controller: 'linked_places/organizations'
-      resources :people, only: :index, controller: 'linked_places/people'
-      resources :places, only: :index, controller: 'linked_places/places'
-      resources :taxonomies, only: :index, controller: 'linked_places/taxonomies'
-      resources :works, only: :index, controller: 'linked_places/works'
-    end
-
-    resources :projects, only: [] do
-      get :descriptors, on: :member
-    end
-
-    resources :works do
-      resources :events, only: :index
-      resources :instances, only: :index
-      resources :items, only: :index
-      resources :manifests
-      resources :media_contents, only: :index
-      resources :organizations, only: :index
-      resources :people, only: :index
-      resources :places, only: :index
-      resources :taxonomies, only: :index
-      resources :works, only: :index
-    end
-  end
+  extend Admin
+  extend Public::V0
+  extend Public::V1
 end
