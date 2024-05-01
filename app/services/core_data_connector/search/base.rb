@@ -289,12 +289,10 @@ module CoreDataConnector
             .where(ProjectModelRelationship.arel_table.name => { allow_inverse: true })
         }, as: :related_record, class_name: Relationship.to_s
 
+        # Include the ID attributes as a string by default
+        search_attribute(:id) { uuid }
+        search_attribute(:record_id) { id.to_s }
         search_attribute :uuid
-
-        # Include the ID attribute as a string by default
-        search_attribute(:record_id) do
-          id.to_s
-        end
 
         # Uses the specified attributes to create a JSON object. We'll skip relationships by default as to
         # not create an infinite loop while serializing related records.
