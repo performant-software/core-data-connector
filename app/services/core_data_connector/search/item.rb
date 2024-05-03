@@ -13,6 +13,8 @@ module CoreDataConnector
         # Includes
         include Base
 
+        search_attribute :faircopy_cloud_id
+
         search_attribute(:name) do
           primary_name.name.name
         end
