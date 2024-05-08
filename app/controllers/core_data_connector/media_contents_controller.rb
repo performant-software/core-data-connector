@@ -2,6 +2,7 @@ module CoreDataConnector
   class MediaContentsController < ApplicationController
     # Includes
     include OwnableController
+    include TripleEyeEffable::ResourceableController
     include UserDefinedFields::Queryable
 
     # Search attributes
