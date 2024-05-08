@@ -28,8 +28,8 @@ GIT
 
 GIT
   remote: https://github.com/performant-software/triple-eye-effable.git
-  revision: 27941317d9153df7317a0103b735356476665cfb
-  tag: v0.1.11
+  revision: 9034fb1faea66375fc1cb997f782930d0aaef2d3
+  tag: v0.2.0
   specs:
     triple_eye_effable (0.1.0)
       httparty (~> 0.20.0)
