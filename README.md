@@ -79,17 +79,19 @@ bundle exec rake typesense:create -- -h host -p port -r protocol -a api_key -c c
 bundle exec rake typesense:delete -- -h host -p port -r protocol -a api_key -c collection_name
 ```
 
-#### Add documents to a collection
+#### Index documents into a collection
 ```bash
 bundle exec rake typesense:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids
 ```
+
+**Note:** This task expects the entire collection to be indexed. Any records not included in the batch will be removed from the index.
 
 #### Update a collection
 ```bash
 bundle exec rake typesense:update -- -h host -p port -r protocol -a api_key -c collection_name
 ```
 
-**Note**: This task was added as a workaround for an issue in Typesense indexing nested facetable fields using auto-detection schema. This task should be run _after_ the indexing process to update the "facet" attribute on any fields that should be facetable.
+**Note:** This task was added as a workaround for an issue in Typesense indexing nested facetable fields using auto-detection schema. This task should be run _after_ the indexing process to update the "facet" attribute on any fields that should be facetable.
 
 
 ## Public API

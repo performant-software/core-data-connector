@@ -67,16 +67,23 @@ module Typesense
                           hash
                         end
 
+      # Append a unique import_id to all of the documents indexed in this batch
+      import_id = DateTime.now.to_i
+      import_attributes = { import_id: import_id }
+
       # Iterate over the keys and query the records belonging to each project model
       model_classes.keys.each do |model_class|
         klass = model_class.constantize
         ids = model_classes[model_class]
 
         klass.for_search(ids) do |records|
-          documents = records.map { |r| r.to_search_json(false) }
-          collection.documents.import(documents, action: 'upsert')
+          documents = records.map { |r| r.to_search_json(false).merge(import_attributes) }
+          collection.documents.import(documents, action: 'emplace')
         end
       end
+
+      # Delete any records from the index not included in this batch
+      collection.documents.delete(filter_by: "import_id:!=#{import_id}")
     end
 
     def update
