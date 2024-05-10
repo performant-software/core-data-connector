@@ -3,7 +3,7 @@ module Public
     def self.extended(router)
       router.instance_exec do
         namespace :public, only: [:index, :show] do
-          resources :instances, only: :show, controller: 'v0/instances' do
+          resources :instances, controller: 'v0/instances' do
             resources :instances, only: :index, controller: 'v0/instances'
             resources :items, only: :index, controller: 'v0/items'
             resources :manifests, controller: 'v0/manifests'
@@ -15,7 +15,7 @@ module Public
             resources :works, only: :index, controller: 'v0/works'
           end
 
-          resources :items, only: :show, controller: 'v0/items' do
+          resources :items, controller: 'v0/items' do
             resources :instances, only: :index, controller: 'v0/instances'
             resources :items, only: :index, controller: 'v0/items'
             resources :manifests, controller: 'v0/manifests'
@@ -27,7 +27,7 @@ module Public
             resources :works, only: :index, controller: 'v0/works'
           end
 
-          resources :places, only: :show, controller: 'v0/linked_places/places' do
+          resources :places, controller: 'v0/linked_places/places' do
             resources :instances, only: :index, controller: 'v0/linked_places/instances'
             resources :items, only: :index, controller: 'v0/linked_places/items'
             resources :manifests, controller: 'v0/manifests'
@@ -43,7 +43,7 @@ module Public
             get :descriptors, on: :member, controller: 'v0/projects'
           end
 
-          resources :works, only: :show, controller: 'v0/works' do
+          resources :works, controller: 'v0/works' do
             resources :instances, only: :index, controller: 'v0/instances'
             resources :items, only: :index, controller: 'v0/items'
             resources :manifests, controller: 'v0/manifests'

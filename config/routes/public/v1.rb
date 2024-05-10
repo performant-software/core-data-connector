@@ -5,7 +5,7 @@ module Public
 
         namespace :public, only: [:index, :show] do
           namespace :v1 do
-            resources :events, only: :show do
+            resources :events do
               resources :events, only: :index
               resources :instances, only: :index
               resources :items, only: :index
@@ -18,7 +18,7 @@ module Public
               resources :works, only: :index
             end
 
-            resources :instances, only: :show do
+            resources :instances do
               resources :events, only: :index
               resources :instances, only: :index
               resources :items, only: :index
@@ -31,7 +31,7 @@ module Public
               resources :works, only: :index
             end
 
-            resources :items, only: :show do
+            resources :items do
               resources :events, only: :index
               resources :instances, only: :index
               resources :items, only: :index
@@ -44,7 +44,7 @@ module Public
               resources :works, only: :index
             end
 
-            resources :people, only: :show do
+            resources :people do
               resources :events, only: :index
               resources :instances, only: :index
               resources :items, only: :index
@@ -57,7 +57,7 @@ module Public
               resources :works, only: :index
             end
 
-            resources :places, only: :show do
+            resources :places do
               resources :events, only: :index
               resources :instances, only: :index
               resources :items, only: :index
@@ -74,7 +74,7 @@ module Public
               get :descriptors, on: :member
             end
 
-            resources :works, only: :show do
+            resources :works do
               resources :events, only: :index
               resources :instances, only: :index
               resources :items, only: :index

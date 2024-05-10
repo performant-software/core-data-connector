@@ -14,6 +14,8 @@ module CoreDataConnector
             item_class.where(build_base_sql)
           elsif params[:id].present?
             item_class.where(uuid: params[:id])
+          elsif params[:project_ids].present?
+            item_class.all_records_by_project(params[:project_ids])
           else
             item_class.none
           end
