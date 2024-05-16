@@ -336,20 +336,38 @@ module CoreDataConnector
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
+          attributes = {
+            inverse: true
+          }
+
           user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
 
           hash[key] ||= []
-          hash[key] << relationship.primary_record.to_search_json.merge(user_defined)
+
+          hash[key] << relationship
+                         .primary_record
+                         .to_search_json
+                         .merge(user_defined)
+                         .merge(attributes)
         end
 
         def build_relationship(relationship, hash)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
+          attributes = {
+            inverse: false
+          }
+
           user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
 
           hash[key] ||= []
-          hash[key] << relationship.related_record.to_search_json.merge(user_defined)
+
+          hash[key] << relationship
+                         .related_record
+                         .to_search_json
+                         .merge(user_defined)
+                         .merge(attributes)
         end
 
         def build_relationships(hash)
