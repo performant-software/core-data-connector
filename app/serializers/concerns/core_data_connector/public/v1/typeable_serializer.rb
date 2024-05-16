@@ -5,17 +5,20 @@ module CoreDataConnector
         extend ActiveSupport::Concern
 
         included do
-          index_attributes(:relationship_type) { |item, current_user, options| relationship_type(item, options) }
+          index_attributes(:project_model_relationship_uuid) { |item| relationship_uuid(item) }
+          index_attributes(:project_model_relationship_inverse) { |item| relationship_inverse(item) }
 
           protected
 
-          def self.relationship_type(item, options)
-            if options[:nested_resource].to_s.to_bool
-              if !item.relationships.empty?
-                item.relationships.map{ |r| r.project_model_relationship.inverse_name }.first
-              elsif !item.related_relationships.empty?
-                item.related_relationships.map { |r| r.project_model_relationship.name }.first
-              end
+          def self.relationship_inverse(item)
+            !item.relationships.empty?
+          end
+
+          def self.relationship_uuid(item)
+            if !item.relationships.empty?
+              item.relationships.map{ |r| r.project_model_relationship.uuid }.first
+            elsif !item.related_relationships.empty?
+              item.related_relationships.map { |r| r.project_model_relationship.uuid }.first
             end
           end
         end
