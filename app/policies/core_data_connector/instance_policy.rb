@@ -1,5 +1,7 @@
 module CoreDataConnector
   class InstancePolicy < BasePolicy
+    # Includes
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :instance, :project_model_id, :project_id

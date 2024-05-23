@@ -2,6 +2,7 @@ module CoreDataConnector
   class MediaContent < ApplicationRecord
     # Includes
     include Identifiable
+    include Manifestable
     include Ownable
     include Relateable
     include Search::MediaContent

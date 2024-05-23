@@ -1,6 +1,7 @@
 module CoreDataConnector
   class OrganizationsController < ApplicationController
     # Includes
+    include MergeableController
     include NameableController
     include OwnableController
     include UserDefinedFields::Queryable

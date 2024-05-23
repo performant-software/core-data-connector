@@ -1,5 +1,7 @@
 module CoreDataConnector
   class EventPolicy < BasePolicy
+    # Includes
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :event, :project_model_id, :project_id

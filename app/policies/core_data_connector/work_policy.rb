@@ -1,5 +1,7 @@
 module CoreDataConnector
   class WorkPolicy < BasePolicy
+    # Includes
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :work, :project_model_id, :project_id
