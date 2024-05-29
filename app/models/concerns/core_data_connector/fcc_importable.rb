@@ -32,20 +32,31 @@ module CoreDataConnector
           return nil
         end
 
-        send_request(url, followlocation: true) do |file_string|
-          tempfile = Tempfile.new
-          tempfile.binmode
-          tempfile.write(file_string)
-          tempfile.rewind
-  
-          zip_importer = Import::ZipHelper.new
-          ok, errors = zip_importer.import_zip(tempfile)
-  
-          if errors && !errors.empty?
-            puts "Errors importing records for #{url}:"
-            puts errors.inspect
-          end
+        # TODO: Temporary change to bypass valid FairCopy.cloud records
+        file = File.open('/Users/dleadbetter/Performant/core-data/import-fcc/Archive.zip')
+
+        zip_importer = Import::ZipHelper.new
+        ok, errors = zip_importer.import_zip(file)
+
+        if errors && !errors.empty?
+          puts "Errors importing records for #{url}:"
+          puts errors.inspect
         end
+
+        # send_request(url, followlocation: true) do |file_string|
+        #   tempfile = Tempfile.new
+        #   tempfile.binmode
+        #   tempfile.write(file_string)
+        #   tempfile.rewind
+        #
+        #   zip_importer = Import::ZipHelper.new
+        #   ok, errors = zip_importer.import_zip(tempfile)
+        #
+        #   if errors && !errors.empty?
+        #     puts "Errors importing records for #{url}:"
+        #     puts errors.inspect
+        #   end
+        # end
       end
     end
   end

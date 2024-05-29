@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Work < ApplicationRecord
     # Includes
+    include Export::Work
     include Identifiable
     include Manifestable
     include Nameable

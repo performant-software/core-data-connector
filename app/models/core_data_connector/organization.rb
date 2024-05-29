@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Organization < ApplicationRecord
     # Includes
+    include Export::Organization
     include Identifiable
     include Manifestable
     include Nameable

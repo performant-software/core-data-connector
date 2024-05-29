@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Relationship < ApplicationRecord
     # Includes
+    include Export::Relationship
     include UserDefinedFields::Fieldable
 
     # Relationships

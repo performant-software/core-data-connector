@@ -14,6 +14,15 @@ module CoreDataConnector
         super
 
         execute <<-SQL.squish
+          UPDATE core_data_connector_relationships relationships
+             SET z_relationship_id = z_relationships.id,
+                 user_defined = z_relationships.user_defined,
+                 updated_at = current_timestamp
+            FROM #{table_name} z_relationships
+           WHERE z_relationships.relationship_id = relationships.id
+        SQL
+
+        execute <<-SQL.squish
           WITH
 
           insert_relationships AS (
@@ -21,6 +30,7 @@ module CoreDataConnector
           INSERT INTO core_data_connector_relationships (
             project_model_relationship_id,
             z_relationship_id,
+            uuid,
             primary_record_id,
             primary_record_type,
             related_record_id,
@@ -31,6 +41,7 @@ module CoreDataConnector
           )
           SELECT z_relationships.project_model_relationship_id,
                  z_relationships.id,
+                 z_relationships.uuid,
                  z_relationships.primary_record_id,
                  z_relationships.primary_record_type,
                  z_relationships.related_record_id,
@@ -39,8 +50,9 @@ module CoreDataConnector
                  current_timestamp,
                  current_timestamp
             FROM #{table_name} z_relationships
-           WHERE z_relationships.primary_record_id IS NOT NULL
-             and z_relationships.related_record_id IS NOT NULL
+           WHERE z_relationships.relationship_id IS NULL
+             AND z_relationships.primary_record_id IS NOT NULL
+             AND z_relationships.related_record_id IS NOT NULL
           RETURNING id as relationship_id, z_relationship_id
 
           )
@@ -54,6 +66,13 @@ module CoreDataConnector
 
       def transform
         super
+
+        execute <<-SQL.squish
+          UPDATE #{table_name} z_relationships
+             SET relationship_id = relationships.id
+            FROM core_data_connector_relationships relationships
+           WHERE relationships.uuid = z_relationships.uuid
+        SQL
 
         execute <<-SQL.squish
           WITH all_related_types AS (
@@ -111,6 +130,10 @@ module CoreDataConnector
            type: 'INTEGER',
            copy: true
          }, {
+           name: 'uuid',
+           type: 'UUID',
+           copy: true
+         },{
            name: 'primary_record_uuid',
            type: 'UUID',
            copy: true
