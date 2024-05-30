@@ -1,6 +1,7 @@
 module CoreDataConnector
   class PeopleController < ApplicationController
     # Includes
+    include MergeableController
     include NameableController
     include OwnableController
     include UserDefinedFields::Queryable

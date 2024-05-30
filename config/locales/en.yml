@@ -14,6 +14,8 @@ en:
       timeout: "Your request has timed out"
     manifest:
       unique: "Only a single manifest can exist per relationship"
+    mergeable:
+      ids: "IDs are required"
     nameable:
       primary_name: "This record must have a primary name"
     projects:

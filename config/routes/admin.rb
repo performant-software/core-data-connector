@@ -2,21 +2,35 @@
 module Admin
   def self.extended(router)
     router.instance_exec do
-      resources :events
+      resources :events do
+        post :merge, on: :collection
+      end
 
-      resources :instances
+      resources :instances do
+        post :merge, on: :collection
+      end
 
-      resources :items
+      resources :items do
+        post :merge, on: :collection
+      end
 
-      resources :media_contents
+      resources :media_contents do
+        post :merge, on: :collection
+      end
 
       resources :names, only: :index
 
-      resources :organizations
+      resources :organizations do
+        post :merge, on: :collection
+      end
 
-      resources :people
+      resources :people do
+        post :merge, on: :collection
+      end
 
-      resources :places
+      resources :places do
+        post :merge, on: :collection
+      end
 
       resources :project_models do
         get :model_classes, on: :collection
@@ -36,7 +50,9 @@ module Admin
         post :upload, on: :collection
       end
 
-      resources :taxonomies
+      resources :taxonomies do
+        post :merge, on: :collection
+      end
 
       resources :user_projects
 
@@ -49,7 +65,9 @@ module Admin
 
       resources :web_identifiers
 
-      resources :works
+      resources :works do
+        post :merge, on: :collection
+      end
     end
   end
 end

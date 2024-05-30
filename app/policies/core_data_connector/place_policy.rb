@@ -1,5 +1,7 @@
 module CoreDataConnector
   class PlacePolicy < BasePolicy
+    # Includes
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :place, :project_model_id, :project_id

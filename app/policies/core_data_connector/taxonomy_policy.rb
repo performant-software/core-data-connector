@@ -1,5 +1,7 @@
 module CoreDataConnector
   class TaxonomyPolicy < BasePolicy
+    # Includes
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :taxonomy, :project_model_id, :project_id

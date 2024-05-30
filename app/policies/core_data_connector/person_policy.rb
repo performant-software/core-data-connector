@@ -1,5 +1,6 @@
 module CoreDataConnector
   class PersonPolicy < BasePolicy
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :person, :project_model_id, :project_id

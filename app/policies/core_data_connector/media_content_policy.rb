@@ -1,5 +1,7 @@
 module CoreDataConnector
   class MediaContentPolicy < BasePolicy
+    # Includes
+    include MergeablePolicy
     include OwnablePolicy
 
     attr_reader :current_user, :media_content, :project_model_id, :project_id
