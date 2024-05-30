@@ -25,13 +25,19 @@ module CoreDataConnector
                     })
 
           query.find_each do |project_model_relationship|
-            descriptors << {
+            descriptor = {
               identifier: project_model_relationship.uuid,
               label: project_model_relationship.name,
               context: project_model_relationship.primary_model.name
             }
 
-            project_model_relationship.user_defined_fields.each do |user_defined_field|
+            if project_model_relationship.allow_inverse?
+              descriptor[:inverse_label] = project_model_relationship.inverse_name
+            end
+
+            descriptors << descriptor
+
+              project_model_relationship.user_defined_fields.each do |user_defined_field|
               descriptors << {
                 identifier: user_defined_field.uuid,
                 label: user_defined_field.column_name,
