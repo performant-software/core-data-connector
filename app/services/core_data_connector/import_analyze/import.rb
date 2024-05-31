@@ -15,7 +15,13 @@ module CoreDataConnector
           filename = File.basename(filepath)
           klass = find_class(filename)
 
-          attributes = klass.export_attributes.map{ |a| a[:name] } unless klass.nil?
+          user_defined_columns = Helper.user_defined_columns(filepath)
+          user_defined_fields_uuids = user_defined_columns.map { |c| Helper.column_name_to_uuid(c) }
+
+          user_defined_fields = UserDefinedFields::UserDefinedField
+                                  .where(uuid: user_defined_fields_uuids)
+
+          attributes = build_attributes(klass, user_defined_fields)
           records_by_uuid = find_records_by_uuid(filepath, klass)
 
           CSV.foreach(filepath, headers: true, converters: [:numeric]) do |row|
@@ -26,7 +32,7 @@ module CoreDataConnector
 
             data[filename][:data] << {
               import: row_hash,
-              db: record&.to_export_csv
+              db: to_export_csv(record, user_defined_fields)
             }
           end
         end
@@ -44,6 +50,26 @@ module CoreDataConnector
             associations: klass.export_preloads
           ).call
         end
+      end
+
+      def build_attributes(klass, user_defined_fields)
+        attributes = []
+
+        klass.export_attributes.each do |attribute|
+          attributes << {
+            name: attribute[:name],
+            label: translate(klass, attribute)
+          }
+        end
+
+        user_defined_fields.each do |user_defined_field|
+          attributes << {
+            name: Helper.uuid_to_column_name(user_defined_field.uuid),
+            label: user_defined_field.column_name
+          }
+        end
+
+        attributes
       end
 
       def find_class(filename)
@@ -72,6 +98,28 @@ module CoreDataConnector
         end
 
         records_by_uuid
+      end
+
+      def to_export_csv(record, user_defined_fields)
+        return nil unless record.present?
+
+        csv = record.to_export_csv
+
+        user_defined_fields.each do |user_defined_field|
+          next unless record.user_defined.present?
+
+          key = Helper.uuid_to_column_name(user_defined_field.uuid)
+          csv[key] = record.user_defined[user_defined_field.uuid]
+        end
+
+        csv
+      end
+
+      def translate(klass, attribute)
+        model_path = "services.import_analyze.#{klass.model_name.route_key}.#{attribute[:name]}"
+        common_path = "services.import_analyze.common.#{attribute[:name]}"
+
+        I18n.t(model_path, default: nil) || I18n.t(common_path, default: nil) || attribute[:name]
       end
     end
   end

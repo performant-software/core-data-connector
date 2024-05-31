@@ -37,3 +37,23 @@ en:
     iiif:
       manifest:
         label: "%{name}: %{relationship}"
+    import_analyze:
+      common:
+        name: "Name"
+        uuid: "Identifier"
+      events:
+        description: "Description"
+        end_date: "End date"
+        end_date_description: "End date description"
+        start_date: "Start date"
+        start_date_description: "Start date description"
+      organizations:
+        description: "Description"
+      people:
+        biography: "Biography"
+        first_name: "First name"
+        last_name: "Last name"
+        middle_name: "Middle name"
+      places:
+        latitude: "Latitude"
+        longitude: "Longitude"
