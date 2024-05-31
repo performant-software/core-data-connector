@@ -45,5 +45,32 @@ module CoreDataConnector
         render json: { errors: errors }, status: :bad_request
       end
     end
+
+    def import
+      item = find_record(item_class)
+      authorize item if authorization_valid?
+
+      begin
+        # Generate the CSV files and compress them in a ZIP
+        service = ImportAnalyze::Import.new
+        zip_filepath = service.create_zip(params[:files])
+
+        # Run the importer with the new ZIP file
+        zip_importer = Import::ZipHelper.new
+        ok, errors = zip_importer.import_zip(zip_filepath)
+
+        # Remove the ZIP file directory
+        directory = File.dirname(zip_filepath)
+        FileSystem.remove_directory(directory)
+      rescue StandardError => exception
+        errors = [exception]
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: :bad_request
+      end
+    end
   end
 end

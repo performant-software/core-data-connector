@@ -21,6 +21,13 @@ module CoreDataConnector
       update?
     end
 
+    # A user can import for an item if the user is an admin or has update permissions.
+    def import?
+      return true if current_user.admin?
+
+      update?
+    end
+
     # Allowed create/update attributes.
     def permitted_attributes
       [ *ownable_attributes,

@@ -7,14 +7,17 @@ module CoreDataConnector
 
     # Creates a temporary directory in the Rails root/tmp folder
     def self.create_directory
-      "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
+      directory = "#{Rails.root}/tmp/#{SecureRandom.urlsafe_base64}"
+
+      FileUtils.mkdir_p(directory) unless File.exist? directory
+
+      directory
     end
 
     # Extracts the passed zip file to a temporary directory and returns the path
     def self.extract_zip(zip_file)
       # Create the target directory
       destination = create_directory
-      FileUtils.mkdir_p(destination) unless File.exist? destination
 
       # Extract the zip file to the directory
       Zip::File.open(zip_file) do |zipfile|

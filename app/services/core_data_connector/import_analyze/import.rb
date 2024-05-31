@@ -9,7 +9,7 @@ module CoreDataConnector
 
         data = {}
 
-        pattern = File.join(directory, "*.csv")
+        pattern = File.join(directory, '*.csv')
 
         Dir.glob(pattern).each do |filepath|
           filename = File.basename(filepath)
@@ -38,6 +38,38 @@ module CoreDataConnector
         end
 
         data
+      end
+
+      def create_zip(files)
+        return nil unless files.present?
+
+        # Create the temporary directory
+        directory = FileSystem.create_directory
+
+        # Generate the CSV files from the passed files hash
+        files.keys.each do |filename|
+          CSV.open("#{directory}/#{filename}", 'w') do |csv|
+            records = files[filename]
+            csv << records.first.keys
+
+            records.each do |record|
+              csv << record.values
+            end
+          end
+        end
+
+        # Zip the generated CSV files
+        zipfile_name = "#{directory}/archive.zip"
+        pattern = File.join(directory, '*.csv')
+
+        Zip::File.open(zipfile_name, create: true) do |zipfile|
+          Dir.glob(pattern).each do |filepath|
+            zipfile.add(File.basename(filepath), filepath)
+          end
+        end
+
+        # Return the file path to the created zip file
+        zipfile_name
       end
 
       private
