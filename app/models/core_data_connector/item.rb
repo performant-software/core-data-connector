@@ -5,6 +5,7 @@ module CoreDataConnector
     include FccImportable
     include Identifiable
     include Manifestable
+    include Mergeable
     include Nameable
     include Ownable
     include Relateable

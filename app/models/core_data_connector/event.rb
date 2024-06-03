@@ -5,6 +5,7 @@ module CoreDataConnector
     include FuzzyDates::FuzzyDateable
     include Identifiable
     include Manifestable
+    include Mergeable
     include Ownable
     include Relateable
     include Search::Event

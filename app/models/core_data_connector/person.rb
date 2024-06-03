@@ -4,6 +4,7 @@ module CoreDataConnector
     include Export::Person
     include Identifiable
     include Manifestable
+    include Mergeable
     include Nameable
     include Ownable
     include Relateable

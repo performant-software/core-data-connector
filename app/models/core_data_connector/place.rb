@@ -6,6 +6,7 @@ module CoreDataConnector
     include Export::Place
     include Identifiable
     include Manifestable
+    include Mergeable
     include Nameable
     include Ownable
     include Relateable

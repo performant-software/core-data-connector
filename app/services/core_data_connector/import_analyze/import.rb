@@ -5,8 +5,6 @@ module CoreDataConnector
     class Import
 
       def analyze(directory)
-        # TODO: Check authorization somewhere?
-
         data = {}
 
         pattern = File.join(directory, '*.csv')
@@ -30,11 +28,37 @@ module CoreDataConnector
             row_hash = row.to_h.symbolize_keys
             record = records_by_uuid[row_hash[:uuid]]
 
+            if record && record.is_a?(Mergeable)
+              merged = record.record_merges.map { |rm| rm.merged_uuid }
+            end
+
             data[filename][:data] << {
               import: row_hash,
-              db: to_export_csv(record, user_defined_fields)
+              db: to_export_csv(record, user_defined_fields),
+              merged: merged
             }
           end
+        end
+
+        # Iterate over the data set and remove any already merged rows, adding them to the "merged" attribute
+        # for the row of the primary record.
+        data.keys.each do |filename|
+          rows = data[filename][:data]
+
+          rows.each do |row|
+            next unless row[:merged].present?
+
+            duplicates = []
+
+            row[:merged].each do |uuid|
+              duplicate = rows.select { |r| r[:import][:uuid] == uuid }&.first
+              duplicates << duplicate if duplicate.present?
+            end
+
+            row[:duplicates] = duplicates.map { |d| d[:import] }
+            duplicates.each { |d| rows.delete(d) }
+          end
+
         end
 
         data
@@ -75,6 +99,13 @@ module CoreDataConnector
       private
 
       def apply_preloads(klass, records)
+        if klass.ancestors.include?(Mergeable)
+          Preloader.new(
+            records: records,
+            associations: [:record_merges]
+          ).call
+        end
+
         # Preload any associations from the concrete class
         if klass.respond_to?(:export_preloads) && klass.export_preloads.present?
           Preloader.new(
