@@ -4,6 +4,8 @@ module CoreDataConnector
   module ImportAnalyze
     class Import
 
+      FILE_RELATIONSHIPS = 'relationships.csv'
+
       def analyze(directory)
         data = {}
 
@@ -42,24 +44,59 @@ module CoreDataConnector
 
         # Iterate over the data set and remove any already merged rows, adding them to the "merged" attribute
         # for the row of the primary record.
+        relationship_data = data[FILE_RELATIONSHIPS][:data]
+
         data.keys.each do |filename|
           rows = data[filename][:data]
 
           rows.each do |row|
             next unless row[:merged].present?
 
+            # Find the rows containing the duplicates and add them to the current row
             duplicates = []
 
             row[:merged].each do |uuid|
+              # Find all of the records in the current file that have been merged into the current row
               duplicate = rows.select { |r| r[:import][:uuid] == uuid }&.first
               duplicates << duplicate if duplicate.present?
+
+              # Move to the next record if no relationship data is present
+              next unless relationship_data.present?
+
+              # Update relationships where the "primary_record_uuid" matches the merged row
+              update_relationships(relationship_data, :primary_record_uuid, uuid, row[:import][:uuid])
+
+              # Update relationships where the "related_record_uuid" matches the merged row
+              update_relationships(relationship_data, :related_record_uuid, uuid, row[:import][:uuid])
             end
 
             row[:duplicates] = duplicates.map { |d| d[:import] }
+
+            # Delete the duplicate rows
             duplicates.each { |d| rows.delete(d) }
           end
 
         end
+
+        # De-duplicate relationships
+        relationship_data.each do |row|
+          next if row[:keep].present?
+
+          # Find relationship rows where all fields match the current row except the "uuid"
+          relationship = row[:import].except(:uuid)
+          duplicates = relationship_data.select { |r| r[:import][:uuid] != row[:import][:uuid] && r[:import].except(:uuid) == relationship }
+
+          # Keep row with an existing record in the database, or the first. Mark all other for delete.
+          all = [row, *duplicates]
+          keep = all.select{ |r| r[:db].present? }&.first
+          keep = all.first unless keep.present?
+
+          keep[:keep] = true
+          (all - [keep]).each{ |r| r[:keep] = false }
+        end
+
+        # Remove any rows not marked with "keep"
+        relationship_data.delete_if { |r| r[:keep] != true }
 
         data
       end
@@ -183,6 +220,21 @@ module CoreDataConnector
         common_path = "services.import_analyze.common.#{attribute[:name]}"
 
         I18n.t(model_path, default: nil) || I18n.t(common_path, default: nil) || attribute[:name]
+      end
+
+      def update_relationships(relationship_data, attribute, find_uuid, new_uuid)
+        relationships = relationship_data.select{ |r| r[:import][attribute] == find_uuid }
+
+        relationships.each do |relationship|
+          # Create the new relationships row
+          new_relationship = relationship[:import].merge({ attribute => new_uuid })
+
+          # Add the new row to the relationships data set
+          relationship_data << { import: new_relationship }
+
+          # Delete the existing relationship
+          relationship_data.delete(relationship)
+        end
       end
     end
   end

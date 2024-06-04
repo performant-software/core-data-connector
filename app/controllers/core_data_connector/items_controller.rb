@@ -35,8 +35,6 @@ module CoreDataConnector
         FileSystem.remove_directory(directory)
       rescue StandardError => exception
         errors = [exception]
-        puts errors
-        throw exception
       end
 
       if errors.nil? || errors.empty?
@@ -49,6 +47,8 @@ module CoreDataConnector
     def import
       item = find_record(item_class)
       authorize item if authorization_valid?
+
+      # TODO: Authorize user to import each item in the CSV
 
       begin
         # Generate the CSV files and compress them in a ZIP
