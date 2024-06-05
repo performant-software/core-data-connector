@@ -1,62 +1,14 @@
 module CoreDataConnector
   module FccImportable
     extend ActiveSupport::Concern
-    include Http::Requestable
 
     included do
-      after_create :fcc_import
-      
-      CODE_NO_RESPONSE = 0
-
       # Generate the full URL for the record's CSV files in FairCopy.cloud
-      def faircopy_cloud_url(project)
-        if !self[:faircopy_cloud_id] || !project[:faircopy_cloud_url]
-          return nil
-        end
+      def faircopy_cloud_url
+        project = project_model.project
+        return nil unless project_model.id == project.faircopy_cloud_project_model_id
 
-        "#{project[:faircopy_cloud_url]}/documents/#{self[:faircopy_cloud_id]}/csv"
-      end
-
-      def fcc_import
-        project = Project.find(self.project_id)
-
-        url = self.faircopy_cloud_url(project)
-
-        if !url
-          return nil
-        end
-
-        project_model = self.project_model
-
-        if project.faircopy_cloud_project_model_id != project_model.id
-          return nil
-        end
-
-        # TODO: Temporary change to bypass valid FairCopy.cloud records
-        file = File.open('/Users/dleadbetter/Performant/core-data/import-fcc/Archive.zip')
-
-        zip_importer = Import::ZipHelper.new
-        ok, errors = zip_importer.import_zip(file)
-
-        if errors && !errors.empty?
-          puts "Errors importing records for #{url}:"
-          puts errors.inspect
-        end
-
-        # send_request(url, followlocation: true) do |file_string|
-        #   tempfile = Tempfile.new
-        #   tempfile.binmode
-        #   tempfile.write(file_string)
-        #   tempfile.rewind
-        #
-        #   zip_importer = Import::ZipHelper.new
-        #   ok, errors = zip_importer.import_zip(tempfile)
-        #
-        #   if errors && !errors.empty?
-        #     puts "Errors importing records for #{url}:"
-        #     puts errors.inspect
-        #   end
-        # end
+        "#{project.faircopy_cloud_url}/documents/#{faircopy_cloud_id}/csv"
       end
     end
   end

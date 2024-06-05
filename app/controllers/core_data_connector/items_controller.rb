@@ -3,6 +3,7 @@ require 'zip'
 module CoreDataConnector
   class ItemsController < ApplicationController
     # Includes
+    include Http::Requestable
     include MergeableController
     include NameableController
     include OwnableController
@@ -19,24 +20,31 @@ module CoreDataConnector
       authorize item if authorization_valid?
 
       errors = nil
+      data = nil
 
       begin
         # Download the zip file from FairCopy.cloud
-        file = File.open('/Users/dleadbetter/Performant/core-data/import-fcc/Archive.zip')
+        send_request(item.faircopy_cloud_url, followlocation: true) do |contents|
+          # Write the contents to a temporary file
+          file = Tempfile.new
+          file.binmode
+          file.write(contents)
+          file.rewind
 
-        # Extract the CSV files
-        directory = FileSystem.extract_zip(file)
+          # Extract the CSV files
+          directory = FileSystem.extract_zip(file)
 
-        # Analyze the import files
-        service = ImportAnalyze::Import.new
-        data = service.analyze(directory)
+          # Analyze the import files
+          service = ImportAnalyze::Import.new
+          data = service.analyze(directory)
 
-        # Check that the user is authorized to import all of the records in the file
-        policy = ImportAnalyze::Policy.new(current_user)
-        raise Pundit::NotAuthorizedError, I18n.t('errors.items_controller.authorize') unless policy.has_access?(data)
+          # Check that the user is authorized to import all of the records in the file
+          policy = ImportAnalyze::Policy.new(current_user)
+          raise Pundit::NotAuthorizedError, I18n.t('errors.items_controller.authorize') unless policy.has_access?(data)
 
-        # Remove the temporary directory
-        FileSystem.remove_directory(directory)
+          # Remove the temporary directory
+          FileSystem.remove_directory(directory)
+        end
       rescue StandardError => exception
         errors = [exception]
       end
