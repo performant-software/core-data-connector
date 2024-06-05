@@ -1,5 +1,3 @@
-require 'zip'
-
 module CoreDataConnector
   class ItemsController < ApplicationController
     # Includes
@@ -31,8 +29,11 @@ module CoreDataConnector
           file.write(contents)
           file.rewind
 
+          # Create a temporary directory
+          directory = FileSystem.create_directory
+
           # Extract the CSV files
-          directory = FileSystem.extract_zip(file)
+          FileSystem.extract_zip(file, directory)
 
           # Analyze the import files
           service = ImportAnalyze::Import.new

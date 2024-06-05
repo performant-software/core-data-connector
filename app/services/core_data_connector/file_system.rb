@@ -14,12 +14,8 @@ module CoreDataConnector
       directory
     end
 
-    # Extracts the passed zip file to a temporary directory and returns the path
-    def self.extract_zip(zip_file)
-      # Create the target directory
-      destination = create_directory
-
-      # Extract the zip file to the directory
+    # Extracts the passed zip file to the passed destination
+    def self.extract_zip(zip_file, destination)
       Zip::File.open(zip_file) do |zipfile|
         zipfile.each do |entry|
           # Ignore directories
@@ -32,9 +28,6 @@ module CoreDataConnector
           zipfile.extract(entry, File.join(destination, entry.name))
         end
       end
-
-      # Return the path of the extracted files
-      destination
     end
 
     # Removes the passed directory
