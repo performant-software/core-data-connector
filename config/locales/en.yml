@@ -12,6 +12,8 @@ en:
       general: "An error occurred when making your request"
       no_response: "No response from the server"
       timeout: "Your request has timed out"
+    items_controller:
+      authorize: "You do not have permission to import these records. Please contact your system administrator."
     manifest:
       unique: "Only a single manifest can exist per relationship"
     mergeable:

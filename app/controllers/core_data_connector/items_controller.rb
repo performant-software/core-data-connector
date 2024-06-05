@@ -31,6 +31,10 @@ module CoreDataConnector
         service = ImportAnalyze::Import.new
         data = service.analyze(directory)
 
+        # Check that the user is authorized to import all of the records in the file
+        policy = ImportAnalyze::Policy.new(current_user)
+        raise Pundit::NotAuthorizedError, I18n.t('errors.items_controller.authorize') unless policy.has_access?(data)
+
         # Remove the temporary directory
         FileSystem.remove_directory(directory)
       rescue StandardError => exception
@@ -48,9 +52,11 @@ module CoreDataConnector
       item = find_record(item_class)
       authorize item if authorization_valid?
 
-      # TODO: Authorize user to import each item in the CSV
-
       begin
+        # Check that the user is authorized to import all of the records in the file
+        policy = ImportAnalyze::Policy.new(current_user)
+        raise Pundit::NotAuthorizedError, I18n.t('errors.items_controller.authorize') unless policy.has_access?(params[:files])
+
         # Generate the CSV files and compress them in a ZIP
         service = ImportAnalyze::Import.new
         zip_filepath = service.create_zip(params[:files])
