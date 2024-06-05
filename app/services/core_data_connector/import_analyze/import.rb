@@ -5,6 +5,7 @@ module CoreDataConnector
     class Import
 
       FILE_RELATIONSHIPS = 'relationships.csv'
+      FILE_WEB_IDENTIFIERS = 'web_identifiers.csv'
 
       def analyze(directory)
         data = {}
@@ -13,6 +14,10 @@ module CoreDataConnector
 
         Dir.glob(pattern).each do |filepath|
           filename = File.basename(filepath)
+
+          # Analyzing web identifiers is currently not supported
+          next if filename == FILE_WEB_IDENTIFIERS
+
           klass = find_class(filename)
 
           user_defined_columns = Helper.user_defined_columns(filepath)
