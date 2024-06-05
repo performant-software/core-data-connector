@@ -54,7 +54,7 @@ module CoreDataConnector
       def transform
         # Sets the user_defined column based on any included user-defined fields
         expression = user_defined_columns
-                       .map{ |c| ["'#{column_name_to_uuid(c[:name])}'", c[:name]] }
+                       .map{ |c| ["'#{ImportAnalyze::Helper.column_name_to_uuid(c[:name])}'", c[:name]] }
                        .flatten
                        .join(', ')
 
@@ -82,11 +82,6 @@ module CoreDataConnector
         [ *column_names, *user_defined_columns ]
       end
 
-      # Converts the passed colum name to a UUID value.
-      def column_name_to_uuid(column_name)
-        column_name.gsub('_', '-')[1..-1]
-      end
-
       def create_table_name
         "#{table_name_prefix}_#{Random.rand(1000..9999)}"
       end
@@ -97,11 +92,10 @@ module CoreDataConnector
         headers = CSV.foreach(filepath).first
 
         headers.each do |header|
-          next unless header.starts_with?('udf_')
-          uuid = header.gsub('udf_', '')
+          next unless ImportAnalyze::Helper.is_user_defined_column?(header)
 
           columns << {
-            name: uuid_to_column_name(uuid),
+            name: header,
             type: 'VARCHAR',
             copy: true
           }
