@@ -1,9 +1,11 @@
 module CoreDataConnector
   class Event < ApplicationRecord
     # Includes
+    include Export::Event
     include FuzzyDates::FuzzyDateable
     include Identifiable
     include Manifestable
+    include Mergeable
     include Ownable
     include Relateable
     include Search::Event

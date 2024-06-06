@@ -1,8 +1,10 @@
 module CoreDataConnector
   class Person < ApplicationRecord
     # Includes
+    include Export::Person
     include Identifiable
     include Manifestable
+    include Mergeable
     include Nameable
     include Ownable
     include Relateable

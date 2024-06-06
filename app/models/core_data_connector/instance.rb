@@ -1,8 +1,10 @@
 module CoreDataConnector
   class Instance < ApplicationRecord
     # Includes
+    include Export::Instance
     include Identifiable
     include Manifestable
+    include Mergeable
     include Nameable
     include Ownable
     include Relateable

@@ -59,6 +59,12 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_taxonomies
+             SET uuid = gen_random_uuid()
+           WHERE z_taxonomies.uuid IS NULL
+        SQL
+
+        execute <<-SQL.squish
+          UPDATE #{table_name} z_taxonomies
              SET taxonomy_id = taxonomies.id
             FROM core_data_connector_taxonomies taxonomies
            WHERE taxonomies.uuid = z_taxonomies.uuid

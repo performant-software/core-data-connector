@@ -5,6 +5,10 @@ module CoreDataConnector
         :project_model_relationship_id
       ]
 
+      MERGE_ATTRIBUTES = [
+        :merged_uuid
+      ]
+
       RELATIONSHIP_ATTRIBUTES = [
         :project_model_relationship_id,
         :primary_record_type,
@@ -29,6 +33,7 @@ module CoreDataConnector
 
       def merge(new_record, merged_records)
         manifests = []
+        record_merges = []
         relationships = []
         related_relationships = []
         web_identifiers = []
@@ -36,6 +41,12 @@ module CoreDataConnector
         merged_records.each do |record|
           # Append the manifests from the merged record(s) to the new record
           record.manifests.each { |manifest| add_item(manifests, manifest, MANIFEST_ATTRIBUTES) }
+
+          # Append the merges from the merged record(s) to the new record
+          record.record_merges.each { |record_merge| add_item(record_merges, record_merge, MERGE_ATTRIBUTES) }
+
+          # Create a record_merge for the merged record(s)
+          record_merges << RecordMerge.new(merged_uuid: record.uuid) unless record.uuid == new_record.uuid
 
           # Append the relationships from the merged record(s) to the new record
           record.relationships.each { |relationship| add_item(relationships, relationship, RELATIONSHIP_ATTRIBUTES) }
@@ -48,6 +59,10 @@ module CoreDataConnector
         # Add the manifests to the new record
         manifests.each { |manifest| manifest.manifestable = new_record }
         new_record.manifests = manifests
+
+        # Add the merges to the new record
+        record_merges.each { |record_merge| record_merge.mergeable = new_record }
+        new_record.record_merges = record_merges
 
         # Add the relationships to the new record
         relationships.each { |relationship| relationship.primary_record = new_record }

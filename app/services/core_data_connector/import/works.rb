@@ -99,6 +99,12 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_works
+             SET uuid = gen_random_uuid()
+           WHERE z_works.uuid IS NULL
+        SQL
+
+        execute <<-SQL.squish
+          UPDATE #{table_name} z_works
              SET work_id = works.id
             FROM core_data_connector_works works
            WHERE works.uuid = z_works.uuid

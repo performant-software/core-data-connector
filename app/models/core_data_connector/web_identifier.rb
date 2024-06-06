@@ -1,5 +1,8 @@
 module CoreDataConnector
   class WebIdentifier < ApplicationRecord
+    # Includes
+    include Export::WebIdentifier
+
     # Relationships
     belongs_to :identifiable, polymorphic: true
     belongs_to :web_authority

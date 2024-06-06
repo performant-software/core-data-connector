@@ -11,6 +11,8 @@ module Admin
       end
 
       resources :items do
+        get :analyze_import, on: :member
+        post :import, on: :member
         post :merge, on: :collection
       end
 

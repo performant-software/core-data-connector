@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Identifiable
     include Manifestable
+    include Mergeable
     include Ownable
     include Relateable
     include Search::MediaContent

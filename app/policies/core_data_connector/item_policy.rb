@@ -14,6 +14,20 @@ module CoreDataConnector
       @project_id = item&.project_id
     end
 
+    # A user can analyze the import for an item if the user is an admin or has update permissions.
+    def analyze_import?
+      return true if current_user.admin?
+
+      update?
+    end
+
+    # A user can import for an item if the user is an admin or has update permissions.
+    def import?
+      return true if current_user.admin?
+
+      update?
+    end
+
     # Allowed create/update attributes.
     def permitted_attributes
       [ *ownable_attributes,
