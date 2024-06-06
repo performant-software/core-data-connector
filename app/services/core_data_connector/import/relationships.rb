@@ -52,7 +52,9 @@ module CoreDataConnector
             FROM #{table_name} z_relationships
            WHERE z_relationships.relationship_id IS NULL
              AND z_relationships.primary_record_id IS NOT NULL
+             AND z_relationships.primary_record_type IS NOT NULL
              AND z_relationships.related_record_id IS NOT NULL
+             AND z_relationships.related_record_type IS NOT NULL
           RETURNING id as relationship_id, z_relationship_id
 
           )
@@ -69,9 +71,8 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_relationships
-             SET relationship_id = relationships.id
-            FROM core_data_connector_relationships relationships
-           WHERE relationships.uuid = z_relationships.uuid
+             SET uuid = gen_random_uuid()
+           WHERE z_relationships.uuid IS NULL
         SQL
 
         execute <<-SQL.squish
@@ -119,6 +120,29 @@ module CoreDataConnector
              AND primary_types.type = z_relationships.primary_record_type
              AND related_types.uuid = z_relationships.related_record_uuid
              AND related_types.type = z_relationships.related_record_type
+        SQL
+
+        execute <<-SQL.squish
+          UPDATE #{table_name} z_relationships
+             SET relationship_id = relationships.id
+            FROM core_data_connector_relationships relationships
+           WHERE relationships.uuid = z_relationships.uuid
+             AND z_relationships.relationship_id IS NULL
+        SQL
+
+        execute <<-SQL.squish
+          UPDATE #{table_name} z_relationships
+             SET relationship_id = relationships.id
+            FROM core_data_connector_relationships relationships
+           WHERE relationships.primary_record_id = z_relationships.primary_record_id
+             AND relationships.primary_record_type = z_relationships.primary_record_type
+             AND relationships.related_record_id = z_relationships.related_record_id
+             AND relationships.related_record_type = z_relationships.related_record_type
+             AND (((relationships.user_defined IS NULL OR relationships.user_defined = '{}'::jsonb)
+             AND (z_relationships.user_defined IS NULL OR z_relationships.user_defined = '{}'::jsonb))
+              OR (relationships.user_defined @> z_relationships.user_defined
+             AND relationships.user_defined <@ z_relationships.user_defined))
+             AND z_relationships.relationship_id IS NULL
         SQL
       end
 
