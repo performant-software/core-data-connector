@@ -7,6 +7,7 @@ module CoreDataConnector
     VIEW_SHARED = 'shared'
 
     included do
+      search_methods :search_uuid
 
       protected
 
@@ -29,6 +30,20 @@ module CoreDataConnector
           query.merge(item_class.shared_records_by_project_model(params[:project_model_id]))
         else
           query.merge(item_class.owned_records_by_project_model(params[:project_model_id]))
+        end
+      end
+
+      private
+
+      def search_uuid(query)
+        return query unless params[:search].present?
+
+        uuid_query = item_class.where(uuid: params[:search])
+
+        if query == item_class.all
+          query.merge(uuid_query)
+        else
+          query.or(uuid_query)
         end
       end
     end
