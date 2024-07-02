@@ -31,6 +31,9 @@ module CoreDataConnector
         class: CoreDataConnector::Taxonomy,
         filename: 'taxonomies.csv'
       }, {
+        class: CoreDataConnector::WebIdentifier,
+        filename: 'web_identifiers.csv'
+      }, {
         class: CoreDataConnector::Work,
         filename: 'works.csv'
       }]
