@@ -36,6 +36,36 @@ module CoreDataConnector
       render json: json, status: :ok
     end
 
+    def export_data
+      project = Project.find(params[:id])
+      authorize project, :export_data?
+
+      begin
+        directory = FileSystem.create_directory
+        filename = "#{project.name.gsub(/\s+/, "")}.zip"
+
+        # Run the exporter to generate the CSV files
+        exporter = Export::Exporter.new(project.id)
+        exporter.run(directory)
+
+        # Create a zip file of the CSVs in the passed directory
+        FileSystem.create_zip directory, filename
+
+        # Send the file to the client
+        zip = File.join(directory, filename)
+
+        File.open(zip, 'r') do |file|
+          send_data file.read, filename: filename, type: 'application/zip', disposition: 'attachment'
+        end
+      rescue StandardError => exception
+        # Render a 400 response if an errors occur
+        render json: { errors: [exception] }, status: :bad_request
+      ensure
+        # Remove the temporary directory
+        FileSystem.remove_directory directory
+      end
+    end
+
     def export_variables
       project = Project.find(params[:id])
       authorize project, :export_variables?
@@ -103,15 +133,6 @@ module CoreDataConnector
         user_id: current_user.id,
         role: UserProject::ROLE_OWNER
       )
-    end
-
-    private
-
-    def create_importer(filepath)
-      filename = File.basename(filepath, '.csv')
-
-      importer_class = "CoreDataConnector::Import::#{filename.capitalize}".constantize
-      importer_class.new(filepath)
     end
   end
 end

@@ -14,6 +14,18 @@ module CoreDataConnector
       directory
     end
 
+    def self.create_zip(directory, zip_filename)
+      zip_filepath = File.join(directory, zip_filename)
+      file_pattern = File.join(directory, '*.csv')
+
+      Zip::File.open(zip_filepath, create: true) do |zipfile|
+        Dir.glob(file_pattern).each do |filepath|
+          filename = File.basename(filepath)
+          zipfile.add(filename, File.join(directory, filename))
+        end
+      end
+    end
+
     # Extracts the passed zip file to the passed destination
     def self.extract_zip(zip_file, destination)
       Zip::File.open(zip_file) do |zipfile|
