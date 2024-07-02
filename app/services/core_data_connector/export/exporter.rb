@@ -25,6 +25,9 @@ module CoreDataConnector
         class: CoreDataConnector::Place,
         filename: 'places.csv'
       }, {
+        class: CoreDataConnector::Relationship,
+        filename: 'relationships.csv'
+      }, {
         class: CoreDataConnector::Taxonomy,
         filename: 'taxonomies.csv'
       }, {
@@ -92,15 +95,8 @@ module CoreDataConnector
       end
 
       def build_user_defined_fields
-        subquery = ProjectModel
-                     .where(ProjectModel.arel_table[:id].eq(UserDefinedFields::UserDefinedField.arel_table[:defineable_id]))
-                     .where(project_id: project_id)
-                     .arel
-                     .exists
-
-        query = UserDefinedFields::UserDefinedField
-                  .where(defineable_type: ProjectModel.to_s)
-                  .where(subquery)
+        query = Queries
+                  .all_fields_by_project(project_id)
                   .group(:table_name, :uuid)
                   .pluck(:table_name, :uuid)
 
