@@ -43,6 +43,7 @@ module Admin
       resources :projects do
         post :clear, on: :member
         get :export_configuration, on: :member
+        get :export_data, on: :member
         get :export_variables, on: :member
         post :import_configuration, on: :member
         post :import_data, on: :member

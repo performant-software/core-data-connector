@@ -40,6 +40,13 @@ module CoreDataConnector
       project_owner?
     end
 
+    # A user can export data from a project if they are an admin.
+    def export_data?
+      return true if current_user.admin?
+
+      false
+    end
+
     # A user can export a project's environment variables if they are an admin or an owner of the project.
     def export_variables?
       return true if current_user.admin?

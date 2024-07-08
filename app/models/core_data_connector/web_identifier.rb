@@ -10,6 +10,12 @@ module CoreDataConnector
     # Callbacks
     before_create :find_identifier
 
+    def self.all_records_by_project(project_id)
+      WebIdentifier
+        .joins(:web_authority)
+        .where(web_authority: { project_id: project_id })
+    end
+
     private
 
     def find_identifier
