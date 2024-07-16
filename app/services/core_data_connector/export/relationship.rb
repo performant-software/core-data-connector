@@ -16,16 +16,18 @@ module CoreDataConnector
         # Export attributes
         export_attribute :project_model_relationship_id
         export_attribute :uuid
-        export_attribute :primary_record_type
-        export_attribute :related_record_type
 
         export_attribute(:primary_record_uuid) do
           primary_record&.uuid
         end
 
+        export_attribute :primary_record_type
+
         export_attribute(:related_record_uuid) do
           related_record&.uuid
         end
+
+        export_attribute :related_record_type
       end
     end
   end
