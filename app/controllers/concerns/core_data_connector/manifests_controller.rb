@@ -60,6 +60,8 @@ module CoreDataConnector
             related_record_type: relationship_params[:related_record_type]
           )
 
+          next if relationship.nil?
+
           record = record_to_update(relationship)
           next if record.nil? || cache.include?(record)
 
