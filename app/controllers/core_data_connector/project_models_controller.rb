@@ -4,6 +4,7 @@ module CoreDataConnector
     search_attributes :name
 
     # Preloads
+    preloads :project, only: :index
     preloads :project_model_shares, only: :index
     preloads project_model_relationships: :related_model, only: :show
     preloads inverse_project_model_relationships: :primary_model, only: :show
