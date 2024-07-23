@@ -20,7 +20,7 @@ module CoreDataConnector
         user_defined: {},
         place_names_attributes: [:id, :name, :primary, :_destroy],
         place_geometry_attributes: [:id, :geometry_json, :_destroy],
-        place_layers_attributes: [:id, :name, :layer_type, :url, :geometry, :_destroy]
+        place_layers_attributes: [:id, :name, :layer_type, :url, :content, :_destroy]
       ]
     end
 
