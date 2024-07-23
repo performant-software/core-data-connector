@@ -1,6 +1,6 @@
 module CoreDataConnector
   class PlaceLayer < ApplicationRecord
-    LAYER_TYPES = %w(geojson raster)
+    LAYER_TYPES = %w(geojson raster georeference)
 
     # Relationships
     belongs_to :place
@@ -8,7 +8,7 @@ module CoreDataConnector
     # Validations
     validates :name, presence: true
     validates :layer_type, inclusion: { in: LAYER_TYPES }
-    validates :geometry, presence: true, if: -> { url.blank? }
-    validates :url, presence: true, if: -> { geometry.blank? }
+    validates :content, presence: true, if: -> { url.blank? }
+    validates :url, presence: true, if: -> { content.blank? }
   end
 end
