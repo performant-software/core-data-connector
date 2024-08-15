@@ -76,22 +76,6 @@ module CoreDataConnector
 
         private
 
-        # def identifier
-        #   route_name = current_record.class.model_name.route_key.singularize
-        #   method_name = "public_v1_#{route_name}_manifests_path"
-        #
-        #   router_helpers = Engine.routes.url_helpers
-        #   pathname = router_helpers.send(method_name.to_sym, current_record.uuid)
-        #
-        #   url = "#{ENV['HOSTNAME']}#{pathname}"
-        #
-        #   parameters = {
-        #     project_ids: params[:project_ids]
-        #   }
-        #
-        #   "#{url}?#{parameters.to_query}"
-        # end
-
         def label
           service = Iiif::Manifest.new
           service.find_label(current_record)
