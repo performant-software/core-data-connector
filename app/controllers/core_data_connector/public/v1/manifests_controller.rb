@@ -43,10 +43,19 @@ module CoreDataConnector
         def build_index_response(items, metadata)
           return {} if items.empty?
 
+          parameters = {
+            project_ids: params[:project_ids]
+          }
+
+          id = Iiif::Manifest.generate_identifier(
+            model_class: current_record.class,
+            uuid: current_record.uuid
+          )
+
           service = TripleEyeEffable::Presentation.new
 
           service.create_collection(
-            id: identifier,
+            id: "#{ENV['HOSTNAME']}/#{id}/#{parameters.to_query}",
             label: label,
             items: items.map{ |i| to_collection_item(i) }
           )
@@ -67,30 +76,18 @@ module CoreDataConnector
 
         private
 
-        def identifier
-          route_name = current_record.class.model_name.route_key.singularize
-          method_name = "public_v1_#{route_name}_manifests_path"
-
-          router_helpers = Engine.routes.url_helpers
-          pathname = router_helpers.send(method_name.to_sym, current_record.uuid)
-
-          url = "#{ENV['HOSTNAME']}#{pathname}"
-
-          parameters = {
-            project_ids: params[:project_ids]
-          }
-
-          "#{url}?#{parameters.to_query}"
-        end
-
         def label
           service = Iiif::Manifest.new
           service.find_label(current_record)
         end
 
         def to_collection_item(manifest)
+          parameters = {
+            project_ids: params[:project_ids]
+          }
+
           {
-            id: "#{ENV['HOSTNAME']}/#{manifest.identifier}",
+            id: "#{ENV['HOSTNAME']}/#{manifest.identifier}?#{parameters.to_query}",
             type: 'Manifest',
             label: manifest.label,
             item_count: manifest.item_count,

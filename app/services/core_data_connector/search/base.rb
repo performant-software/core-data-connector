@@ -327,10 +327,43 @@ module CoreDataConnector
           # Include related records
           build_relationships hash unless skip_relationships
 
+          # Add the year range for related events
+          build_event_range hash
+
           hash
         end
 
         private
+
+        def build_event_range(hash)
+          min_range = nil
+          max_range = nil
+
+          events = [
+            *event_relationships.map{ |r| r.related_record },
+            *event_related_relationships.map{ |r| r.primary_record }
+          ]
+
+          events.each do |event|
+            if min_range.nil? || (event.start_date&.start_date.present? && event.start_date.start_date.year < min_range)
+              min_range = event.start_date&.start_date&.year
+            end
+
+            if min_range.nil? || (event.end_date&.start_date.present? && event.end_date.start_date.year < min_range)
+              min_range = event.end_date&.start_date&.year
+            end
+
+            if max_range.nil? || (event.end_date&.end_date.present? && event.end_date.end_date.year > max_range)
+              max_range = event.end_date&.end_date&.year
+            end
+
+            if max_range.nil? || (event.start_date&.end_date.present? && event.start_date.end_date.year > max_range)
+              max_range = event.start_date&.end_date&.year
+            end
+          end
+
+          hash['event_range_facet'] = [min_range, max_range] unless min_range.nil? || max_range.nil?
+        end
 
         def build_inverse_relationship(relationship, hash)
           project_model_relationship = relationship.project_model_relationship
