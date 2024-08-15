@@ -1,8 +1,20 @@
 module CoreDataConnector
   module Iiif
     class Manifest
+      def self.generate_identifier(model_class:, uuid:, project_model_relationship_uuid: nil)
+        route_name = model_class.model_name.route_key.singularize
+
+        manifest_key = project_model_relationship_uuid.present? ? 'manifest' : 'manifests'
+        method_name = "public_v1_#{route_name}_#{manifest_key}_path"
+
+        router_helpers = Engine.routes.url_helpers
+        router_helpers.send(method_name.to_sym, uuid, project_model_relationship_uuid)
+      end
+
       def find_label(record)
-        if record.is_a?(Place)
+        if record.is_a?(Event)
+          record.name
+        elsif record.is_a?(Place)
           record.name
         elsif record.is_a?(Instance) || record.is_a?(Item) || record.is_a?(Work)
           record.primary_name&.name&.name
@@ -55,14 +67,11 @@ module CoreDataConnector
             hash.keys.each do |project_model_relationship_uuid|
               info = hash[project_model_relationship_uuid]
 
-              identifier = [
-                'core_data',
-                'public',
-                model_class.model_name.route_key,
-                record.uuid,
-                'manifests',
-                project_model_relationship_uuid
-              ].join('/')
+              identifier = self.class.generate_identifier(
+                model_class: model_class,
+                uuid: record.uuid,
+                project_model_relationship_uuid: project_model_relationship_uuid
+              )
 
               # Create or update the manifest records
               project_model_relationship_id = info[:id]
@@ -75,6 +84,8 @@ module CoreDataConnector
                   identifier: identifier
                 )
               end
+
+              manifest.identifier = identifier
 
               # Get the resources from the info object, limiting if required
               resources = info[:resources]
