@@ -8,43 +8,60 @@ module CoreDataConnector
         @current_user = current_user
       end
 
-      # A user can import the set of files if they are an admin or have access to the project(s) containing all of the
+      # A user can analyze the set of files if they are an admin or have access to the project(s) containing all of the
       # models and relationships they are attempting to import.
-      def has_access?(files)
+      def has_analyze_access?(files)
         return true if current_user.admin?
 
-        access = true
+        project_model_ids = files.except(Import::FILE_RELATIONSHIPS)
+                                 .values
+                                 .map{ |v| v[:data]&.map{ |d| d[:import][:project_model_id] } }
+                                 .flatten
+                                 .uniq
 
-        # Verify the user has access to all of the project_models for which they are attempting to import
-        project_model_ids = project_models_query.pluck(:id)
-        model_files = files.except(Import::FILE_RELATIONSHIPS)
+        project_model_relationship_ids = (files.dig(Import::FILE_RELATIONSHIPS, :data) || [])
+                                           .map{ |v| v[:import][:project_model_relationship_id] }
+                                           .flatten
+                                           .uniq
 
-        return false if project_model_ids.empty? && !model_files.empty?
+        has_access?(project_model_ids, project_model_relationship_ids)
+      end
 
-        model_files.keys.each do |filename|
-          model_files[filename][:data].each do |row|
-            project_model_id = row[:import][:project_model_id]
-            (access = false) and break unless project_model_ids.include?(project_model_id)
-          end
+      # A user can import the set of files if they are an admin or have access to the project(s) containing all of the
+      # models and relationships they are attempting to import.
+      def has_import_access?(files)
+        return true if current_user.admin?
 
-          break unless access
-        end
+        project_model_ids = files.except(Import::FILE_RELATIONSHIPS)
+                                 .values
+                                 .map{ |v| v.map{ |d| d['project_model_id'] } }
+                                 .flatten
+                                 .uniq
 
-        # Verify the user has access to all of the project_model_relationships for which they are attempting to import
-        project_model_relationship_ids = project_model_relationships_query.pluck(:id)
-        relationships_file = files[Import::FILE_RELATIONSHIPS]
+        project_model_relationship_ids = files[Import::FILE_RELATIONSHIPS]
+                                           &.map{ |v| v['project_model_relationship_id'] }
+                                           &.uniq
 
-        return false if project_model_relationship_ids.empty? && !relationships_file.empty?
-
-        relationships_file[:data].each do |row|
-          project_model_relationship_id = row[:import][:project_model_relationship_id]
-          (access = false) and break unless project_model_relationship_ids.include?(project_model_relationship_id)
-        end
-
-        access
+        has_access?(project_model_ids, project_model_relationship_ids)
       end
 
       private
+
+      def has_access?(project_model_ids, project_model_relationship_ids)
+        # Return false if the data being imported belongs to a model for which the user does not have access
+        allowed_project_model_ids = project_models_query.pluck(:id)
+        return false unless project_model_ids.all? { |id| allowed_project_model_ids.include?(id) }
+
+        # Return true if we're not importing any relationships
+        return true if project_model_relationship_ids.nil? || project_model_relationship_ids.empty?
+
+        # Return false if the relationship data being imported belongs to a model for which the user does not have access
+        allowed_project_model_relationship_ids = project_model_relationships_query.pluck(:id)
+        return false unless project_model_relationship_ids.all?{ |id| allowed_project_model_relationship_ids.include?(id) }
+
+        # Return true
+        true
+      end
 
       def project_models_query
         ProjectModel
