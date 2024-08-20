@@ -14,8 +14,11 @@ module CoreDataConnector
 
       begin
         project_models.map(&:clear)
-      rescue StandardError => exception
-        errors = [exception]
+      rescue StandardError => error
+        errors = [error]
+
+        # Log the error
+        log_error error
       end
 
       if errors.nil? || errors.empty?
@@ -57,9 +60,12 @@ module CoreDataConnector
         File.open(zip, 'r') do |file|
           send_data file.read, filename: filename, type: 'application/zip', disposition: 'attachment'
         end
-      rescue StandardError => exception
+      rescue StandardError => error
+        # Log the error
+        log_error(error)
+
         # Render a 400 response if an errors occur
-        render json: { errors: [exception] }, status: :bad_request
+        render json: { errors: [error] }, status: :bad_request
       ensure
         # Remove the temporary directory
         FileSystem.remove_directory directory
@@ -85,8 +91,11 @@ module CoreDataConnector
       begin
         service = Configuration.new(project, params[:file])
         service.import_configuration
-      rescue StandardError => exception
-        errors = [exception]
+      rescue StandardError => error
+        errors = [error]
+
+        # Log the error
+        log_error(error)
       end
 
       if errors.nil? || errors.empty?
@@ -108,6 +117,9 @@ module CoreDataConnector
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
       else
+        # Log the error
+        log_error(error)
+
         render json: { errors: errors }, status: :unprocessable_entity
       end
     end

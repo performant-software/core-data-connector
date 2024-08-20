@@ -49,7 +49,7 @@ module CoreDataConnector
 
         # Iterate over the data set and remove any already merged rows, adding them to the "merged" attribute
         # for the row of the primary record.
-        relationship_data = data[FILE_RELATIONSHIPS][:data]
+        relationship_data = data.dig(FILE_RELATIONSHIPS, :data)
 
         data.keys.each do |filename|
           rows = data[filename][:data]
@@ -84,7 +84,7 @@ module CoreDataConnector
         end
 
         # De-duplicate relationships
-        relationship_data.each do |row|
+        relationship_data&.each do |row|
           next if row[:keep].present?
 
           # Find relationship rows where all fields match the current row except the "uuid"
@@ -101,7 +101,7 @@ module CoreDataConnector
         end
 
         # Remove any rows not marked with "keep"
-        relationship_data.delete_if { |r| r[:keep] != true }
+        relationship_data.delete_if { |r| r[:keep] != true } if relationship_data.present?
 
         data
       end

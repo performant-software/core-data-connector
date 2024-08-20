@@ -10,5 +10,11 @@ module CoreDataConnector
     def serializer_class
       "CoreDataConnector::#{"#{controller_name}_serializer".classify}".constantize
     end
+
+    protected
+
+    def log_error(error)
+      Rails.logger.error (["#{self.class} - #{error.class}: #{error.message}", error.backtrace]).join("\n")
+    end
   end
 end
