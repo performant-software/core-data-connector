@@ -197,6 +197,9 @@ module CoreDataConnector
       end
 
       included do
+        # Includes
+        include UserDefinedFields::Converter
+
         # Primary relationships
         has_many :event_relationships, -> {
           where(Relationship.arel_table.name => { related_record_type: CoreDataConnector::Event.to_s })
@@ -431,7 +434,7 @@ module CoreDataConnector
           user_defined_fields.each do |field|
             next unless record.user_defined
 
-            value = record.user_defined[field.uuid]
+            value = convert_value(field, record.user_defined[field.uuid])
             next unless value.present?
 
             key = field.uuid
