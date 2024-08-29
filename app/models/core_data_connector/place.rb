@@ -24,7 +24,7 @@ module CoreDataConnector
     name_table :place_names
 
     # Delegates
-    delegate :name, to: :primary_name
+    delegate :name, to: :primary_name, allow_nil: true
 
     # User defined fields parent
     resolve_defineable -> (place) { place.project_model }
