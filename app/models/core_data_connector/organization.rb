@@ -12,7 +12,7 @@ module CoreDataConnector
     include UserDefinedFields::Fieldable
 
     # Delegates
-    delegate :name, to: :primary_name
+    delegate :name, to: :primary_name, allow_nil: true
 
     name_table :organization_names
 
