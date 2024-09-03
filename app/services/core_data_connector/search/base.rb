@@ -25,25 +25,33 @@ module CoreDataConnector
           Preloader.new(
             records: records,
             associations: [
+              event_relationships: [
+                related_record: [
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
+              ],
               instance_relationships: [
                 related_record: [
                   primary_name: :name,
                   source_titles: :name,
                   project_model: :user_defined_fields
-                ]
+                ],
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               item_relationships: [
                 related_record: [
                   primary_name: :name,
                   source_titles: :name,
                   project_model: :user_defined_fields
-                ]
+                ],
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               media_content_relationships: [
                 related_record: [
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               organization_relationships: [
                 related_record: [
@@ -51,7 +59,7 @@ module CoreDataConnector
                   :organization_names,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               person_relationships: [
                 related_record: [
@@ -59,7 +67,7 @@ module CoreDataConnector
                   :person_names,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               place_relationships: [
                 related_record: [
@@ -68,14 +76,14 @@ module CoreDataConnector
                   :place_names,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               taxonomy_relationships: [
                 related_record: [
                   :name,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               work_relationships: [
                 related_record: [
@@ -83,7 +91,7 @@ module CoreDataConnector
                   source_titles: :name,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, primary_model: :project]
               ]
             ],
             scope: (
@@ -97,13 +105,19 @@ module CoreDataConnector
           Preloader.new(
             records: records,
             associations: [
+              event_related_relationships: [
+                primary_record: [
+                  project_model: :user_defined_fields
+                ],
+                project_model_relationship: [:user_defined_fields, related_model: :project]
+              ],
               instance_related_relationships: [
                 primary_record: [
                   primary_name: :name,
                   source_titles: :name,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               item_related_relationships: [
                 primary_record: [
@@ -111,13 +125,13 @@ module CoreDataConnector
                   source_titles: :name,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               media_content_related_relationships: [
                 primary_record: [
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               organization_related_relationships: [
                 primary_record: [
@@ -125,7 +139,7 @@ module CoreDataConnector
                   :organization_names,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               person_related_relationships: [
                 primary_record: [
@@ -133,7 +147,7 @@ module CoreDataConnector
                   :person_names,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               place_related_relationships: [
                 primary_record: [
@@ -142,14 +156,14 @@ module CoreDataConnector
                   :place_names,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               taxonomy_related_relationships: [
                 primary_record: [
                   :name,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               work_related_relationships: [
                 primary_record: [
@@ -157,7 +171,7 @@ module CoreDataConnector
                   source_titles: :name,
                   project_model: :user_defined_fields
                 ],
-                project_model_relationship: :user_defined_fields
+                project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
             ],
             scope: (
@@ -324,8 +338,29 @@ module CoreDataConnector
           user_defined_fields = build_user_defined(self, project_model.user_defined_fields)
           hash.merge!(user_defined_fields)
 
+          projects = []
+
           # Include related records
-          build_relationships hash unless skip_relationships
+          build_relationships hash, projects unless skip_relationships
+
+          # Only include project information for the base record
+          if !skip_relationships
+            # Add the owning project to the list of all projects
+            add_project(projects, project_model.project)
+
+            # Add the projects to the hash
+            hash['all_projects'] = projects
+            hash['all_projects_facet'] = projects
+
+            # Add the owner project attribute to the hash
+            owner_project = {
+              id: project_model.project.id,
+              name: project_model.project.name
+            }
+
+            hash['owner_project'] = owner_project
+            hash['owner_project_facet'] = owner_project
+          end
 
           # Add the year range for related events
           build_event_range hash
@@ -334,6 +369,12 @@ module CoreDataConnector
         end
 
         private
+
+        def add_project(projects, project)
+          return if projects.any?{ |p| p[:id] == project.id }
+
+          projects << { id: project.id, name: project.name }
+        end
 
         def build_event_range(hash)
           min_range = nil
@@ -365,13 +406,12 @@ module CoreDataConnector
           hash['event_range_facet'] = [min_range, max_range] unless min_range.nil? || max_range.nil?
         end
 
-        def build_inverse_relationship(relationship, hash)
+        def build_inverse_relationship(relationship, hash, projects)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
-          attributes = {
-            inverse: true
-          }
+          # Add the related model project to the list of projects
+          add_project(projects, project_model_relationship.related_model.project)
 
           user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
 
@@ -381,16 +421,15 @@ module CoreDataConnector
                          .primary_record
                          .to_search_json
                          .merge(user_defined)
-                         .merge(attributes)
+                         .merge({ inverse: true })
         end
 
-        def build_relationship(relationship, hash)
+        def build_relationship(relationship, hash, projects)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
-          attributes = {
-            inverse: false
-          }
+          # Add the primary model project to the list of projects
+          add_project(projects, project_model_relationship.primary_model.project)
 
           user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
 
@@ -400,29 +439,29 @@ module CoreDataConnector
                          .related_record
                          .to_search_json
                          .merge(user_defined)
-                         .merge(attributes)
+                         .merge({ inverse: false })
         end
 
-        def build_relationships(hash)
-          event_relationships.each { |r| build_relationship(r, hash) }
-          instance_relationships.each { |r| build_relationship(r, hash) }
-          item_relationships.each { |r| build_relationship(r, hash) }
-          media_content_relationships.each { |r| build_relationship(r, hash) }
-          organization_relationships.each { |r| build_relationship(r, hash) }
-          person_relationships.each { |r| build_relationship(r, hash) }
-          place_relationships.each { |r| build_relationship(r, hash) }
-          taxonomy_relationships.each { |r| build_relationship(r, hash) }
-          work_relationships.each { |r| build_relationship(r, hash) }
+        def build_relationships(hash, projects)
+          event_relationships.each { |r| build_relationship(r, hash, projects) }
+          instance_relationships.each { |r| build_relationship(r, hash, projects) }
+          item_relationships.each { |r| build_relationship(r, hash, projects) }
+          media_content_relationships.each { |r| build_relationship(r, hash, projects) }
+          organization_relationships.each { |r| build_relationship(r, hash, projects) }
+          person_relationships.each { |r| build_relationship(r, hash, projects) }
+          place_relationships.each { |r| build_relationship(r, hash, projects) }
+          taxonomy_relationships.each { |r| build_relationship(r, hash, projects) }
+          work_relationships.each { |r| build_relationship(r, hash, projects) }
 
-          event_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          instance_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          item_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          media_content_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          organization_related_relationships.each { |r| build_inverse_relationship(r,hash) }
-          person_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          place_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash) }
-          work_related_relationships.each { |r| build_inverse_relationship(r, hash) }
+          event_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          instance_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          item_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          organization_related_relationships.each { |r| build_inverse_relationship(r,hash, projects) }
+          person_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          place_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          work_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
         end
 
         def build_user_defined(record, user_defined_fields)
