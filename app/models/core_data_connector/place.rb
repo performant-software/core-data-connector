@@ -21,6 +21,7 @@ module CoreDataConnector
     accepts_nested_attributes_for :place_geometry, allow_destroy: true
     accepts_nested_attributes_for :place_layers, allow_destroy: true
 
+    # Nameable table
     name_table :place_names
 
     # Delegates

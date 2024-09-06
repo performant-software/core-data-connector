@@ -7,9 +7,6 @@ module CoreDataConnector
     include UserDefinedFields::Queryable
 
     # Preloads
-    preloads source_titles: :name
-
-    # Joins
-    joins primary_name: :name
+    preloads :source_names, only: :show
   end
 end

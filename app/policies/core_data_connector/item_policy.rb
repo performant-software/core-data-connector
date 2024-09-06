@@ -33,7 +33,7 @@ module CoreDataConnector
       [ *ownable_attributes,
         :faircopy_cloud_id,
         user_defined: {},
-        source_titles_attributes: [:id, :primary, :name_id, :_destroy, name_attributes: [:id, :name]]
+        source_names_attributes: [:id, :name, :primary, :_destroy]
       ]
     end
 

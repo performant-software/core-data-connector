@@ -8,10 +8,7 @@ module CoreDataConnector
     include UserDefinedFields::Queryable
 
     # Preloads
-    preloads source_titles: :name
-
-    # Joins
-    joins primary_name: :name
+    preloads :source_names, only: :show
 
     def analyze_import
       item = find_record(item_class)

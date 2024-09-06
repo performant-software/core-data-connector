@@ -18,7 +18,7 @@ module CoreDataConnector
     def permitted_attributes
       [ *ownable_attributes,
         user_defined: {},
-        source_titles_attributes: [:id, :primary, :name_id, :_destroy, name_attributes: [:id, :name]]
+        source_names_attributes: [:id, :name, :primary, :_destroy]
       ]
     end
 

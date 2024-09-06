@@ -14,6 +14,7 @@ module CoreDataConnector
     # Delegates
     delegate :first_name, :middle_name, :last_name, to: :primary_name, allow_nil: true
 
+    # Nameable table
     name_table :person_names
 
     # User defined fields parent
