@@ -8,5 +8,8 @@ module CoreDataConnector
 
     # Preloads
     preloads :source_names, only: :show
+
+    # Search attributes
+    search_attributes :name
   end
 end
