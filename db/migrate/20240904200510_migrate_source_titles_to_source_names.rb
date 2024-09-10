@@ -7,7 +7,7 @@ class MigrateSourceTitlesToSourceNames < ActiveRecord::Migration[7.0]
         JOIN core_data_connector_names names ON names.id = source_titles.name_id
     SQL
 
-    execute <<-SQL.suqish
+    execute <<-SQL.squish
       DELETE
         FROM core_data_connector_source_names
        WHERE nameable_type = 'CoreDataConnector::Instance'
@@ -15,7 +15,7 @@ class MigrateSourceTitlesToSourceNames < ActiveRecord::Migration[7.0]
                                     FROM core_data_connector_instances )
     SQL
 
-    execute <<-SQL.suqish
+    execute <<-SQL.squish
       DELETE
         FROM core_data_connector_source_names
        WHERE nameable_type = 'CoreDataConnector::Item'
@@ -23,7 +23,7 @@ class MigrateSourceTitlesToSourceNames < ActiveRecord::Migration[7.0]
                                     FROM core_data_connector_items )
     SQL
 
-    execute <<-SQL.suqish
+    execute <<-SQL.squish
       DELETE
         FROM core_data_connector_source_names
        WHERE nameable_type = 'CoreDataConnector::Work'
