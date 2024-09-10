@@ -13,7 +13,7 @@ module CoreDataConnector
     include Search::Item
 
     # Nameable table
-    name_table :source_names, polymorphic: true
+    name_table :source_names, as: :nameable
 
     # Delegates
     delegate :name, to: :primary_name, allow_nil: true

@@ -3,10 +3,11 @@ module CoreDataConnector
     extend ActiveSupport::Concern
 
     class_methods do
-      def name_table(name, options = nil)
-        if options && options[:polymorphic]
-          self.send(:has_many, name.to_sym, as: :nameable, dependent: :destroy)
-          has_one :primary_name, -> { where(primary: true) }, class_name: name.to_s.classify, as: :nameable
+      def name_table(name, options = {})
+        # Relationships
+        if options && options[:as]
+          self.send(:has_many, name.to_sym, dependent: :destroy, as: options[:as])
+          has_one :primary_name, -> { where(primary: true) }, class_name: name.to_s.classify, as: options[:as]
         else
           self.send(:has_many, name.to_sym, dependent: :destroy)
           has_one :primary_name, -> { where(primary: true) }, class_name: name.to_s.classify
