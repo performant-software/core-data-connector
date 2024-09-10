@@ -1,8 +1,8 @@
 class MigrateSourceTitlesToSourceNames < ActiveRecord::Migration[7.0]
   def change
     execute <<-SQL.squish
-      INSERT INTO core_data_connector_source_names ( nameable_id, nameable_type, name, created_at, updated_at )
-      SELECT source_titles.name_id, source_titles.nameable_type, names.name, source_titles.created_at, source_titles.updated_at
+      INSERT INTO core_data_connector_source_names ( nameable_id, nameable_type, name, "primary", created_at, updated_at )
+      SELECT source_titles.nameable_id, source_titles.nameable_type, names.name, source_titles.primary, source_titles.created_at, source_titles.updated_at
         FROM core_data_connector_source_titles source_titles
         JOIN core_data_connector_names names ON names.id = source_titles.name_id
     SQL
