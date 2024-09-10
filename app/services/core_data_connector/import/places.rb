@@ -34,6 +34,7 @@ module CoreDataConnector
                    updated_at = current_timestamp
               FROM #{table_name} z_places
              WHERE z_places.place_id = place_names.place_id
+               AND place_names.primary = TRUE
 
           )
 

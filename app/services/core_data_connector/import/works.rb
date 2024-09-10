@@ -8,24 +8,31 @@ module CoreDataConnector
           UPDATE core_data_connector_works
             SET z_work_id = NULL
         SQL
-
-        execute <<-SQL.squish
-          UPDATE core_data_connector_names
-            SET z_source_id = NULL,
-                z_source_type = NULL
-        SQL
       end
 
       def load
         super
 
         execute <<-SQL.squish
+          WITH
+ 
+          update_works AS (
+
           UPDATE core_data_connector_works works
              SET z_work_id = z_works.id,
                  user_defined = z_works.user_defined,
                  updated_at = current_timestamp
             FROM #{table_name} z_works
            WHERE z_works.work_id = works.id
+
+          )
+
+          UPDATE core_data_connector_source_names source_names
+             SET name = z_works.name
+            FROM #{table_name} z_works
+           WHERE z_works.work_id = source_names.nameable_id
+             AND source_names.nameable_type = 'CoreDataConnector::Work'
+             AND source_names.primary = TRUE
         SQL
 
         execute <<-SQL.squish
@@ -51,46 +58,24 @@ module CoreDataConnector
             WHERE z_works.work_id IS NULL
           RETURNING id AS work_id, z_work_id
 
-        ),
-
-        insert_names AS (
-
-          INSERT INTO core_data_connector_names (
-            name,
-            z_source_id,
-            z_source_type,
-            created_at,
-            updated_at
-          )
-          SELECT z_works.name,
-                 insert_works.work_id,
-                 'CoreDataConnector::Work',
-                 current_timestamp,
-                 current_timestamp
-            FROM insert_works
-            JOIN #{table_name} z_works ON z_works.id = insert_works.z_work_id
-          RETURNING id AS name_id, z_source_id, z_source_type, name
-
         )
 
-        INSERT INTO core_data_connector_source_titles (
-          nameable_type,
+        INSERT INTO core_data_connector_source_names (
           nameable_id,
-          name_id,
+          nameable_type,
+          name,
           "primary",
           created_at,
           updated_at
         )
-        SELECT 'CoreDataConnector::Work',
-                insert_works.work_id,
-                insert_names.name_id,
-                TRUE,
-                current_timestamp,
-                current_timestamp
-           FROM insert_works
-           JOIN insert_names
-             ON insert_names.z_source_id = insert_works.work_id
-            AND insert_names.z_source_type = 'CoreDataConnector::Work'
+        SELECT insert_works.work_id,
+               'CoreDataConnector::Work',
+               z_works.name,
+               TRUE,
+               current_timestamp,
+               current_timestamp
+          FROM insert_works
+          JOIN #{table_name} z_works ON z_works.id = insert_works.z_work_id
         SQL
       end
 

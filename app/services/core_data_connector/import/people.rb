@@ -35,6 +35,7 @@ module CoreDataConnector
                  updated_at = current_timestamp
            FROM #{table_name} z_people
           WHERE z_people.person_id = person_names.person_id
+            AND person_names.primary = TRUE
         SQL
 
         execute <<-SQL.squish
