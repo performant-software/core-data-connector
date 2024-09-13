@@ -118,7 +118,7 @@ module CoreDataConnector
         render json: { }, status: :ok
       else
         # Log the error
-        log_error(error)
+        log_error(errors.first)
 
         render json: { errors: errors }, status: :unprocessable_entity
       end
