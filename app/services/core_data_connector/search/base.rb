@@ -353,16 +353,15 @@ module CoreDataConnector
 
             # Add the projects to the hash
             hash['all_projects'] = projects
-            hash['all_projects_facet'] = projects
 
             # Add the owner project attribute to the hash
             owner_project = {
               id: project_model.project.id,
-              name: project_model.project.name
+              name: project_model.project.name,
+              name_facet: project_model.project.name
             }
 
             hash['owner_project'] = owner_project
-            hash['owner_project_facet'] = owner_project
           end
 
           # Add the year range for related events
@@ -376,7 +375,7 @@ module CoreDataConnector
         def add_project(projects, project)
           return if projects.any?{ |p| p[:id] == project.id }
 
-          projects << { id: project.id, name: project.name }
+          projects << { id: project.id, name: project.name, name_facet: project.name }
         end
 
         def build_event_range(hash)
