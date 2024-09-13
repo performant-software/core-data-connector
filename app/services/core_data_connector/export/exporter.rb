@@ -75,6 +75,8 @@ module CoreDataConnector
                 # the complete set of all user-defined fields across all models for the current type.
                 user_defined_field_uuids.each do |uuid|
                   value = record.user_defined[uuid] if record.user_defined.present?
+                  value = value.to_json if value.is_a?(Hash) || value.is_a?(Array)
+
                   csv_row[uuid] = value
                 end
 
