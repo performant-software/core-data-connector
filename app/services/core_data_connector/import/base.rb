@@ -52,16 +52,28 @@ module CoreDataConnector
       end
 
       def transform
+        return unless user_defined_columns.present?
+
         # Sets the user_defined column based on any included user-defined fields
         expression = user_defined_columns
-                       .map{ |c| ["'#{ImportAnalyze::Helper.column_name_to_uuid(c[:name])}'", c[:name]] }
+                       .map{ |c| ["'#{c[:uuid]}'", c[:name]] }
                        .flatten
                        .join(', ')
 
-        if !expression.empty?
+        execute <<-SQL.squish
+          UPDATE #{table_name}
+             SET user_defined = json_strip_nulls(json_build_object(#{expression}))
+        SQL
+
+        # Sets the "Select" and "FuzzyDate" user-defined types to JSONB
+        user_defined_columns.each do |column|
+          next unless column[:data_type] == UserDefinedFields::UserDefinedField::DATA_TYPES[:select] && column[:allow_multiple] ||
+            column[:data_type] == UserDefinedFields::UserDefinedField::DATA_TYPES[:fuzzy_date]
+
           execute <<-SQL.squish
             UPDATE #{table_name}
-               SET user_defined = json_strip_nulls(json_build_object(#{expression}))
+               SET user_defined = jsonb_set(user_defined, '{#{column[:uuid]}}', (user_defined->>'#{column[:uuid]}')::jsonb)
+             WHERE user_defined->>'#{column[:uuid]}' IS NOT NULL
           SQL
         end
       end
@@ -94,9 +106,18 @@ module CoreDataConnector
         headers.each do |header|
           next unless ImportAnalyze::Helper.is_user_defined_column?(header)
 
+          uuid = ImportAnalyze::Helper.column_name_to_uuid(header)
+          user_defined_field = UserDefinedFields::UserDefinedField.find_by_uuid(uuid)
+
+          data_type = user_defined_field.data_type
+          allow_multiple = user_defined_field.allow_multiple
+
           columns << {
             name: header,
             type: 'VARCHAR',
+            uuid: uuid,
+            data_type: data_type,
+            allow_multiple: allow_multiple,
             copy: true
           }
         end
