@@ -8,12 +8,9 @@ module CoreDataConnector
         include UserDefinedFields::Queryable
 
         # Preloads
-        preloads source_titles: :name
         preloads project_model: :user_defined_fields
+        preloads :source_names
         preloads web_identifiers: :web_authority, only: :show
-
-        # Joins
-        joins primary_name: :name
       end
     end
   end

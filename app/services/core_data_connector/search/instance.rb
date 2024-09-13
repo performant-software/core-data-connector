@@ -5,7 +5,7 @@ module CoreDataConnector
 
       class_methods do
         def preloads
-          [:primary_name, source_titles: :name]
+          [:primary_name, :source_names]
         end
       end
 
@@ -13,12 +13,15 @@ module CoreDataConnector
         # Includes
         include Base
 
+        # Search attributes
+        search_attribute :name, facet: true
+
         search_attribute(:name) do
-          primary_name.name.name
+          primary_name.name
         end
 
         search_attribute(:names, facet: true) do
-          source_titles.map { |st| st.name.name }
+          source_names.map(&:name)
         end
       end
 

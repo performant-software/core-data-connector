@@ -43,9 +43,9 @@ module CoreDataConnector
       when Event.to_s
         query = query.preload(params[:inverse] ? { primary_record: [:start_date, :end_date] } : { related_record: [:start_date, :end_date] })
       when Instance.to_s
-        query = query.preload(params[:inverse] ? { primary_record: [primary_name: :name] } : { related_record: [primary_name: :name] })
+        query = query.preload(params[:inverse] ? { primary_record: :primary_name } : { related_record: :primary_name })
       when Item.to_s
-        query = query.preload(params[:inverse] ? { primary_record: [primary_name: :name] } : { related_record: [primary_name: :name] })
+        query = query.preload(params[:inverse] ? { primary_record: :primary_name } : { related_record: :primary_name })
       when MediaContent.to_s
         query = query.preload(params[:inverse] ? :primary_record : :related_record)
       when Organization.to_s
@@ -57,7 +57,7 @@ module CoreDataConnector
       when Taxonomy.to_s
         query = query.preload(params[:inverse] ? :primary_record : :related_record)
       when Work.to_s
-        query = query.preload(params[:inverse] ? { primary_record: [primary_name: :name] } : { related_record: [primary_name: :name] })
+        query = query.preload(params[:inverse] ? { primary_record: :primary_name } : { related_record: :primary_name })
       end
 
       # For sorting, left join the polymorphic model we're currently looking at.
@@ -65,9 +65,9 @@ module CoreDataConnector
       when Event.to_s
         query = query.joins(params[:inverse] ? :inverse_related_event : :related_event).joins(Event.start_date_join, Event.end_date_join)
       when Instance.to_s
-        query = query.joins(params[:inverse] ? { inverse_related_instance: [primary_name: :name] } : { related_instance: [primary_name: :name] })
+        query = query.joins(params[:inverse] ? { inverse_related_instance: :primary_name } : { related_instance: :primary_name })
       when Item.to_s
-        query = query.joins(params[:inverse] ? { inverse_related_item: [primary_name: :name] } : { related_item: [primary_name: :name] })
+        query = query.joins(params[:inverse] ? { inverse_related_item: :primary_name } : { related_item: :primary_name })
       when MediaContent.to_s
         query = query.joins(params[:inverse] ? :inverse_related_media_content : :related_media_content)
       when Organization.to_s
@@ -79,7 +79,7 @@ module CoreDataConnector
       when Taxonomy.to_s
         query = query.joins(params[:inverse] ? :inverse_related_taxonomy : :related_taxonomy)
       when Work.to_s
-        query = query.joins(params[:inverse] ? { inverse_related_work: [primary_name: :name] } : { related_work: [primary_name: :name] })
+        query = query.joins(params[:inverse] ? { inverse_related_work: :primary_name } : { related_work: :primary_name })
       end
 
       query
@@ -122,6 +122,8 @@ module CoreDataConnector
     end
 
     def search_related_records(query)
+      return query unless params[:search].present?
+
       or_query = nil
 
       case model_class
@@ -129,25 +131,11 @@ module CoreDataConnector
         attribute = "#{Event.arel_table.name}.#{Event.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
       when Instance.to_s
-        or_query = Instance.where(
-          Name
-            .joins(:source_titles)
-            .where(SourceTitle.arel_table[:primary].eq(true))
-            .where(SourceTitle.arel_table[:nameable_id].eq(Instance.arel_table[:id]))
-            .where(SourceTitle.arel_table[:nameable_type].eq(Instance.to_s))
-            .where('core_data_connector_names.name ILIKE ?', "%#{params[:search]}%")
-            .arel.exists
-          )
+        attribute = "#{SourceName.arel_table.name}.#{SourceName.arel_table[:name].name}"
+        or_query = resolve_search_query(attribute)
       when Item.to_s
-        or_query = Item.where(
-          Name
-            .joins(:source_titles)
-            .where(SourceTitle.arel_table[:primary].eq(true))
-            .where(SourceTitle.arel_table[:nameable_id].eq(Item.arel_table[:id]))
-            .where(SourceTitle.arel_table[:nameable_type].eq(Item.to_s))
-            .where('core_data_connector_names.name ILIKE ?', "%#{params[:search]}%")
-            .arel.exists
-          )
+        attribute = "#{SourceName.arel_table.name}.#{SourceName.arel_table[:name].name}"
+        or_query = resolve_search_query(attribute)
       when MediaContent.to_s
         attribute = "#{MediaContent.arel_table.name}.#{MediaContent.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
@@ -163,15 +151,8 @@ module CoreDataConnector
         attribute = "#{Taxonomy.arel_table.name}.#{Taxonomy.arel_table[:name].name}"
         or_query = resolve_search_query(attribute)
       when Work.to_s
-        or_query = Work.where(
-          Name
-            .joins(:source_titles)
-            .where(SourceTitle.arel_table[:primary].eq(true))
-            .where(SourceTitle.arel_table[:nameable_id].eq(Work.arel_table[:id]))
-            .where(SourceTitle.arel_table[:nameable_type].eq(Work.to_s))
-            .where('core_data_connector_names.name ILIKE ?', "%#{params[:search]}%")
-            .arel.exists
-          )
+        attribute = "#{SourceName.arel_table.name}.#{SourceName.arel_table[:name].name}"
+        or_query = resolve_search_query(attribute)
       end
 
       return query if or_query.nil?

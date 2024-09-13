@@ -16,10 +16,7 @@ module CoreDataConnector
         # Export attributes
         export_attribute :project_model_id
         export_attribute :uuid
-
-        export_attribute(:name) do
-          primary_name&.name&.name
-        end
+        export_attribute :name
       end
     end
   end

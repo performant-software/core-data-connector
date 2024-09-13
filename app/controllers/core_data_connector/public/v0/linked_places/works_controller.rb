@@ -8,13 +8,9 @@ module CoreDataConnector
           include UnauthenticateableController
           include UserDefinedFields::Queryable
 
-          # Joins
-          joins :primary_name
-
           # Preloads
-          preloads primary_name: :name
           preloads project_model: :user_defined_fields
-          preloads source_titles: :name
+          preloads :source_names, only: :show
         end
       end
     end

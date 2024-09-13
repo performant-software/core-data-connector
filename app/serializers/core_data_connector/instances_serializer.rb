@@ -3,7 +3,7 @@ module CoreDataConnector
     include OwnableSerializer
     include UserDefinedFields::FieldableSerializer
 
-    index_attributes :id, primary_name: SourceTitlesSerializer, source_titles: SourceTitlesSerializer
-    show_attributes :id, primary_name: SourceTitlesSerializer, source_titles: SourceTitlesSerializer
+    index_attributes :id, :name
+    show_attributes :id, :name, source_names: [:id, :name, :primary]
   end
 end

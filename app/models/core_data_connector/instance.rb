@@ -12,7 +12,10 @@ module CoreDataConnector
     include Search::Instance
 
     # Nameable table
-    name_table :source_titles, polymorphic: true
+    name_table :source_names, as: :nameable
+
+    # Delegates
+    delegate :name, to: :primary_name, allow_nil: true
 
     # User defined fields parent
     resolve_defineable -> (organization) { organization.project_model }

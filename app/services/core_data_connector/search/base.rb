@@ -33,16 +33,16 @@ module CoreDataConnector
               ],
               instance_relationships: [
                 related_record: [
-                  primary_name: :name,
-                  source_titles: :name,
+                  :primary_name,
+                  :source_names,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               item_relationships: [
                 related_record: [
-                  primary_name: :name,
-                  source_titles: :name,
+                  :primary_name,
+                  :source_names,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: [:user_defined_fields, primary_model: :project]
@@ -87,8 +87,8 @@ module CoreDataConnector
               ],
               work_relationships: [
                 related_record: [
-                  primary_name: :name,
-                  source_titles: :name,
+                  :primary_name,
+                  :source_names,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: [:user_defined_fields, primary_model: :project]
@@ -113,16 +113,16 @@ module CoreDataConnector
               ],
               instance_related_relationships: [
                 primary_record: [
-                  primary_name: :name,
-                  source_titles: :name,
+                  :primary_name,
+                  :source_names,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               item_related_relationships: [
                 primary_record: [
-                  primary_name: :name,
-                  source_titles: :name,
+                  :primary_name,
+                  :source_names,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: [:user_defined_fields, related_model: :project]
@@ -167,8 +167,8 @@ module CoreDataConnector
               ],
               work_related_relationships: [
                 primary_record: [
-                  primary_name: :name,
-                  source_titles: :name,
+                  :primary_name,
+                  :source_names,
                   project_model: :user_defined_fields
                 ],
                 project_model_relationship: [:user_defined_fields, related_model: :project]

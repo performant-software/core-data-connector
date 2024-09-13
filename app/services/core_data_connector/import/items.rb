@@ -8,24 +8,31 @@ module CoreDataConnector
           UPDATE core_data_connector_items
             SET z_item_id = NULL
         SQL
-
-        execute <<-SQL.squish
-          UPDATE core_data_connector_names
-            SET z_source_id = NULL,
-                z_source_type = NULL
-        SQL
       end
 
       def load
         super
 
         execute <<-SQL.squish
+          WITH
+
+          update_items AS (
+
           UPDATE core_data_connector_items items
              SET z_item_id = z_items.id,
                  user_defined = z_items.user_defined,
                  updated_at = current_timestamp
             FROM #{table_name} z_items
            WHERE z_items.item_id = items.id
+
+          )
+
+          UPDATE core_data_connector_source_names source_names
+             SET name = z_items.name
+            FROM #{table_name} z_items
+           WHERE z_items.item_id = source_names.nameable_id
+             AND source_names.nameable_type = 'CoreDataConnector::Item'
+             AND source_names.primary = TRUE
         SQL
 
         execute <<-SQL.squish
@@ -51,46 +58,24 @@ module CoreDataConnector
             WHERE z_items.item_id IS NULL
           RETURNING id AS item_id, z_item_id
 
-        ),
-
-        insert_names AS (
-
-          INSERT INTO core_data_connector_names (
-            name,
-            z_source_id,
-            z_source_type,
-            created_at,
-            updated_at
-          )
-          SELECT z_items.name,
-                 insert_items.item_id,
-                 'CoreDataConnector::Item',
-                 current_timestamp,
-                 current_timestamp
-            FROM insert_items
-            JOIN #{table_name} z_items ON z_items.id = insert_items.z_item_id
-          RETURNING id AS name_id, z_source_id, z_source_type, name
-
         )
 
-        INSERT INTO core_data_connector_source_titles (
-          nameable_type,
+        INSERT INTO core_data_connector_source_names (
           nameable_id,
-          name_id,
+          nameable_type,
+          name,
           "primary",
           created_at,
           updated_at
         )
-        SELECT 'CoreDataConnector::Item',
-                insert_items.item_id,
-                insert_names.name_id,
-                TRUE,
-                current_timestamp,
-                current_timestamp
-           FROM insert_items
-           JOIN insert_names
-             ON insert_names.z_source_id = insert_items.item_id
-            AND insert_names.z_source_type = 'CoreDataConnector::Item'
+        SELECT insert_items.item_id, 
+               'CoreDataConnector::Item', 
+               z_items.name, 
+               TRUE, 
+               current_timestamp, 
+               current_timestamp
+          FROM insert_items
+          JOIN #{table_name} z_items ON z_items.id = insert_items.z_item_id
         SQL
       end
 

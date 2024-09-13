@@ -20,8 +20,6 @@ module Admin
         post :merge, on: :collection
       end
 
-      resources :names, only: :index
-
       resources :organizations do
         post :merge, on: :collection
       end

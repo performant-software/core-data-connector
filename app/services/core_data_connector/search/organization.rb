@@ -14,11 +14,8 @@ module CoreDataConnector
         include Base
 
         # Search attributes
+        search_attribute :name, facet: true
         search_attribute :description
-
-        search_attribute(:name) do
-          primary_name.name
-        end
 
         search_attribute(:names, facet: true) do
           organization_names.map(&:name)
