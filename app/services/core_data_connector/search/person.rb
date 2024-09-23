@@ -14,8 +14,11 @@ module CoreDataConnector
         include Base
 
         # Search attributes
-        search_attribute :name, facet: true
         search_attribute :biography
+
+        search_attribute(:name, facet: true) do
+          create_name primary_name
+        end
 
         search_attribute(:names, facet: true) do
           person_names.map { |n| create_name(n) }
