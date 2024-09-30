@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Export::Taxonomy
     include Identifiable
+    include ImportAnalyze::Taxonomy
     include Manifestable
     include Mergeable
     include Ownable

@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Export::Instance
     include Identifiable
+    include ImportAnalyze::Instance
     include Manifestable
     include Mergeable
     include Nameable

@@ -10,14 +10,14 @@ module CoreDataConnector
         item = item_class.new(prepare_params)
         authorize_create item
 
-        preloads = [
-          :project_model,
-          relationships: [:related_record, project_model_relationship: :user_defined_fields],
-          related_relationships: [:primary_record, project_model_relationship: :user_defined_fields],
-        ]
+        # preloads = [
+        #   :project_model,
+        #   relationships: [:related_record, project_model_relationship: :user_defined_fields],
+        #   related_relationships: [:primary_record, project_model_relationship: :user_defined_fields],
+        # ]
 
         items = item_class
-                  .preload(preloads)
+                  .preload(ImportAnalyze::Helper::PRELOADS)
                   .where(id: params[:ids])
 
         authorize_destroy items

@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Export::Person
     include Identifiable
+    include ImportAnalyze::Person
     include Manifestable
     include Mergeable
     include Nameable

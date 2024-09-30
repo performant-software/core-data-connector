@@ -1,7 +1,7 @@
 module CoreDataConnector
   module Import
     class Importer
-      attr_reader :importers
+      attr_reader :importers, :import_id
 
       IMPORTERS = [{
         importer_class: Events,
@@ -45,12 +45,13 @@ module CoreDataConnector
         filepath = "#{directory}/#{filename}"
 
         if File.exist? filepath
-          @importers << klass.new(filepath)
+          @importers << klass.new(filepath, import_id)
         end
       end
 
       def initialize(directory)
         @importers = []
+        @import_id = SecureRandom.uuid
 
         IMPORTERS.each do |importer|
           populate_importer(importer, directory)
@@ -80,6 +81,8 @@ module CoreDataConnector
         importers.each do |importer|
           importer.cleanup
         end
+
+        import_id
       end
     end
   end
