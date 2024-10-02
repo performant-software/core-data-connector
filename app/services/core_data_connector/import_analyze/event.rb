@@ -7,10 +7,6 @@ module CoreDataConnector
       include Base
 
       class_methods do
-        def base_query
-          joins(:primary_name)
-        end
-
         def group_by_columns
           [:name]
         end
