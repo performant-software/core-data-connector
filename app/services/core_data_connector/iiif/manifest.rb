@@ -12,13 +12,11 @@ module CoreDataConnector
       end
 
       def find_label(record)
-        if record.is_a?(Event)
-          record.name
-        elsif record.is_a?(Place)
-          record.name
-        elsif record.is_a?(Instance) || record.is_a?(Item) || record.is_a?(Work)
-          record.primary_name&.name&.name
-        end
+        return record.full_name if record.is_a?(Person)
+
+        return record.name if record.respond_to?(:name)
+
+        nil
       end
 
       def reset_manifests
