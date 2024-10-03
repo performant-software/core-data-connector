@@ -24,7 +24,6 @@ module CoreDataConnector
           base_query
             .select(select_columns)
             .where(import_id: import_id)
-            # .where(project_model_id: 34)
             .group(group_by_columns)
             .having('COUNT(*) > 1')
         end
