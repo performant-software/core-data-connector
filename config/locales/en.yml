@@ -1,11 +1,89 @@
 en:
 
   authorization:
+    core_data_connector/event_policy:
+      create?: "You do not have permission to create an event."
+      delete?: "You do not have permission to delete this event."
+      import?: "You do not have permission to import data into this event."
+      show?: "You do not have permission to view this event."
+      update?: "You do not have permission to update this event."
+
+    core_data_connector/instance_policy:
+      create?: "You do not have permission to create an instance."
+      delete?: "You do not have permission to delete this instance."
+      import?: "You do not have permission to import data into this instance."
+      show?: "You do not have permission to view this instance."
+      update?: "You do not have permission to update this instance."
+
+    core_data_connector/item_policy:
+      create?: "You do not have permission to create an item."
+      delete?: "You do not have permission to delete this item."
+      import?: "You do not have permission to import data into this item."
+      show?: "You do not have permission to view this item."
+      update?: "You do not have permission to update this item."
+
+    core_data_connector/media_content_policy:
+      create?: "You do not have permission to create a media_content."
+      delete?: "You do not have permission to delete this media_content."
+      import?: "You do not have permission to import data into this media_content."
+      show?: "You do not have permission to view this media_content."
+      update?: "You do not have permission to update this media_content."
+
+    core_data_connector/organization_policy:
+      create?: "You do not have permission to create an organization."
+      delete?: "You do not have permission to delete this organization."
+      import?: "You do not have permission to import data into this organization."
+      show?: "You do not have permission to view this organization."
+      update?: "You do not have permission to update this organization."
+
+    core_data_connector/person_policy:
+      create?: "You do not have permission to create a person."
+      delete?: "You do not have permission to delete this person."
+      import?: "You do not have permission to import data into this person."
+      show?: "You do not have permission to view this person."
+      update?: "You do not have permission to update this person."
+
+    core_data_connector/place_policy:
+      create?: "You do not have permission to create a place."
+      delete?: "You do not have permission to delete this place."
+      import?: "You do not have permission to import data into this place."
+      show?: "You do not have permission to view this place."
+      update?: "You do not have permission to update this place."
+
     core_data_connector/project_policy:
       create?: "You do not have permission to create a project."
       delete?: "You do not have permission to delete this project."
       import?: "You do not have permission to import data into this project."
+      show?: "You do not have permission to view this project."
       update?: "You do not have permission to update this project."
+
+    core_data_connector/record_merge_policy:
+      create?: "You do not have permission to create a record merge."
+      delete?: "You do not have permission to delete this record merge."
+      import?: "You do not have permission to import data into this record merge."
+      show?: "You do not have permission to view this record merge."
+      update?: "You do not have permission to update this record merge."
+
+    core_data_connector/relationship_policy:
+      create?: "You do not have permission to create a relationship."
+      delete?: "You do not have permission to delete this relationship."
+      import?: "You do not have permission to import data into this relationship."
+      show?: "You do not have permission to view this relationship."
+      update?: "You do not have permission to update this relationship."
+
+    core_data_connector/taxonomy_policy:
+      create?: "You do not have permission to create a taxonomy."
+      delete?: "You do not have permission to delete this taxonomy."
+      import?: "You do not have permission to import data into this taxonomy."
+      show?: "You do not have permission to view this taxonomy."
+      update?: "You do not have permission to update this taxonomy."
+
+    core_data_connector/work_policy:
+      create?: "You do not have permission to create a work."
+      delete?: "You do not have permission to delete this work."
+      import?: "You do not have permission to import data into this work."
+      show?: "You do not have permission to view this work."
+      update?: "You do not have permission to update this work."
 
   errors:
     http:

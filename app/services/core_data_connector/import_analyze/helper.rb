@@ -4,6 +4,12 @@ module CoreDataConnector
 
       PREFIX_USER_DEFINED = 'udf_'
 
+      PRELOADS = [
+        :project_model,
+        relationships: [:related_record, project_model_relationship: :user_defined_fields],
+        related_relationships: [:primary_record, project_model_relationship: :user_defined_fields],
+      ]
+
       def self.column_name_to_uuid(column_name)
         column_name.gsub(PREFIX_USER_DEFINED, '').gsub('_', '-')
       end

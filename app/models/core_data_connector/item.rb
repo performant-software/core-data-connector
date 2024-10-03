@@ -4,6 +4,7 @@ module CoreDataConnector
     include Export::Item
     include FccImportable
     include Identifiable
+    include ImportAnalyze::Item
     include Manifestable
     include Mergeable
     include Nameable

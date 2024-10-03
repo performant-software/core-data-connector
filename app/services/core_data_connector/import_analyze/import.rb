@@ -84,12 +84,12 @@ module CoreDataConnector
         end
 
         # De-duplicate relationships
-        relationship_data&.each do |row|
+        relationship_data&.each.with_index do |row, i|
           next if row[:keep].present?
 
-          # Find relationship rows where all fields match the current row except the "uuid"
+          # Find relationship rows where all fields match the current row except the index
           relationship = row[:import].except(:uuid)
-          duplicates = relationship_data.select { |r| r[:import][:uuid] != row[:import][:uuid] && r[:import].except(:uuid) == relationship }
+          duplicates = relationship_data.select.with_index { |r, j|  i != j && r[:import].except(:uuid) == relationship }
 
           # Keep row with an existing record in the database, or the first. Mark all other for delete.
           all = [row, *duplicates]
@@ -115,7 +115,7 @@ module CoreDataConnector
         # Generate the CSV files from the passed files hash
         files.keys.each do |filename|
           CSV.open("#{directory}/#{filename}", 'w') do |csv|
-            records = files[filename]
+            records = files[filename][:data]
             csv << records.first.keys
 
             records.each do |record|
@@ -136,6 +136,26 @@ module CoreDataConnector
 
         # Return the file path to the created zip file
         zipfile_name
+      end
+
+      def remove_duplicates(files, import_id)
+        service = Merge::Merger.new
+
+        files.keys.each do |filename|
+          next unless files[filename][:remove_duplicates].to_s.to_bool
+
+          klass = find_class(filename)
+          grouped_duplicates = klass.find_duplicates(import_id)
+
+          next if grouped_duplicates.empty?
+
+          grouped_duplicates.each do |group|
+            primary = klass.preload(Helper::PRELOADS).find(group.primary_id)
+            duplicates = klass.preload(Helper::PRELOADS).where(id: group.duplicate_ids)
+
+            service.merge(primary, duplicates)
+          end
+        end
       end
 
       private

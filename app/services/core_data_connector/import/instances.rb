@@ -21,6 +21,7 @@ module CoreDataConnector
             UPDATE core_data_connector_instances instances
                SET z_instance_id = z_instances.id,
                    user_defined = z_instances.user_defined,
+                   import_id = z_instances.import_id,
                    updated_at = current_timestamp
               FROM #{table_name} z_instances
              WHERE z_instances.instance_id = instances.id
@@ -40,23 +41,25 @@ module CoreDataConnector
 
         insert_instances AS (
 
-          INSERT INTO core_data_connector_instances (
-            project_model_id,
-            uuid,
-            z_instance_id,
-            user_defined,
-            created_at,
-            updated_at
-          )
-          SELECT z_instances.project_model_id,
-                 z_instances.uuid,
-                 z_instances.id,
-                 z_instances.user_defined,
-                 current_timestamp,
-                 current_timestamp
-            FROM #{table_name} z_instances
-            WHERE z_instances.instance_id IS NULL
-          RETURNING id AS instance_id, z_instance_id
+        INSERT INTO core_data_connector_instances (
+          project_model_id,
+          uuid,
+          z_instance_id,
+          user_defined,
+          import_id,
+          created_at,
+          updated_at
+        )
+        SELECT z_instances.project_model_id,
+               z_instances.uuid,
+               z_instances.id,
+               z_instances.user_defined,
+               z_instances.import_id,
+               current_timestamp,
+               current_timestamp
+          FROM #{table_name} z_instances
+         WHERE z_instances.instance_id IS NULL
+        RETURNING id AS instance_id, z_instance_id
 
         )
 
@@ -81,12 +84,6 @@ module CoreDataConnector
 
       def transform
         super
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_instances
-             SET uuid = gen_random_uuid()
-           WHERE z_instances.uuid IS NULL
-        SQL
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_instances
@@ -117,6 +114,9 @@ module CoreDataConnector
         }, {
           name: 'user_defined',
           type: 'JSONB'
+        }, {
+          name: 'import_id',
+          type: 'UUID'
         }]
       end
 

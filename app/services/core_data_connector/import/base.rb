@@ -3,10 +3,11 @@ require 'csv'
 module CoreDataConnector
   module Import
     class Base
-      attr_reader :filepath, :table_name, :user_defined_columns
+      attr_reader :filepath, :import_id, :table_name, :user_defined_columns
 
-      def initialize(filepath)
+      def initialize(filepath, import_id)
         @filepath = filepath
+        @import_id = import_id
 
         @connection = ActiveRecord::Base.connection
         @table_name = create_table_name
@@ -52,6 +53,19 @@ module CoreDataConnector
       end
 
       def transform
+        # Set the uuid value for any NULL records
+        execute <<-SQL.squish
+          UPDATE #{table_name}
+             SET uuid = gen_random_uuid()
+           WHERE uuid IS NULL
+        SQL
+
+        # Set the import_id value for each record
+        execute <<-SQL.squish
+          UPDATE #{table_name}
+             SET import_id = '#{import_id}'
+        SQL
+
         return unless user_defined_columns.present?
 
         # Sets the user_defined column based on any included user-defined fields

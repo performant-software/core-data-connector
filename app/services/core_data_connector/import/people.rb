@@ -22,6 +22,7 @@ module CoreDataConnector
                SET z_person_id = z_people.id,
                    biography = z_people.biography,
                    user_defined = z_people.user_defined,
+                   import_id = z_people.import_id,
                    updated_at = current_timestamp
               FROM #{table_name} z_people
              WHERE z_people.person_id = people.id
@@ -43,8 +44,24 @@ module CoreDataConnector
           
           insert_people AS (
 
-          INSERT INTO core_data_connector_people (project_model_id, uuid, z_person_id, biography, user_defined, created_at, updated_at)
-          SELECT z_people.project_model_id, z_people.uuid, z_people.id, z_people.biography, z_people.user_defined, current_timestamp, current_timestamp
+          INSERT INTO core_data_connector_people (
+            project_model_id, 
+            uuid, 
+            z_person_id, 
+            biography, 
+            user_defined,
+            import_id,
+            created_at, 
+            updated_at
+          )
+          SELECT z_people.project_model_id, 
+                 z_people.uuid, 
+                 z_people.id, 
+                 z_people.biography, 
+                 z_people.user_defined,
+                 z_people.import_id,
+                 current_timestamp, 
+                 current_timestamp
             FROM #{table_name} z_people
            WHERE z_people.person_id IS NULL
           RETURNING id AS person_id, z_person_id
@@ -70,12 +87,6 @@ module CoreDataConnector
 
       def transform
         super
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_people
-             SET uuid = gen_random_uuid()
-           WHERE z_people.uuid IS NULL
-        SQL
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_people
@@ -118,6 +129,9 @@ module CoreDataConnector
          }, {
            name: 'user_defined',
            type: 'JSONB'
+         }, {
+           name: 'import_id',
+           type: 'UUID'
          }]
       end
 

@@ -24,17 +24,19 @@ module CoreDataConnector
               zipfile.extract(entry, File.join(destination, entry.name))
             end
           end
+
+          import_id = nil
       
           # Create a new importer with the temp directory and run it
           ActiveRecord::Base.transaction do
             importer = CoreDataConnector::Import::Importer.new(destination)
-            importer.run
+            import_id = importer.run
           end
       
           # Remove the temporary directory
           FileUtils.rm_rf(destination)
       
-          return true, []
+          return true, [], import_id
         rescue ActiveRecord::RecordInvalid => exception
           return false, [exception]
         rescue StandardError => exception

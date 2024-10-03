@@ -4,6 +4,7 @@ module CoreDataConnector
     include Export::Event
     include FuzzyDates::FuzzyDateable
     include Identifiable
+    include ImportAnalyze::Event
     include Manifestable
     include Mergeable
     include Ownable

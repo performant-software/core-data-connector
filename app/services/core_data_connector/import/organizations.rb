@@ -22,6 +22,7 @@ module CoreDataConnector
              SET z_organization_id = z_organizations.id,
                  description = z_organizations.description,
                  user_defined = z_organizations.user_defined,
+                 import_id = z_organizations.import_id,
                  updated_at = current_timestamp
             FROM #{table_name} z_organizations
            WHERE z_organizations.organization_id = organizations.id
@@ -45,15 +46,17 @@ module CoreDataConnector
             project_model_id, uuid, 
             z_organization_id, 
             description, 
-            user_defined, 
+            user_defined,
+            import_id,
             created_at, 
             updated_at
-            )
+          )
           SELECT z_organizations.project_model_id, 
                  z_organizations.uuid, 
                  z_organizations.id, 
                  z_organizations.description, 
                  z_organizations.user_defined, 
+                 z_organizations.import_id,
                  current_timestamp, 
                  current_timestamp
             FROM #{table_name} z_organizations
@@ -81,12 +84,6 @@ module CoreDataConnector
 
       def transform
         super
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_organizations
-             SET uuid = gen_random_uuid()
-           WHERE z_organizations.uuid IS NULL
-        SQL
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_organizations
@@ -121,6 +118,9 @@ module CoreDataConnector
          }, {
            name: 'user_defined',
            type: 'JSONB'
+         }, {
+           name: 'import_id',
+           type: 'UUID'
          }]
       end
 

@@ -21,6 +21,7 @@ module CoreDataConnector
                  name = z_events.name,
                  description = z_events.description,
                  user_defined = z_events.user_defined,
+                 import_id = z_events.import_id,
                  updated_at = current_timestamp
             FROM #{table_name} z_events
            WHERE z_events.event_id = events.id
@@ -65,7 +66,8 @@ module CoreDataConnector
             z_event_id, 
             name, 
             description, 
-            user_defined, 
+            user_defined,
+            import_id,
             created_at, 
             updated_at
           )
@@ -74,7 +76,8 @@ module CoreDataConnector
                  z_events.id, 
                  z_events.name, 
                  z_events.description, 
-                 z_events.user_defined, 
+                 z_events.user_defined,
+                 z_events.import_id,
                  current_timestamp, 
                  current_timestamp
             FROM #{table_name} z_events
@@ -153,12 +156,6 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_events
-             SET uuid = gen_random_uuid()
-           WHERE z_events.uuid IS NULL
-        SQL
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_events
              SET event_id = events.id
             FROM core_data_connector_events events
            WHERE events.uuid = z_events.uuid
@@ -230,6 +227,9 @@ module CoreDataConnector
          }, {
            name: 'end_date_end_date',
            type: 'DATE'
+         }, {
+           name: 'import_id',
+           type: 'UUID'
          }]
       end
 

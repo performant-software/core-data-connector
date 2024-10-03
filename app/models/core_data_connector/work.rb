@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Export::Work
     include Identifiable
+    include ImportAnalyze::Work
     include Manifestable
     include Mergeable
     include Nameable

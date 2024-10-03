@@ -21,6 +21,7 @@ module CoreDataConnector
           UPDATE core_data_connector_items items
              SET z_item_id = z_items.id,
                  user_defined = z_items.user_defined,
+                 import_id = z_items.import_id,
                  updated_at = current_timestamp
             FROM #{table_name} z_items
            WHERE z_items.item_id = items.id
@@ -40,23 +41,25 @@ module CoreDataConnector
 
         insert_items AS (
 
-          INSERT INTO core_data_connector_items (
-            project_model_id,
-            uuid,
-            z_item_id,
-            user_defined,
-            created_at,
-            updated_at
-          )
-          SELECT z_items.project_model_id,
-                 z_items.uuid,
-                 z_items.id,
-                 z_items.user_defined,
-                 current_timestamp,
-                 current_timestamp
-            FROM #{table_name} z_items
-            WHERE z_items.item_id IS NULL
-          RETURNING id AS item_id, z_item_id
+        INSERT INTO core_data_connector_items (
+          project_model_id,
+          uuid,
+          z_item_id,
+          user_defined,
+          import_id,
+          created_at,
+          updated_at
+        )
+        SELECT z_items.project_model_id,
+               z_items.uuid,
+               z_items.id,
+               z_items.user_defined,
+               z_items.import_id,
+               current_timestamp,
+               current_timestamp
+          FROM #{table_name} z_items
+         WHERE z_items.item_id IS NULL
+        RETURNING id AS item_id, z_item_id
 
         )
 
@@ -81,12 +84,6 @@ module CoreDataConnector
 
       def transform
         super
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_items
-             SET uuid = gen_random_uuid()
-           WHERE z_items.uuid IS NULL
-        SQL
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_items
@@ -117,6 +114,9 @@ module CoreDataConnector
         }, {
           name: 'user_defined',
           type: 'JSONB'
+        }, {
+          name: 'import_id',
+          type: 'UUID'
         }]
       end
 

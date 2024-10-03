@@ -47,6 +47,8 @@ module Admin
         post :import_data, on: :member
       end
 
+      resources :record_merges, only: [:index, :destroy]
+
       resources :relationships do
         post :upload, on: :collection
       end

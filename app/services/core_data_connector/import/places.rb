@@ -21,6 +21,7 @@ module CoreDataConnector
             UPDATE core_data_connector_places places
                SET z_place_id = z_places.id,
                    user_defined = z_places.user_defined,
+                   import_id = z_places.import_id,
                    updated_at = current_timestamp
               FROM #{table_name} z_places
              WHERE z_places.place_id = places.id
@@ -50,8 +51,22 @@ module CoreDataConnector
 
           insert_places AS (
 
-          INSERT INTO core_data_connector_places (project_model_id, uuid, z_place_id, user_defined, created_at, updated_at)
-          SELECT z_places.project_model_id, z_places.uuid, z_places.id, z_places.user_defined, current_timestamp, current_timestamp
+          INSERT INTO core_data_connector_places (
+            project_model_id, 
+            uuid, 
+            z_place_id, 
+            user_defined,
+            import_id,
+            created_at, 
+            updated_at
+          )
+          SELECT z_places.project_model_id, 
+                 z_places.uuid, 
+                 z_places.id, 
+                 z_places.user_defined,
+                 z_places.import_id,
+                 current_timestamp, 
+                 current_timestamp
             FROM #{table_name} z_places
            WHERE z_places.place_id IS NULL
           RETURNING id AS place_id, z_place_id
@@ -90,12 +105,6 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_places
-             SET uuid = gen_random_uuid()
-           WHERE z_places.uuid IS NULL
-        SQL
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_places
              SET place_id = places.id
             FROM core_data_connector_places places
            WHERE places.uuid = z_places.uuid
@@ -131,7 +140,10 @@ module CoreDataConnector
         }, {
            name: 'user_defined',
            type: 'JSONB'
-        }]
+        }, {
+           name: 'import_id',
+           type: 'UUID'
+         }]
       end
 
       def table_name_prefix
