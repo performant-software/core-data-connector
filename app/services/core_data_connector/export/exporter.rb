@@ -43,7 +43,7 @@ module CoreDataConnector
       end
 
       def run(directory)
-        user_defined_fields = build_user_defined_fields
+        user_defined_fields_by_table = build_user_defined_fields
 
         EXPORT_CLASSES.each do |klass|
           model_class = klass[:class]
@@ -58,8 +58,8 @@ module CoreDataConnector
           # Skip this model class if the project does not contain any relevant data
           next unless query.count(Arel.star) > 0
 
-          user_defined_field_uuids = user_defined_fields[model_class.to_s] || []
-          headers = find_headers(model_class, user_defined_field_uuids)
+          user_defined_fields = user_defined_fields_by_table[model_class.to_s] || []
+          headers = find_headers(model_class, user_defined_fields)
 
           CSV.open(filepath, 'w', headers: headers, write_headers: true) do |csv|
             query.find_in_batches(batch_size: 1000) do |records|
@@ -69,17 +69,7 @@ module CoreDataConnector
 
               # Iterate over each record and convert it to a CSV row
               records.each do |record|
-                csv_row = record.to_export_csv
-
-                # Add the user-defined field properties to the hash. The list of user-defined field UUIDs will contain
-                # the complete set of all user-defined fields across all models for the current type.
-                user_defined_field_uuids.each do |uuid|
-                  value = record.user_defined[uuid] if record.user_defined.present?
-                  value = value.to_json if value.is_a?(Hash) || value.is_a?(Array)
-
-                  csv_row[uuid] = value
-                end
-
+                csv_row = record.to_export_csv(user_defined_fields)
                 csv << csv_row.values
               end
             end
@@ -102,24 +92,21 @@ module CoreDataConnector
       def build_user_defined_fields
         query = Queries
                   .all_fields_by_project(project_id)
-                  .group(:table_name, :uuid)
-                  .pluck(:table_name, :uuid)
+                  .order(:uuid)
 
-        query.inject({}) do |h, v|
-          uuid, value = v
+        query.inject({}) do |hash, user_defined_field|
+          hash[user_defined_field.table_name] ||= []
+          hash[user_defined_field.table_name] << user_defined_field
 
-          h[uuid] ||= []
-          h[uuid] << value
-
-          h
+          hash
         end
       end
 
-      def find_headers(klass, user_defined_field_uuids)
+      def find_headers(klass, user_defined_fields)
         headers = klass.export_attributes.map{ |a| a[:name].to_s }
 
-        user_defined_field_uuids.each do |uuid|
-          headers << ImportAnalyze::Helper.uuid_to_column_name(uuid)
+        user_defined_fields.each do |user_defined_field|
+          headers << ImportAnalyze::Helper.uuid_to_column_name(user_defined_field.uuid)
         end
 
         headers
