@@ -17,7 +17,7 @@ module CoreDataConnector
       end
 
       included do
-        def to_export_csv
+        def to_export_csv(user_defined_fields)
           hash = {}
 
           # Add attributes defined by the concrete-class
@@ -35,7 +35,29 @@ module CoreDataConnector
             hash[name] = value
           end
 
+          # Add user-defined field values
+          add_user_defined_fields(hash, user_defined_fields)
+
           hash
+        end
+
+        private
+
+        def add_user_defined_fields(hash, user_defined_fields)
+          return unless user_defined_fields.present? && self.respond_to?(:user_defined)
+
+          user_defined_fields.each do |user_defined_field|
+            key = ImportAnalyze::Helper.uuid_to_column_name(user_defined_field.uuid)
+            value = user_defined[user_defined_field.uuid]
+
+            if user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:fuzzy_date]
+              value = value.nil? ? '' : value.to_json
+            elsif user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:select] && user_defined_field.allow_multiple?
+              value = value&.to_json
+            end
+
+            hash[key] = value
+          end
         end
       end
     end

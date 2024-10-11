@@ -32,16 +32,17 @@ module CoreDataConnector
           CSV.foreach(filepath, headers: true, converters: [:numeric]) do |row|
             data[filename] ||= { attributes: attributes, data: [] }
 
-            row_hash = row.to_h.symbolize_keys
+            row_hash = row_to_csv(row, user_defined_fields)
             record = records_by_uuid[row_hash[:uuid]]
 
-            if record && record.is_a?(Mergeable)
-              merged = record.record_merges.map { |rm| rm.merged_uuid }
+            if record.present?
+              db = record_to_csv(record, user_defined_fields)
+              merged = record.record_merges.map { |rm| rm.merged_uuid } if record.is_a?(Mergeable)
             end
 
             data[filename][:data] << {
               import: row_hash,
-              db: to_export_csv(record, user_defined_fields),
+              db: db,
               merged: merged
             }
           end
@@ -187,10 +188,13 @@ module CoreDataConnector
           }
         end
 
+        serializer = UserDefinedFields::UserDefinedFieldsSerializer.new
+
         user_defined_fields.each do |user_defined_field|
           attributes << {
             name: Helper.uuid_to_column_name(user_defined_field.uuid),
-            label: user_defined_field.column_name
+            label: user_defined_field.column_name,
+            field: serializer.render_show(user_defined_field)
           }
         end
 
@@ -225,19 +229,47 @@ module CoreDataConnector
         records_by_uuid
       end
 
-      def to_export_csv(record, user_defined_fields)
-        return nil unless record.present?
-
-        csv = record.to_export_csv
+      def record_to_csv(record, user_defined_fields)
+        csv = record.to_export_csv(user_defined_fields)
 
         user_defined_fields.each do |user_defined_field|
-          next unless record.user_defined.present?
-
           key = Helper.uuid_to_column_name(user_defined_field.uuid)
-          csv[key] = record.user_defined[user_defined_field.uuid]
+          value = csv[key]
+
+          next unless value.present?
+
+          # Since the "to_export_csv" method will serialize JSON to strings, we'll convert it back to JSON
+          # here in order to do proper comparison on the client.
+          if (user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:select] &&
+            user_defined_field.allow_multiple?) ||
+            user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:fuzzy_date]
+            csv[key] = JSON.parse(value)
+          end
         end
 
         csv
+      end
+
+      def row_to_csv(row, user_defined_fields)
+        csv = row.to_h
+
+        user_defined_fields.each do |user_defined_field|
+          key = Helper.uuid_to_column_name(user_defined_field.uuid)
+          next unless csv[key].present?
+
+          if user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:boolean] ||
+            user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:number] ||
+            user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:string]
+            csv[key] = csv[key].to_s
+          elsif user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:select] &&
+            user_defined_field.allow_multiple?
+            csv[key] = JSON.parse(csv[key])
+          elsif user_defined_field.data_type == UserDefinedFields::UserDefinedField::DATA_TYPES[:fuzzy_date]
+            csv[key] = JSON.parse(csv[key])
+          end
+        end
+
+        csv.symbolize_keys
       end
 
       def translate(klass, attribute)
