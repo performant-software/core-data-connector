@@ -17,6 +17,7 @@ module CoreDataConnector
           UPDATE core_data_connector_taxonomies taxonomies
             SET  z_taxonomy_id = z_taxonomies.id,
                  name = z_taxonomies.name,
+                 import_id = z_taxonomies.import_id,
                  updated_at = current_timestamp
            FROM #{table_name} z_taxonomies
           WHERE z_taxonomies.taxonomy_id = taxonomies.id
@@ -32,17 +33,19 @@ module CoreDataConnector
             uuid,
             z_taxonomy_id,
             name,
+            import_id,
             created_at, 
             updated_at
-            )
+          )
           SELECT z_taxonomies.project_model_id,
                  z_taxonomies.uuid,
                  z_taxonomies.id,
                  z_taxonomies.name,
+                 z_taxonomies.import_id,
                  current_timestamp,
                  current_timestamp
-          FROM   #{table_name} z_taxonomies
-          WHERE  z_taxonomies.taxonomy_id IS NULL
+            FROM #{table_name} z_taxonomies
+           WHERE z_taxonomies.taxonomy_id IS NULL
           RETURNING id AS taxonomy_id, z_taxonomy_id
 
           )
@@ -56,12 +59,6 @@ module CoreDataConnector
 
       def transform
         super
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_taxonomies
-             SET uuid = gen_random_uuid()
-           WHERE z_taxonomies.uuid IS NULL
-        SQL
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_taxonomies
@@ -89,6 +86,9 @@ module CoreDataConnector
         }, {
           name: 'taxonomy_id',
           type: 'INTEGER'
+        }, {
+          name: 'import_id',
+          type: 'UUID'
         }]
       end
 

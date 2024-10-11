@@ -3,6 +3,8 @@ module CoreDataConnector
     extend ActiveSupport::Concern
 
     included do
+      # Search methods
+      search_methods :search_merged_uuid
 
       def merge
         render json: { errors: [I18n.t('errors.mergeable.ids')] }, status: :bad_request and return unless params[:ids].present?
@@ -10,14 +12,8 @@ module CoreDataConnector
         item = item_class.new(prepare_params)
         authorize_create item
 
-        preloads = [
-          :project_model,
-          relationships: [:related_record, project_model_relationship: :user_defined_fields],
-          related_relationships: [:primary_record, project_model_relationship: :user_defined_fields],
-        ]
-
         items = item_class
-                  .preload(preloads)
+                  .preload(ImportAnalyze::Helper::PRELOADS)
                   .where(id: params[:ids])
 
         authorize_destroy items
@@ -49,6 +45,25 @@ module CoreDataConnector
         items.each do |item|
           policy = Pundit.policy!(current_user, item)
           policy.destroy?
+        end
+      end
+
+      def search_merged_uuid(query)
+        return query unless params[:search].present?
+
+        uuid_query = item_class.where(
+          RecordMerge
+            .where(RecordMerge.arel_table[:mergeable_id].eq(item_class.arel_table[:id]))
+            .where(mergeable_type: item_class.to_s)
+            .where(merged_uuid: params[:search])
+            .arel
+            .exists
+        )
+
+        if query == item_class.all
+          query.merge(uuid_query)
+        else
+          query.or(uuid_query)
         end
       end
     end

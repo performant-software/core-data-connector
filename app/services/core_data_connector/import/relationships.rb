@@ -17,6 +17,7 @@ module CoreDataConnector
           UPDATE core_data_connector_relationships relationships
              SET z_relationship_id = z_relationships.id,
                  user_defined = z_relationships.user_defined,
+                 import_id = z_relationships.import_id,
                  updated_at = current_timestamp
             FROM #{table_name} z_relationships
            WHERE z_relationships.relationship_id = relationships.id
@@ -36,6 +37,7 @@ module CoreDataConnector
             related_record_id,
             related_record_type,
             user_defined,
+            import_id,
             created_at,
             updated_at
           )
@@ -47,6 +49,7 @@ module CoreDataConnector
                  z_relationships.related_record_id,
                  z_relationships.related_record_type,
                  z_relationships.user_defined,
+                 z_relationships.import_id,
                  current_timestamp,
                  current_timestamp
             FROM #{table_name} z_relationships
@@ -68,12 +71,6 @@ module CoreDataConnector
 
       def transform
         super
-
-        execute <<-SQL.squish
-          UPDATE #{table_name} z_relationships
-             SET uuid = gen_random_uuid()
-           WHERE z_relationships.uuid IS NULL
-        SQL
 
         execute <<-SQL.squish
           WITH all_related_types AS (
@@ -185,6 +182,9 @@ module CoreDataConnector
          }, {
            name: 'user_defined',
            type: 'JSONB'
+         }, {
+           name: 'import_id',
+           type: 'UUID'
          }]
       end
 

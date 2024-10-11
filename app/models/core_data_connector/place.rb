@@ -5,6 +5,7 @@ module CoreDataConnector
     # Includes
     include Export::Place
     include Identifiable
+    include ImportAnalyze::Place
     include Manifestable
     include Mergeable
     include Nameable
