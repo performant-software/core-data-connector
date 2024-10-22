@@ -75,10 +75,10 @@ module CoreDataConnector
 
         # Run the importer with the new ZIP file
         zip_importer = Import::ZipHelper.new
-        ok, errors, import_id = zip_importer.import_zip(zip_filepath)
+        ok, errors = zip_importer.import_zip(zip_filepath)
 
         # Remove duplicates for any marked files
-        service.remove_duplicates(params[:files], import_id)
+        service.remove_duplicates(params[:files], item.project_model.project_id)
         errors.each { |e| log_error(e) } unless errors.empty?
 
         # Remove the ZIP file directory
