@@ -139,14 +139,14 @@ module CoreDataConnector
         zipfile_name
       end
 
-      def remove_duplicates(files, import_id)
+      def remove_duplicates(files, project_id)
         service = Merge::Merger.new
 
         files.keys.each do |filename|
           next unless files[filename][:remove_duplicates].to_s.to_bool
 
           klass = find_class(filename)
-          grouped_duplicates = klass.find_duplicates(import_id)
+          grouped_duplicates = klass.find_duplicates(project_id)
 
           next if grouped_duplicates.empty?
 
