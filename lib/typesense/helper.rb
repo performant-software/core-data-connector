@@ -35,6 +35,15 @@ module Typesense
           facet: false,
           optional: true
         }, {
+          name: 'name',
+          type: 'string',
+          sort: true
+        },{
+          name: 'name_facet',
+          type: 'string',
+          sort: true,
+          facet: true
+        }, {
           name: '.*_facet',
           type: 'auto',
           facet: true
