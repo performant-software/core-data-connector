@@ -37,12 +37,8 @@ module Typesense
         }, {
           name: 'name',
           type: 'string',
-          sort: true
-        },{
-          name: 'name_facet',
-          type: 'string',
           sort: true,
-          facet: true
+          optional: true
         }, {
           name: '.*_facet',
           type: 'auto',
