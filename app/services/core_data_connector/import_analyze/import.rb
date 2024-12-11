@@ -85,7 +85,7 @@ module CoreDataConnector
         end
 
         # De-duplicate relationships
-        relationship_data&.each.with_index do |row, i|
+        relationship_data&.each&.with_index do |row, i|
           next if row[:keep].present?
 
           # Find relationship rows where all fields match the current row except the index
