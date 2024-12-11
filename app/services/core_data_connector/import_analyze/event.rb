@@ -8,7 +8,7 @@ module CoreDataConnector
 
       class_methods do
         def group_by_columns
-          [:name]
+          [Event.arel_table[:name]]
         end
       end
     end
