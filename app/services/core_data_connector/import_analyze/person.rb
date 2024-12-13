@@ -12,7 +12,10 @@ module CoreDataConnector
         end
 
         def group_by_columns
-          [PersonName.arel_table[:last_name], PersonName.arel_table[:first_name]]
+          [
+            CoreDataConnector::PersonName.arel_table[:last_name],
+            CoreDataConnector::PersonName.arel_table[:first_name]
+          ]
         end
       end
     end
