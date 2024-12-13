@@ -8,7 +8,7 @@ module CoreDataConnector
 
       class_methods do
         def group_by_columns
-          [Taxonomy.arel_table[:name]]
+          [CoreDataConnector::Taxonomy.arel_table[:name]]
         end
       end
     end

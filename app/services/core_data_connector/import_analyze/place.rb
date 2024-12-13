@@ -12,7 +12,7 @@ module CoreDataConnector
         end
 
         def group_by_columns
-          [PlaceName.arel_table[:name]]
+          [CoreDataConnector::PlaceName.arel_table[:name]]
         end
       end
     end
