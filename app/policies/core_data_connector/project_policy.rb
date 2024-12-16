@@ -7,6 +7,13 @@ module CoreDataConnector
       @project = project
     end
 
+    # A user can analyze and import data into a project if they are an admin.
+    def analyze_import?
+      return true if current_user.admin?
+
+      false
+    end
+
     # A user can clear data from a project if they are an admin or an owner of the project.
     def clear?
       return true if current_user.admin?
@@ -54,6 +61,14 @@ module CoreDataConnector
       project_owner?
     end
 
+    # A user can import data into a project if they are an admin.
+    def import_analyze?
+      return true if current_user.admin?
+
+      false
+    end
+
+    # A user can import a project's configuration if they are an admin or an owner of the project.
     def import_configuration?
       return true if current_user.admin?
 

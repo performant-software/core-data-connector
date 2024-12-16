@@ -25,6 +25,50 @@ module CoreDataConnector
       def self.uuid_to_column_name(uuid)
         "#{PREFIX_USER_DEFINED}#{uuid.gsub('-', '_')}"
       end
+
+      def analyze(zip, user)
+        # Create a temporary directory
+        directory = FileSystem.create_directory
+
+        # Extract the CSV files
+        FileSystem.extract_zip(zip, directory)
+
+        # Analyze the import files
+        service = Import.new
+        data = service.analyze(directory)
+
+        # Check that the user is authorized to import all of the records in the file
+        policy = Policy.new(user)
+        raise Pundit::NotAuthorizedError, I18n.t('errors.import.authorize') unless policy.has_analyze_access?(data)
+
+        # Remove the temporary directory
+        FileSystem.remove_directory(directory)
+
+        data
+      end
+
+      def import(files, user, project_id)
+        # Check that the user is authorized to import all of the records in the file
+        policy = Policy.new(user)
+        raise Pundit::NotAuthorizedError, I18n.t('errors.import.authorize') unless policy.has_import_access?(files)
+
+        # Generate the CSV files and compress them in a ZIP
+        service = Import.new
+        zip_filepath = service.create_zip(files)
+
+        # Run the importer with the new ZIP file
+        zip_importer = CoreDataConnector::Import::ZipHelper.new
+        ok, errors = zip_importer.import_zip(zip_filepath)
+
+        # Remove duplicates for any marked files
+        service.remove_duplicates(files, project_id)
+
+        # Remove the ZIP file directory
+        directory = File.dirname(zip_filepath)
+        FileSystem.remove_directory(directory)
+
+        errors
+      end
     end
   end
 end
