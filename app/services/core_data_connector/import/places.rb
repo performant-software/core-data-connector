@@ -105,7 +105,8 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_places
-             SET place_id = places.id
+             SET place_id = places.id,
+                 user_defined = places.user_defined
             FROM core_data_connector_places places
            WHERE places.uuid = z_places.uuid
         SQL

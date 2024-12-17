@@ -156,7 +156,8 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_events
-             SET event_id = events.id
+             SET event_id = events.id,
+                 user_defined = events.user_defined
             FROM core_data_connector_events events
            WHERE events.uuid = z_events.uuid
         SQL
