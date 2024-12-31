@@ -44,7 +44,7 @@ module CoreDataConnector
         private
 
         def add_user_defined_fields(hash, user_defined_fields)
-          return unless user_defined_fields.present? && self.respond_to?(:user_defined)
+          return unless user_defined_fields.present? && self.respond_to?(:user_defined) && user_defined.present?
 
           user_defined_fields.each do |user_defined_field|
             key = ImportAnalyze::Helper.uuid_to_column_name(user_defined_field.uuid)
