@@ -121,7 +121,8 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_relationships
-             SET relationship_id = relationships.id
+             SET relationship_id = relationships.id,
+                 user_defined = relationships.user_defined
             FROM core_data_connector_relationships relationships
            WHERE relationships.uuid = z_relationships.uuid
              AND z_relationships.relationship_id IS NULL
@@ -129,7 +130,8 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_relationships
-             SET relationship_id = relationships.id
+             SET relationship_id = relationships.id,
+                 user_defined = relationships.user_defined
             FROM core_data_connector_relationships relationships
            WHERE relationships.primary_record_id = z_relationships.primary_record_id
              AND relationships.primary_record_type = z_relationships.primary_record_type

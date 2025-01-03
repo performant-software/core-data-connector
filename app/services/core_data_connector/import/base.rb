@@ -76,7 +76,7 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name}
-             SET user_defined = jsonb_strip_nulls(jsonb_build_object(#{expression}))
+             SET user_defined = user_defined || json_strip_nulls(json_build_object(#{expression}))::jsonb
         SQL
 
         # Sets the "Select" and "FuzzyDate" user-defined types to JSONB

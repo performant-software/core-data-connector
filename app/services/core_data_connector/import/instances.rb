@@ -87,7 +87,8 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE #{table_name} z_instances
-             SET instance_id = instances.id
+             SET instance_id = instances.id,
+                 user_defined = instances.user_defined
             FROM core_data_connector_instances instances
            WHERE instances.uuid = z_instances.uuid
         SQL
