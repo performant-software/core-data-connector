@@ -30,6 +30,12 @@ module Typesense
         name: collection_name,
         enable_nested_fields: true,
         fields: [{
+          name: 'geometry',
+          type: 'object',
+          index: false,
+          facet: false,
+          optional: true
+        }, {
           name: 'coordinates',
           type: 'geopoint',
           facet: false,
