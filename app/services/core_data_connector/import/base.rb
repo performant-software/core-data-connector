@@ -88,6 +88,7 @@ module CoreDataConnector
             UPDATE #{table_name}
                SET user_defined = jsonb_set(user_defined, '{#{column[:uuid]}}', (user_defined->>'#{column[:uuid]}')::jsonb)
              WHERE user_defined->>'#{column[:uuid]}' IS NOT NULL
+               AND user_defined->>'#{column[:uuid]}' != ''
           SQL
         end
       end

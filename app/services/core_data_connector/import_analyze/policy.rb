@@ -13,16 +13,17 @@ module CoreDataConnector
       def has_analyze_access?(files)
         return true if current_user.admin?
 
-        project_model_ids = files.except(Import::FILE_RELATIONSHIPS)
-                                 .values
-                                 .map{ |v| v[:data]&.map{ |d| d[:import][:project_model_id] } }
-                                 .flatten
-                                 .uniq
+        project_model_ids = files
+                              &.except(Import::FILE_RELATIONSHIPS)
+                              &.values
+                              &.map{ |v| v[:data]&.map{ |d| d[:import][:project_model_id] } }
+                              &.flatten
+                              &.uniq
 
         project_model_relationship_ids = (files.dig(Import::FILE_RELATIONSHIPS, :data) || [])
-                                           .map{ |v| v[:import][:project_model_relationship_id] }
-                                           .flatten
-                                           .uniq
+                                           &.map{ |v| v[:import][:project_model_relationship_id] }
+                                           &.flatten
+                                           &.uniq
 
         has_access?(project_model_ids, project_model_relationship_ids)
       end
@@ -32,13 +33,14 @@ module CoreDataConnector
       def has_import_access?(files)
         return true if current_user.admin?
 
-        project_model_ids = files.except(Import::FILE_RELATIONSHIPS)
-                                 .values
-                                 .map{ |v| v.map{ |d| d['project_model_id'] } }
-                                 .flatten
-                                 .uniq
+        project_model_ids = files
+                              &.except(Import::FILE_RELATIONSHIPS)
+                              &.values
+                              &.map{ |v| v['data']&.map{ |d| d['project_model_id'] } }
+                              &.flatten
+                              &.uniq
 
-        project_model_relationship_ids = files[Import::FILE_RELATIONSHIPS]
+        project_model_relationship_ids = (files.dig(Import::FILE_RELATIONSHIPS, :data) || [])
                                            &.map{ |v| v['project_model_relationship_id'] }
                                            &.uniq
 
