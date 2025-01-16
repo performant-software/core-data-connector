@@ -90,6 +90,8 @@ en:
       general: "An error occurred when making your request"
       no_response: "No response from the server"
       timeout: "Your request has timed out"
+    import:
+      authorize: "You do not have permission to import these records. Please contact your system administrator."
     items_controller:
       authorize: "You do not have permission to import these records. Please contact your system administrator."
     manifest:
@@ -99,6 +101,7 @@ en:
     nameable:
       primary_name: "This record must have a primary name"
     projects:
+      authorize: "You do not have permission to import these records. Please contact your system administrator."
       import_configuration: "Configuration file required"
       import_data: "Importable contents required"
     web_authorities_controller:

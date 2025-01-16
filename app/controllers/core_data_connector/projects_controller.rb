@@ -3,6 +3,30 @@ module CoreDataConnector
     # Search attributes
     search_attributes :name
 
+    def analyze_import
+      render json: { errors: [I18n.t('errors.projects.import_data')] }, status: :bad_request and return unless params[:file].present?
+
+      project = Project.find(params[:id])
+      authorize project if authorization_valid?
+
+      service = ImportAnalyze::Helper.new
+
+      begin
+        data = service.analyze(params[:file], current_user)
+      rescue StandardError => error
+        errors = [error]
+
+        # Log the error
+        log_error(error)
+      end
+
+      if errors.nil? || errors.empty?
+        render json: data, status: :ok
+      else
+        render json: { errors: errors }, status: :bad_request
+      end
+    end
+
     def clear
       project = Project.find(params[:id])
       authorize project, :clear?
@@ -82,6 +106,27 @@ module CoreDataConnector
       render json: json, status: :ok
     end
 
+    def import_analyze
+      project = Project.find(params[:id])
+      authorize project if authorization_valid?
+
+      begin
+        service = ImportAnalyze::Helper.new
+        errors = service.import(params[:files], current_user, project.id)
+      rescue StandardError => error
+        errors = [error]
+      end
+
+      # Log any errors
+      errors.each { |e| log_error(e) }
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: :bad_request
+      end
+    end
+
     def import_configuration
       render json: { errors: [I18n.t('errors.projects.import_configuration')] }, status: :bad_request and return unless params[:file].present?
 
@@ -111,8 +156,15 @@ module CoreDataConnector
       project = Project.find(params[:id])
       authorize project, :import_data?
 
-      zip_importer = Import::ZipHelper.new
-      ok, errors = zip_importer.import_zip(params[:file].tempfile)
+      begin
+        zip_importer = Import::ZipHelper.new
+        ok, errors = zip_importer.import_zip(params[:file].tempfile)
+      rescue StandardError => error
+        errors = [error]
+
+        # Log the error
+        log_error(error)
+      end
 
       if errors.nil? || errors.empty?
         render json: { }, status: :ok

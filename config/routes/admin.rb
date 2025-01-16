@@ -39,10 +39,12 @@ module Admin
       resources :project_model_accesses, only: :index
 
       resources :projects do
+        post :analyze_import, on: :member
         post :clear, on: :member
         get :export_configuration, on: :member
         get :export_data, on: :member
         get :export_variables, on: :member
+        post :import_analyze, on: :member
         post :import_configuration, on: :member
         post :import_data, on: :member
       end
