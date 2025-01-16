@@ -58,22 +58,22 @@ module CoreDataConnector
 
         # Add the manifests to the new record
         manifests.each { |manifest| manifest.manifestable = new_record }
-        new_record.manifests = manifests
+        new_record.manifests.build(manifests.map(&:as_json))
 
         # Add the merges to the new record
         record_merges.each { |record_merge| record_merge.mergeable = new_record }
-        new_record.record_merges = record_merges
+        new_record.record_merges.build(record_merges.map(&:as_json))
 
         # Add the relationships to the new record
         relationships.each { |relationship| relationship.primary_record = new_record }
-        new_record.relationships = relationships
+        new_record.relationships.build(relationships.map(&:as_json))
 
         related_relationships.each { |relationship| relationship.related_record = new_record }
-        new_record.related_relationships = related_relationships
+        new_record.related_relationships.build(related_relationships.map(&:as_json))
 
         # Add web identifiers to the new record
         web_identifiers.each { |web_identifier| web_identifier.identifiable = new_record }
-        new_record.web_identifiers = web_identifiers
+        new_record.web_identifiers.build(web_identifiers.map(&:as_json))
 
         # Save the new record
         success = new_record.save
