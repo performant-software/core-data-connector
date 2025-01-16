@@ -27,7 +27,10 @@ module CoreDataConnector
                                   .where(uuid: user_defined_fields_uuids)
 
           attributes = build_attributes(klass, user_defined_fields)
-          records_by_uuid = find_records_by_uuid(filepath, klass)
+          uuids = find_record_uuids(filepath)
+
+          records_by_uuid = find_records_by_uuid(klass, uuids)
+          merges_by_uuid = find_merges_by_uuid(klass, uuids)
 
           CSV.foreach(filepath, headers: true, converters: [:numeric]) do |row|
             data[filename] ||= { attributes: attributes, data: [] }
@@ -45,6 +48,20 @@ module CoreDataConnector
               db: db,
               merged: merged
             }
+
+            # If the current record has been merged and removed, add a row for the record existing in the database. The
+            # merged row will be picked up below and flagged as a merged record.
+            merge_record = merges_by_uuid[row_hash[:uuid]]
+
+            if merge_record.present?
+              merge_row_hash = record_to_csv(merge_record, user_defined_fields)
+
+              data[filename][:data] << {
+                import: merge_row_hash,
+                db: merge_row_hash,
+                merged: merge_record.record_merges.map { |rm| rm.merged_uuid }
+              }
+            end
           end
         end
 
@@ -205,14 +222,46 @@ module CoreDataConnector
         "CoreDataConnector::#{File.basename(filename, '.csv').singularize.capitalize}".classify.constantize
       end
 
-      def find_records_by_uuid(filepath, klass)
-        records_by_uuid = {}
-
+      def find_record_uuids(filepath)
         uuids = []
 
         CSV.foreach(filepath, headers: true, converters: [:numeric]) do |row|
           uuids << row.to_h.symbolize_keys[:uuid]
         end
+
+        uuids
+      end
+
+      def find_merges_by_uuid(klass, uuids)
+        merges_by_uuid = {}
+
+        query = klass.all
+        query = query.merge(klass.export_query) if klass.respond_to?(:export_query)
+
+        query.where(
+          RecordMerge
+            .where(RecordMerge.arel_table[:mergeable_id].eq(klass.arel_table[:id]))
+            .where(mergeable_type: klass.to_s)
+            .where(merged_uuid: uuids)
+            .arel
+            .exists
+        )
+
+        query.find_in_batches(batch_size: 1000) do |records|
+          apply_preloads klass, records
+
+          records.each do |record|
+            record.record_merges.each do |record_merge|
+              merges_by_uuid[record_merge.merged_uuid] = record
+            end
+          end
+        end
+
+        merges_by_uuid
+      end
+
+      def find_records_by_uuid(klass, uuids)
+        records_by_uuid = {}
 
         query = klass.all
         query = query.merge(klass.export_query) if klass.respond_to?(:export_query)
