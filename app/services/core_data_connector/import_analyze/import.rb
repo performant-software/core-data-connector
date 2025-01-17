@@ -233,6 +233,8 @@ module CoreDataConnector
       end
 
       def find_merges_by_uuid(klass, uuids)
+        return {} unless klass.ancestors.include?(Mergeable)
+
         merges_by_uuid = {}
 
         query = klass.all
