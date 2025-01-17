@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'triple_eye_effable'
   spec.add_dependency 'typesense', '~> 0.14'
   spec.add_dependency 'typhoeus', '~> 1.4'
+  spec.add_dependency 'keycloak', '~> 3.3'
 end

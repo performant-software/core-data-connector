@@ -53,6 +53,7 @@ PATH
       fuzzy_dates
       jwt (~> 2.7.1)
       jwt_auth
+      keycloak (~> 3.3)
       rack-cors (~> 2.0.1)
       rails (>= 6.0.3.2, < 8)
       resource_api
@@ -139,6 +140,7 @@ GEM
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     date (3.3.3)
+    domain_name (0.6.20240107)
     erubi (1.12.0)
     ethon (0.16.0)
       ffi (>= 1.15.0)
@@ -147,12 +149,20 @@ GEM
     ffi (1.15.5)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    http-accept (1.7.0)
+    http-cookie (1.0.8)
+      domain_name (~> 0.5)
     httparty (0.20.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    json (2.9.1)
     jwt (2.7.1)
+    keycloak (3.3.0)
+      json (~> 2.6)
+      jwt (~> 2.4)
+      rest-client (~> 2.1)
     loofah (2.21.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -178,6 +188,7 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
+    netrc (0.11.0)
     nio4r (2.5.9)
     nokogiri (1.15.3-arm64-darwin)
       racc (~> 1.4)
@@ -223,6 +234,11 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
+    rest-client (2.1.0)
+      http-accept (>= 1.7.0, < 2.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     rexml (3.2.6)
     rgeo (3.0.0)
     rgeo-activerecord (7.0.1)
@@ -256,6 +272,7 @@ DEPENDENCIES
   faker (~> 3.2.1)
   fuzzy_dates!
   jwt_auth!
+  keycloak (~> 3.3)
   resource_api!
   sqlite3
   triple_eye_effable!
