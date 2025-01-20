@@ -9,7 +9,5 @@ gem 'triple_eye_effable', git: 'https://github.com/performant-software/triple-ey
 gem 'user_defined_fields', git: 'https://github.com/performant-software/user-defined-fields.git', tag: 'v0.1.12'
 gem 'sqlite3'
 
-gem 'keycloak', '~> 3.3'
-
 # Specify your gem's dependencies in core_data_connector.gemspec.
 gemspec

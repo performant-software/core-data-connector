@@ -7,6 +7,5 @@ CoreDataConnector::Engine.routes.draw do
   extend Public::V0
   extend Public::V1
 
-  post 'auth/login', to: 'authentication#login'
-  post 'auth/sso', to: 'authentication#sso'
+  get 'auth/sso/callback', to: 'authentication#login'
 end
