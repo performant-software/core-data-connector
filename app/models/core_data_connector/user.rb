@@ -8,5 +8,13 @@ module CoreDataConnector
 
     # Validations
     validates :email, uniqueness: true
+
+    validate :validate_reset_password
+
+    def validate_reset_password
+      if password_digest_changed? && self.sso_id
+        errors.add(:password, I18n.t('errors.users.password.sso'))
+      end
+    end
   end
 end
