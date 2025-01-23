@@ -70,7 +70,7 @@ module CoreDataConnector
                 project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               place_relationships: [
-                related_record: [
+                related_place_with_centroid: [
                   :place_geometry,
                   :primary_name,
                   :place_names,
@@ -150,7 +150,7 @@ module CoreDataConnector
                 project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               place_related_relationships: [
-                primary_record: [
+                inverse_related_place_with_centroid: [
                   :place_geometry,
                   :primary_name,
                   :place_names,
@@ -185,9 +185,6 @@ module CoreDataConnector
         def for_search(project_model_ids, &block)
           # Base query
           query = all_records_by_project_model(project_model_ids)
-
-          # Concrete class query
-          query = search_query(query) if self.respond_to?(:search_query)
 
           query.find_in_batches(batch_size: 1000) do |records|
             # Apply the preloads for the current batch
@@ -408,6 +405,24 @@ module CoreDataConnector
           hash['event_range_facet'] = [min_range, max_range] unless min_range.nil? || max_range.nil?
         end
 
+        def build_inverse_place_relationship(relationship, hash, projects)
+          project_model_relationship = relationship.project_model_relationship
+          key = project_model_relationship.uuid
+
+          # Add the related model project to the list of projects
+          add_project(projects, project_model_relationship.related_model.project)
+
+          user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
+
+          hash[key] ||= []
+
+          hash[key] << relationship
+                         .inverse_related_place_with_centroid
+                         .to_search_json
+                         .merge(user_defined)
+                         .merge({ inverse: true })
+        end
+
         def build_inverse_relationship(relationship, hash, projects)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
@@ -424,6 +439,24 @@ module CoreDataConnector
                          .to_search_json
                          .merge(user_defined)
                          .merge({ inverse: true })
+        end
+
+        def build_place_relationship(relationship, hash, projects)
+          project_model_relationship = relationship.project_model_relationship
+          key = project_model_relationship.uuid
+
+          # Add the primary model project to the list of projects
+          add_project(projects, project_model_relationship.primary_model.project)
+
+          user_defined = build_user_defined(relationship, project_model_relationship.user_defined_fields)
+
+          hash[key] ||= []
+
+          hash[key] << relationship
+                         .related_place_with_centroid
+                         .to_search_json
+                         .merge(user_defined)
+                         .merge({ inverse: false })
         end
 
         def build_relationship(relationship, hash, projects)
@@ -451,7 +484,7 @@ module CoreDataConnector
           media_content_relationships.each { |r| build_relationship(r, hash, projects) }
           organization_relationships.each { |r| build_relationship(r, hash, projects) }
           person_relationships.each { |r| build_relationship(r, hash, projects) }
-          place_relationships.each { |r| build_relationship(r, hash, projects) }
+          place_relationships.each { |r| build_place_relationship(r, hash, projects) }
           taxonomy_relationships.each { |r| build_relationship(r, hash, projects) }
           work_relationships.each { |r| build_relationship(r, hash, projects) }
 
@@ -461,7 +494,7 @@ module CoreDataConnector
           media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
           organization_related_relationships.each { |r| build_inverse_relationship(r,hash, projects) }
           person_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          place_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          place_related_relationships.each { |r| build_inverse_place_relationship(r, hash, projects) }
           taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
           work_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
         end
