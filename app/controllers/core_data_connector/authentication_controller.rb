@@ -42,22 +42,16 @@ module CoreDataConnector
         render json: { error: 'User not found.' }, status: :bad_request
       end
       
-      # todo: seems odd to have to reach into JwtAuth here, but
-      #       we should stay consistent with email/password handling.
-      #       maybe this logic should be moved into jwt-auth after all?
       user_serializer = JwtAuth.config.user_serializer.constantize
       user_json = user_serializer.new.render_show(sso_user)
 
       # Making our own expiration time here means we're ignoring the time
-      # set for the Keycloak token. That may or may not be okay. Keycloak
-      # defaults to 5 minutes and seems to assume you'll be constantly
-      # refreshing the token if you use theirs.
+      # set for the Keycloak token. Keycloak defaults to 5 minutes and seems
+      # to assume you'll be constantly refreshing the token if you use theirs.
       expiration = expiration_date
 
       token = JwtAuth::JsonWebToken.encode(id: sso_user.id, exp: expiration.to_i)
       data = { token: token, exp: expiration.iso8601, user: user_json }
-
-      puts data.to_json.class
 
       redirect_to "#{ENV['SSO_REDIRECT_URL']}?token=#{Base64.encode64(data.to_json)}"
     end
