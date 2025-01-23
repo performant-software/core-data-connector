@@ -44,6 +44,19 @@ module Public
               resources :works, only: :index
             end
 
+            resources :organizations do
+              resources :events, only: :index
+              resources :instances, only: :index
+              resources :items, only: :index
+              resources :manifests
+              resources :media_contents, only: :index
+              resources :organizations, only: :index
+              resources :people, only: :index
+              resources :places, only: :index
+              resources :taxonomies, only: :index
+              resources :works, only: :index
+            end
+
             resources :people do
               resources :events, only: :index
               resources :instances, only: :index
