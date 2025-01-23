@@ -54,13 +54,19 @@ module CoreDataConnector
             merge_record = merges_by_uuid[row_hash[:uuid]]
 
             if merge_record.present?
-              merge_row_hash = record_to_csv(merge_record, user_defined_fields)
+              # If multiple records in the current import have been merged into an existing record, only add one
+              # record to the file. Other duplicates will be listed in the "merged" attribute.
+              existing = data[filename][:data].select { |r| r[:merged]&.include?(row_hash[:uuid]) }
 
-              data[filename][:data] << {
-                import: merge_row_hash,
-                db: merge_row_hash,
-                merged: merge_record.record_merges.map { |rm| rm.merged_uuid }
-              }
+              if !existing.present?
+                merge_row_hash = record_to_csv(merge_record, user_defined_fields)
+
+                data[filename][:data] << {
+                  import: merge_row_hash,
+                  db: merge_row_hash,
+                  merged: merge_record.record_merges.map { |rm| rm.merged_uuid }
+                }
+              end
             end
           end
         end
@@ -240,7 +246,7 @@ module CoreDataConnector
         query = klass.all
         query = query.merge(klass.export_query) if klass.respond_to?(:export_query)
 
-        query.where(
+        query = query.where(
           RecordMerge
             .where(RecordMerge.arel_table[:mergeable_id].eq(klass.arel_table[:id]))
             .where(mergeable_type: klass.to_s)
