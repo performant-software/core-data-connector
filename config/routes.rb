@@ -9,5 +9,5 @@ CoreDataConnector::Engine.routes.draw do
   extend Public::V0
   extend Public::V1
 
-  get 'auth/sso/callback', to: 'authentication#login'
+  get 'auth/sso/callback', to: 'sso#login'
 end

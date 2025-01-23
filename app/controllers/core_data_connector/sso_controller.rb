@@ -5,7 +5,7 @@ require 'jwt_auth/json_web_token'
 require 'uri'
 
 module CoreDataConnector
-  class AuthenticationController < ApplicationController
+  class SsoController < ApplicationController
     DEFAULT_TOKEN_EXPIRATION = 24
 
     # No user authentication
