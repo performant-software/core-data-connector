@@ -12,7 +12,7 @@ module CoreDataConnector
     skip_before_action :authenticate_request
 
     def login
-      base_url = 'https://keycloak.archivengine.com/realms/core-data/protocol/openid-connect/token'
+      base_url = ENV['SSO_TOKEN_URL']
 
       form_data = {
         code: request.params['code'],
