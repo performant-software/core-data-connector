@@ -39,11 +39,10 @@ module CoreDataConnector
       sso_user = find_sso_user(sso_metadata)
 
       unless sso_user
-        render json: { error: 'User not found.' }, status: :bad_request
+        render json: { error: I18n.t('errors.users.not_found') }, status: :unauthorized
       end
       
-      user_serializer = JwtAuth.config.user_serializer.constantize
-      user_json = user_serializer.new.render_show(sso_user)
+      user_json = UsersSerializer.new.render_show(sso_user)
 
       # Making our own expiration time here means we're ignoring the time
       # set for the Keycloak token. Keycloak defaults to 5 minutes and seems
@@ -58,10 +57,6 @@ module CoreDataConnector
 
     def expiration_date
       ENV.fetch('JWT_AUTH_EXPIRATION') { DEFAULT_TOKEN_EXPIRATION }.to_i.hours.from_now
-    end
-
-    def join_name(keycloak_user)
-      [keycloak_user['first_name'], keycloak_user['last_name']].join(' ')
     end
 
     def find_sso_user(sso_metadata)
