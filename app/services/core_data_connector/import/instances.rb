@@ -83,15 +83,16 @@ module CoreDataConnector
       end
 
       def transform
-        super
-
         execute <<-SQL.squish
           UPDATE #{table_name} z_instances
              SET instance_id = instances.id,
                  user_defined = instances.user_defined
             FROM core_data_connector_instances instances
            WHERE instances.uuid = z_instances.uuid
+             AND z_instances.uuid IS NOT NULL
         SQL
+
+        super
       end
 
       protected
