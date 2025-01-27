@@ -293,7 +293,7 @@ module CoreDataConnector
           key = Helper.uuid_to_column_name(user_defined_field.uuid)
           value = csv[key]
 
-          next unless value.present?
+          csv[key] = nil and next unless value.present?
 
           # Since the "to_export_csv" method will serialize JSON to strings, we'll convert it back to JSON
           # here in order to do proper comparison on the client.
