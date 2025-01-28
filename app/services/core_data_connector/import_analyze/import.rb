@@ -291,7 +291,13 @@ module CoreDataConnector
 
         user_defined_fields.each do |user_defined_field|
           key = Helper.uuid_to_column_name(user_defined_field.uuid)
-          value = csv[key]
+
+          # If the value exists in the hash, extract it. Otherwise add the key to the hash with a nil value.
+          if csv.key?(key)
+            value = csv[key]
+          else
+            csv[key] = nil
+          end
 
           next unless value.present?
 

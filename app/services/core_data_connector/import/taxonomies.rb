@@ -58,14 +58,15 @@ module CoreDataConnector
       end
 
       def transform
-        super
-
         execute <<-SQL.squish
           UPDATE #{table_name} z_taxonomies
              SET taxonomy_id = taxonomies.id
             FROM core_data_connector_taxonomies taxonomies
            WHERE taxonomies.uuid = z_taxonomies.uuid
+             AND z_taxonomies.uuid IS NOT NULL
         SQL
+
+        super
       end
 
       protected
