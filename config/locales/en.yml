@@ -104,6 +104,10 @@ en:
       authorize: "You do not have permission to import these records. Please contact your system administrator."
       import_configuration: "Configuration file required"
       import_data: "Importable contents required"
+    users:
+      password:
+        sso: "Cannot reset passwords for SSO users"
+      not_found: "User not found"
     web_authorities_controller:
       find:
         identifier: "An identifier is required"
