@@ -37,6 +37,7 @@ module CoreDataConnector
 
             hash[field.uuid] = {
               label: field.column_name,
+              type: field.data_type,
               value: value
             }
           end

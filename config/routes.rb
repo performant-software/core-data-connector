@@ -8,4 +8,6 @@ CoreDataConnector::Engine.routes.draw do
   extend Admin
   extend Public::V0
   extend Public::V1
+
+  get 'auth/sso/callback', to: 'sso#login'
 end
