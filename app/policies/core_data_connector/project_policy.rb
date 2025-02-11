@@ -91,7 +91,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      [:name, :description, :discoverable, :faircopy_cloud_url, :faircopy_cloud_project_model_id]
+      [:name, :description, :discoverable, :faircopy_cloud_url, :faircopy_cloud_project_model_id, :map_library_url]
     end
 
     private
