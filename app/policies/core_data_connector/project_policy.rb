@@ -82,6 +82,13 @@ module CoreDataConnector
       false
     end
 
+    # A user can view any project's map library for which they are a member.
+    def map_library?
+      return true if current_user.admin?
+
+      project_member?
+    end
+
     # A user can update a project if they are an admin or an owner of the project.
     def update?
       return true if current_user.admin?

@@ -47,6 +47,7 @@ module Admin
         post :import_analyze, on: :member
         post :import_configuration, on: :member
         post :import_data, on: :member
+        get :map_library, on: :member
       end
 
       resources :record_merges, only: [:index, :destroy]
