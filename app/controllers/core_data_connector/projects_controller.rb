@@ -176,6 +176,16 @@ module CoreDataConnector
       end
     end
 
+    def map_library
+      project = Project.find(params[:id])
+      authorize project, :map_library?
+
+      library = MapLibrary.new(project.map_library_url)
+      json = library.fetch_library || []
+
+      render json: json, status: :ok
+    end
+
     protected
 
     # If we're not looking for "discoverable" projects, use base query defined by the policy. Otherwise, return
