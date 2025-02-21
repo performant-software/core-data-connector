@@ -100,7 +100,7 @@ module CoreDataConnector
                                 project_id: params[:project_ids]
                               }
                             )
-                            .select(Relationship.arel_table[:primary_record_id].as('id'))
+                            .select(Relationship.arel_table[:related_record_id].as('id'))
 
           if params[:project_model_relationship_uuid].present?
             primary_query = primary_query
@@ -122,7 +122,7 @@ module CoreDataConnector
                                 allow_inverse: true
                               }
                             )
-                            .select(Relationship.arel_table[:related_record_id].as('id'))
+                            .select(Relationship.arel_table[:primary_record_id].as('id'))
 
           if params[:project_model_relationship_uuid].present?
             related_query = related_query
