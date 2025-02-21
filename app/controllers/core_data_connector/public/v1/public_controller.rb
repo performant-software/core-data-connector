@@ -11,7 +11,7 @@ module CoreDataConnector
           return item_class.none unless params[:project_ids].present?
 
           if nested_resource?
-            item_class.joins(build_base_sql(item_class.table_name))
+            item_class.joins(build_base_sql)
           elsif params[:id].present?
             item_class.where(uuid: params[:id])
           elsif params[:project_ids].present?
@@ -89,7 +89,7 @@ module CoreDataConnector
 
         private
 
-        def build_base_sql(table_name)
+        def build_base_sql
           primary_query = Relationship
                             .joins(project_model_relationship: :primary_model)
                             .where(
@@ -136,7 +136,7 @@ module CoreDataConnector
               #{primary_query.to_sql}
               UNION ALL
               #{related_query.to_sql}
-            ) record ON record.id = "#{table_name}"."id"
+            ) record ON record.id = "#{item_class.table_name}"."id"
           SQL
         end
       end
