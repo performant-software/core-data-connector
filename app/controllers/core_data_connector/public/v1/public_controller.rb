@@ -92,7 +92,6 @@ module CoreDataConnector
         def build_base_sql(table_name)
           primary_query = Relationship
                             .joins(project_model_relationship: :primary_model)
-                            .where(Relationship.arel_table[:related_record_id].eq(item_class.arel_table[:id]))
                             .where(
                               related_record_type: item_class.to_s,
                               primary_record_id: current_record.id,
@@ -101,6 +100,7 @@ module CoreDataConnector
                                 project_id: params[:project_ids]
                               }
                             )
+                            .select(Relationship.arel_table[:primary_record_id].as('id'))
 
           if params[:project_model_relationship_uuid].present?
             primary_query = primary_query
@@ -111,7 +111,6 @@ module CoreDataConnector
 
           related_query = Relationship
                             .joins(project_model_relationship: :related_model)
-                            .where(Relationship.arel_table[:primary_record_id].eq(item_class.arel_table[:id]))
                             .where(
                               primary_record_type: item_class.to_s,
                               related_record_id: current_record.id,
@@ -123,6 +122,7 @@ module CoreDataConnector
                                 allow_inverse: true
                               }
                             )
+                            .select(Relationship.arel_table[:related_record_id].as('id'))
 
           if params[:project_model_relationship_uuid].present?
             related_query = related_query
