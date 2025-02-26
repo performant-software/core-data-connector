@@ -17,6 +17,7 @@ module CoreDataConnector
           UPDATE core_data_connector_taxonomies taxonomies
             SET  z_taxonomy_id = z_taxonomies.id,
                  name = z_taxonomies.name,
+                 user_defined = z_taxonomies.user_defined,
                  import_id = z_taxonomies.import_id,
                  updated_at = current_timestamp
            FROM #{table_name} z_taxonomies
@@ -33,6 +34,7 @@ module CoreDataConnector
             uuid,
             z_taxonomy_id,
             name,
+            user_defined,
             import_id,
             created_at, 
             updated_at
@@ -41,6 +43,7 @@ module CoreDataConnector
                  z_taxonomies.uuid,
                  z_taxonomies.id,
                  z_taxonomies.name,
+                 z_taxonomies.user_defined,
                  z_taxonomies.import_id,
                  current_timestamp,
                  current_timestamp
@@ -60,7 +63,8 @@ module CoreDataConnector
       def transform
         execute <<-SQL.squish
           UPDATE #{table_name} z_taxonomies
-             SET taxonomy_id = taxonomies.id
+             SET taxonomy_id = taxonomies.id,
+                 user_defined = taxonomies.user_defined
             FROM core_data_connector_taxonomies taxonomies
            WHERE taxonomies.uuid = z_taxonomies.uuid
              AND z_taxonomies.uuid IS NOT NULL
@@ -87,6 +91,9 @@ module CoreDataConnector
         }, {
           name: 'taxonomy_id',
           type: 'INTEGER'
+        }, {
+          name: 'user_defined',
+          type: 'JSONB'
         }, {
           name: 'import_id',
           type: 'UUID'
