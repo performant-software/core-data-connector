@@ -20,6 +20,6 @@ module CoreDataConnector
     delegate :name, to: :primary_name, allow_nil: true
 
     # User defined fields parent
-    resolve_defineable -> (organization) { organization.project_model }
+    resolve_defineable -> (item) { item.project_model }
   end
 end
