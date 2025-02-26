@@ -8,6 +8,10 @@ module CoreDataConnector
     include Mergeable
     include Ownable
     include Relateable
+    include UserDefinedFields::Fieldable
     include Search::Taxonomy
+
+    # User defined fields parent
+    resolve_defineable -> (taxonomy) { taxonomy.project_model }
   end
 end
