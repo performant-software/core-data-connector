@@ -69,14 +69,21 @@ module CoreDataConnector
         return unless user_defined_columns.present?
 
         # Sets the user_defined column based on any included user-defined fields
-        expression = user_defined_columns
-                       .map{ |c| ["'#{c[:uuid]}'", c[:name]] }
-                       .flatten
-                       .join(', ')
+        all_udc_args = user_defined_columns
+                     .map{ |c| ["'#{c[:uuid]}'", c[:name]] }
+                     .flatten
+        # can't pass more than 100 arguments to a function, so build
+        # expression using multiple function calls, each <= 100 args
+        expressions = []
+        all_udc_args.each_slice(100) do |udc_arg_set|
+          args = udc_arg_set.join(', ')
+          expressions.push("jsonb_strip_nulls(jsonb_build_object(#{args}))")
+        end
+        expression = expressions.join(' || ')
 
         execute <<-SQL.squish
           UPDATE #{table_name}
-             SET user_defined = COALESCE(user_defined, '{}') || json_strip_nulls(json_build_object(#{expression}))::jsonb
+             SET user_defined = COALESCE(user_defined, '{}') || #{expression}
         SQL
 
         # Sets the "Select" and "FuzzyDate" user-defined types to JSONB
