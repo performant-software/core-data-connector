@@ -30,7 +30,7 @@ module CoreDataConnector
         def resolve_date(date)
           return [] unless date.present?
 
-          [date.start_date&.to_time&.to_i, date.end_date&.to_time&.to_i]
+          [date.start_date&.to_fs(:year)&.to_i, date.end_date&.to_fs(:year)&.to_i]
         end
 
       end
