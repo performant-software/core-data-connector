@@ -44,6 +44,8 @@ module Public
               resources :works, only: :index
             end
 
+            resources :media_contents, only: :index
+
             resources :organizations do
               resources :events, only: :index
               resources :instances, only: :index
