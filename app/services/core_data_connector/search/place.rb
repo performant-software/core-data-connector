@@ -7,6 +7,10 @@ module CoreDataConnector
         def preloads
           [:primary_name, :place_names, :place_geometry]
         end
+
+        def search_query(query)
+          query.merge(self.with_centroid)
+        end
       end
 
       included do
