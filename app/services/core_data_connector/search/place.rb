@@ -24,8 +24,12 @@ module CoreDataConnector
           place_names.map(&:name)
         end
 
-        search_attribute(:geometry) do
-          Geometry.to_geojson(place_geometry&.geometry)
+        search_attribute(:geometry) do |place, polygons|
+          if polygons
+            next Geometry.to_geojson(place_geometry&.geometry)
+          elsif self.respond_to?(:geometry_center) && geometry_center.present?
+            next Geometry.to_geojson(geometry_center)
+          end
         end
 
         search_attribute(:coordinates) do
@@ -35,7 +39,6 @@ module CoreDataConnector
           [geometry_center.y, geometry_center.x]
         end
       end
-
     end
   end
 end

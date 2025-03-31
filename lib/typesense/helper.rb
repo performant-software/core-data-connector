@@ -62,7 +62,7 @@ module Typesense
       client.collections[collection_name].delete
     end
 
-    def index(project_model_ids)
+    def index(project_model_ids, polygons)
       collection = client.collections[collection_name]
 
       # Query project_models and build a hash of class names to arrays if project_model IDs
@@ -88,7 +88,7 @@ module Typesense
         ids = model_classes[model_class]
 
         klass.for_search(ids) do |records|
-          documents = records.map { |r| r.to_search_json(false).merge(import_attributes) }
+          documents = records.map { |r| r.to_search_json(skip_relationships: false, polygons: polygons).merge(import_attributes) }
           collection.documents.import(documents, action: 'emplace')
         end
       end

@@ -313,7 +313,7 @@ module CoreDataConnector
 
         # Uses the specified attributes to create a JSON object. We'll skip relationships by default as to
         # not create an infinite loop while serializing related records.
-        def to_search_json(skip_relationships = true)
+        def to_search_json(skip_relationships: true, polygons: false)
           hash = {}
 
           # Add attributes defined by the concrete-class
@@ -322,7 +322,11 @@ module CoreDataConnector
 
             # Extract the value for the attribute
             if attr[:block].present?
-              value = instance_eval(&attr[:block])
+              if name == :geometry
+                value = instance_exec(self, polygons, &attr[:block] )
+              else
+                value = instance_eval(&attr[:block])
+              end
             else
               value = self.send(attr[:name])
             end

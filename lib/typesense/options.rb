@@ -12,6 +12,7 @@ module Typesense
       opts.on('-r', '--protocol ARG', String) { |protocol| options[:protocol] = protocol }
       opts.on('-a', '--api-key ARG', String) { |api_key| options[:api_key] = api_key }
       opts.on('-c', '--collection-name ARG', String) { |collection| options[:collection_name] = collection }
+      opts.on('--polygons') { options[:polygons] = true }
 
       args = opts.order!(args) {}
       opts.parse!(args)
