@@ -55,9 +55,7 @@ namespace :typesense do
       collection_name: options[:collection_name]
     )
 
-    polygons = options[:polygons] || false
-
-    helper.index options[:project_model_ids], polygons
+    helper.index options[:project_model_ids], { polygons: options[:polygons] || false }
   end
 
   desc 'Updates the Typesense collection'

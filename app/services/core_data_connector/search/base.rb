@@ -313,7 +313,7 @@ module CoreDataConnector
 
         # Uses the specified attributes to create a JSON object. We'll skip relationships by default as to
         # not create an infinite loop while serializing related records.
-        def to_search_json(skip_relationships: true, polygons: false)
+        def to_search_json(options)
           hash = {}
 
           # Add attributes defined by the concrete-class
@@ -323,7 +323,7 @@ module CoreDataConnector
             # Extract the value for the attribute
             if attr[:block].present?
               if name == :geometry
-                value = instance_exec(self, polygons, &attr[:block] )
+                value = instance_exec(self, options, &attr[:block] )
               else
                 value = instance_eval(&attr[:block])
               end
@@ -348,10 +348,10 @@ module CoreDataConnector
           projects = []
 
           # Include related records
-          build_relationships hash, projects unless skip_relationships
-
-          # Only include project information for the base record
-          if !skip_relationships
+          if options[:include_relationships]
+            build_relationships hash, projects
+          else
+            # Only include project information for the base record
             # Add the owning project to the list of all projects
             add_project(projects, project_model.project)
 
@@ -425,7 +425,7 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .inverse_related_place_with_centroid
-                         .to_search_json
+                         .to_search_json(include_relationships: false)
                          .merge(user_defined)
                          .merge({ inverse: true })
         end
@@ -443,7 +443,7 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .primary_record
-                         .to_search_json
+                         .to_search_json(include_relationships: false)
                          .merge(user_defined)
                          .merge({ inverse: true })
         end
@@ -461,7 +461,7 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .related_place_with_centroid
-                         .to_search_json
+                         .to_search_json(include_relationships: false)
                          .merge(user_defined)
                          .merge({ inverse: false })
         end
@@ -479,7 +479,7 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .related_record
-                         .to_search_json
+                         .to_search_json(include_relationships: false)
                          .merge(user_defined)
                          .merge({ inverse: false })
         end
