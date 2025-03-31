@@ -41,12 +41,11 @@ module CoreDataConnector
         .select(arel_table[Arel.star], function)
     end
 
-    # WIP
-    def self.simplified_polygon
+    def self.with_simplified_geometry(tolerance = 0.01)
       function = Arel::Nodes::NamedFunction.new(
         'st_simplify',
-        [PlaceGeometry.arel_table[:geometry]]
-      ).as('geometry')
+        [PlaceGeometry.arel_table[:geometry], Arel::Nodes.build_quoted(tolerance)]
+      ).as('simplified_geometry')
 
       left_joins(:place_geometry)
         .select(arel_table[Arel.star], function)

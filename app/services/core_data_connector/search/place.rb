@@ -9,7 +9,9 @@ module CoreDataConnector
         end
 
         def search_query(query)
-          query.merge(self.with_centroid)
+          query = query.merge(self.with_centroid)
+
+          query.merge(self.with_simplified_geometry)
         end
       end
 
@@ -25,8 +27,8 @@ module CoreDataConnector
         end
 
         search_attribute(:geometry) do |place, polygons|
-          if polygons
-            next Geometry.to_geojson(place_geometry&.geometry)
+          if polygons && self.respond_to?(:simplified_geometry) && simplified_geometry.present?
+            next Geometry.to_geojson(self.simplified_geometry)
           elsif self.respond_to?(:geometry_center) && geometry_center.present?
             next Geometry.to_geojson(geometry_center)
           end
