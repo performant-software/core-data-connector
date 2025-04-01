@@ -70,7 +70,7 @@ module CoreDataConnector
                 project_model_relationship: [:user_defined_fields, primary_model: :project]
               ],
               place_relationships: [
-                related_place_with_centroid: [
+                related_place_with_search_geometry: [
                   :place_geometry,
                   :primary_name,
                   :place_names,
@@ -150,7 +150,7 @@ module CoreDataConnector
                 project_model_relationship: [:user_defined_fields, related_model: :project]
               ],
               place_related_relationships: [
-                inverse_related_place_with_centroid: [
+                inverse_related_place_with_search_geometry: [
                   :place_geometry,
                   :primary_name,
                   :place_names,
@@ -424,7 +424,7 @@ module CoreDataConnector
           hash[key] ||= []
 
           hash[key] << relationship
-                         .inverse_related_place_with_centroid
+                         .inverse_related_place_with_search_geometry
                          .to_search_json(options)
                          .merge(user_defined)
                          .merge({ inverse: true })
@@ -460,7 +460,7 @@ module CoreDataConnector
           hash[key] ||= []
 
           hash[key] << relationship
-                         .related_place_with_centroid
+                         .related_place_with_search_geometry
                          .to_search_json(options)
                          .merge(user_defined)
                          .merge({ inverse: false })

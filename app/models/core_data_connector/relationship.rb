@@ -30,8 +30,8 @@ module CoreDataConnector
     belongs_to :inverse_related_work, -> { where(Relationship.arel_table.name => { primary_record_type: Work.to_s }) }, class_name: Work.to_s, foreign_key: :primary_record_id, optional: true
 
     # Place relationships
-    belongs_to :related_place_with_centroid, -> { merge(Place.with_centroid) }, class_name: Place.to_s, foreign_key: :related_record_id, optional: true
-    belongs_to :inverse_related_place_with_centroid, -> { merge(Place.with_centroid) }, class_name: Place.to_s, foreign_key: :primary_record_id, optional: true
+    belongs_to :related_place_with_search_geometry, -> { merge(Place.with_search_geometry) }, class_name: Place.to_s, foreign_key: :related_record_id, optional: true
+    belongs_to :inverse_related_place_with_search_geometry, -> { merge(Place.with_search_geometry) }, class_name: Place.to_s, foreign_key: :primary_record_id, optional: true
 
     # Delegates
     delegate :project_id, to: :project_model_relationship

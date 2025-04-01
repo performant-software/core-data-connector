@@ -31,24 +31,34 @@ module CoreDataConnector
     # User defined fields parent
     resolve_defineable -> (place) { place.project_model }
 
-    def self.with_centroid
+    def self.centroid_function
       function = Arel::Nodes::NamedFunction.new(
         'st_centroid',
         [PlaceGeometry.arel_table[:geometry]]
       ).as('geometry_center')
-
-      left_joins(:place_geometry)
-        .select(arel_table[Arel.star], function)
     end
 
-    def self.with_simplified_geometry(tolerance = 0.01)
+    def self.with_centroid
+      left_joins(:place_geometry)
+        .select(arel_table[Arel.star], with_centroid_function)
+    end
+
+    def self.simplified_geometry_function(tolerance = 0.01)
       function = Arel::Nodes::NamedFunction.new(
         'st_simplify',
         [PlaceGeometry.arel_table[:geometry], Arel::Nodes.build_quoted(tolerance)]
       ).as('simplified_geometry')
 
+      function
+    end
+
+    def self.with_search_geometry(simplify_tolerance = 0.01)
       left_joins(:place_geometry)
-        .select(arel_table[Arel.star], function)
+        .select(
+          arel_table[Arel.star],
+          centroid_function,
+          simplified_geometry_function
+        )
     end
   end
 end

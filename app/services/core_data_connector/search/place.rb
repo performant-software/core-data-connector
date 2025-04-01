@@ -9,9 +9,7 @@ module CoreDataConnector
         end
 
         def search_query(query)
-          query = query.merge(self.with_centroid)
-
-          query.merge(self.with_simplified_geometry)
+          query.merge(self.with_search_geometry)
         end
       end
 
