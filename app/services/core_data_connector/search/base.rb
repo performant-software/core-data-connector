@@ -323,7 +323,7 @@ module CoreDataConnector
             # Extract the value for the attribute
             if attr[:block].present?
               if name == :geometry
-                value = instance_exec(self, options, &attr[:block] )
+                value = instance_exec(self, options, &attr[:block])
               else
                 value = instance_eval(&attr[:block])
               end
@@ -349,7 +349,7 @@ module CoreDataConnector
 
           # Include related records
           if options[:include_relationships]
-            build_relationships hash, projects
+            build_relationships(hash, projects, options.merge(include_relationships: false))
 
             # Only include project information for the base record
             # Add the owning project to the list of all projects
@@ -412,7 +412,7 @@ module CoreDataConnector
           hash['event_range_facet'] = [min_range, max_range] unless min_range.nil? || max_range.nil?
         end
 
-        def build_inverse_place_relationship(relationship, hash, projects)
+        def build_inverse_place_relationship(relationship, hash, projects, options)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
@@ -425,12 +425,12 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .inverse_related_place_with_centroid
-                         .to_search_json(include_relationships: false)
+                         .to_search_json(options)
                          .merge(user_defined)
                          .merge({ inverse: true })
         end
 
-        def build_inverse_relationship(relationship, hash, projects)
+        def build_inverse_relationship(relationship, hash, projects, options)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
@@ -443,12 +443,12 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .primary_record
-                         .to_search_json(include_relationships: false)
+                         .to_search_json(options)
                          .merge(user_defined)
                          .merge({ inverse: true })
         end
 
-        def build_place_relationship(relationship, hash, projects)
+        def build_place_relationship(relationship, hash, projects, options)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
@@ -461,12 +461,12 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .related_place_with_centroid
-                         .to_search_json(include_relationships: false)
+                         .to_search_json(options)
                          .merge(user_defined)
                          .merge({ inverse: false })
         end
 
-        def build_relationship(relationship, hash, projects)
+        def build_relationship(relationship, hash, projects, options)
           project_model_relationship = relationship.project_model_relationship
           key = project_model_relationship.uuid
 
@@ -479,31 +479,31 @@ module CoreDataConnector
 
           hash[key] << relationship
                          .related_record
-                         .to_search_json(include_relationships: false)
+                         .to_search_json(options)
                          .merge(user_defined)
                          .merge({ inverse: false })
         end
 
-        def build_relationships(hash, projects)
-          event_relationships.each { |r| build_relationship(r, hash, projects) }
-          instance_relationships.each { |r| build_relationship(r, hash, projects) }
-          item_relationships.each { |r| build_relationship(r, hash, projects) }
-          media_content_relationships.each { |r| build_relationship(r, hash, projects) }
-          organization_relationships.each { |r| build_relationship(r, hash, projects) }
-          person_relationships.each { |r| build_relationship(r, hash, projects) }
-          place_relationships.each { |r| build_place_relationship(r, hash, projects) }
-          taxonomy_relationships.each { |r| build_relationship(r, hash, projects) }
-          work_relationships.each { |r| build_relationship(r, hash, projects) }
+        def build_relationships(hash, projects, options)
+          event_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          instance_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          item_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          media_content_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          organization_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          person_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          place_relationships.each { |r| build_place_relationship(r, hash, projects, options) }
+          taxonomy_relationships.each { |r| build_relationship(r, hash, projects, options) }
+          work_relationships.each { |r| build_relationship(r, hash, projects, options) }
 
-          event_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          instance_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          item_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          organization_related_relationships.each { |r| build_inverse_relationship(r,hash, projects) }
-          person_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          place_related_relationships.each { |r| build_inverse_place_relationship(r, hash, projects) }
-          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
-          work_related_relationships.each { |r| build_inverse_relationship(r, hash, projects) }
+          event_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+          instance_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+          item_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+          media_content_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+          organization_related_relationships.each { |r| build_inverse_relationship(r,hash, projects, options) }
+          person_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+          place_related_relationships.each { |r| build_inverse_place_relationship(r, hash, projects, options) }
+          taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+          work_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
         end
 
         def build_user_defined(record, user_defined_fields)
