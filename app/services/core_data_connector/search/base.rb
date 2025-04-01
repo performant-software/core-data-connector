@@ -350,7 +350,7 @@ module CoreDataConnector
           # Include related records
           if options[:include_relationships]
             build_relationships hash, projects
-          else
+
             # Only include project information for the base record
             # Add the owning project to the list of all projects
             add_project(projects, project_model.project)
