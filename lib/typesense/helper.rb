@@ -65,7 +65,7 @@ module Typesense
     def index(project_model_ids, options)
       collection = client.collections[collection_name]
 
-      options[:include_relationships] = false
+      options[:include_relationships] = true
 
       # Query project_models and build a hash of class names to arrays if project_model IDs
       model_classes = CoreDataConnector::ProjectModel
