@@ -40,7 +40,7 @@ module CoreDataConnector
 
     def self.with_centroid
       left_joins(:place_geometry)
-        .select(arel_table[Arel.star], with_centroid_function)
+        .select(arel_table[Arel.star], centroid_function)
     end
 
     def self.simplified_geometry_function(tolerance = 0.01)
