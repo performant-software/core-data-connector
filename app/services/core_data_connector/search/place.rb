@@ -24,7 +24,7 @@ module CoreDataConnector
           place_names.map(&:name)
         end
 
-        search_attribute(:geometry) do |place, options|
+        search_attribute(:geometry) do |options|
           if options[:polygons] && self.respond_to?(:simplified_geometry) && simplified_geometry.present?
             next Geometry.to_geojson(self.simplified_geometry)
           elsif self.respond_to?(:geometry_center) && geometry_center.present?

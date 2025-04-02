@@ -32,7 +32,7 @@ module CoreDataConnector
     resolve_defineable -> (place) { place.project_model }
 
     def self.centroid_function
-      function = Arel::Nodes::NamedFunction.new(
+      Arel::Nodes::NamedFunction.new(
         'st_centroid',
         [PlaceGeometry.arel_table[:geometry]]
       ).as('geometry_center')
@@ -44,12 +44,10 @@ module CoreDataConnector
     end
 
     def self.simplified_geometry_function(tolerance = 0.01)
-      function = Arel::Nodes::NamedFunction.new(
+      Arel::Nodes::NamedFunction.new(
         'st_simplify',
         [PlaceGeometry.arel_table[:geometry], Arel::Nodes.build_quoted(tolerance)]
       ).as('simplified_geometry')
-
-      function
     end
 
     def self.with_search_geometry(simplify_tolerance = 0.01)

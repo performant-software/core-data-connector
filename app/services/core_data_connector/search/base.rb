@@ -322,11 +322,7 @@ module CoreDataConnector
 
             # Extract the value for the attribute
             if attr[:block].present?
-              if name == :geometry
-                value = instance_exec(self, options, &attr[:block])
-              else
-                value = instance_eval(&attr[:block])
-              end
+              value = instance_exec(options, &attr[:block])
             else
               value = self.send(attr[:name])
             end
