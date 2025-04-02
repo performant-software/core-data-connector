@@ -26,9 +26,9 @@ module CoreDataConnector
 
         search_attribute(:geometry) do |options|
           if options[:polygons] && self.respond_to?(:simplified_geometry) && simplified_geometry.present?
-            next Geometry.to_geojson(self.simplified_geometry)
+            Geometry.to_geojson(self.simplified_geometry)
           elsif self.respond_to?(:geometry_center) && geometry_center.present?
-            next Geometry.to_geojson(geometry_center)
+            Geometry.to_geojson(geometry_center)
           end
         end
 
