@@ -105,17 +105,21 @@ module Typesense
       collection = collection_schema.retrieve
       fields = collection['fields']
 
+      fields_to_update = []
+
       # Update any fields where the name ends with "_facet" and are not flagged as facetable.
       # Update any fields named "coordinates" to type "geopoint"
       fields.each do |field|
         name = field['name']
 
         if name.end_with?('_facet') && !field['facet']
-          collection_schema.update({ fields: [{ name: name, drop: true }, field.merge({ facet: true })] })
+          fields_to_update.push({ name: name, drop: true }, field.merge({ facet: true }))
         elsif name.include?('coordinates') && !name.include?('geometry') && field['type'] != 'geopoint[]'
-          collection_schema.update({ fields: [{ name: name, drop: true }, field.merge({ type: 'geopoint[]', sort: true })] })
+          fields_to_update.push({ name: name, drop: true }, field.merge({ type: 'geopoint[]', sort: true }))
         end
       end
+
+      collection_schema.update({ fields: fields_to_update })
     end
   end
 end
