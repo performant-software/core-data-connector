@@ -313,7 +313,7 @@ module CoreDataConnector
 
         # Uses the specified attributes to create a JSON object. We'll skip relationships by default as to
         # not create an infinite loop while serializing related records.
-        def to_search_json(options)
+        def to_search_json(options = { include_relationships: false })
           hash = {}
 
           # Add attributes defined by the concrete-class
