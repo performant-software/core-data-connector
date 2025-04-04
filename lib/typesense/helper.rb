@@ -62,8 +62,10 @@ module Typesense
       client.collections[collection_name].delete
     end
 
-    def index(project_model_ids)
+    def index(project_model_ids, options)
       collection = client.collections[collection_name]
+
+      options[:include_relationships] = true
 
       # Query project_models and build a hash of class names to arrays if project_model IDs
       model_classes = CoreDataConnector::ProjectModel
@@ -88,7 +90,7 @@ module Typesense
         ids = model_classes[model_class]
 
         klass.for_search(ids) do |records|
-          documents = records.map { |r| r.to_search_json(false).merge(import_attributes) }
+          documents = records.map { |r| r.to_search_json(options).merge(import_attributes) }
           collection.documents.import(documents, action: 'emplace')
         end
       end
@@ -103,17 +105,21 @@ module Typesense
       collection = collection_schema.retrieve
       fields = collection['fields']
 
+      fields_to_update = []
+
       # Update any fields where the name ends with "_facet" and are not flagged as facetable.
       # Update any fields named "coordinates" to type "geopoint"
       fields.each do |field|
         name = field['name']
 
         if name.end_with?('_facet') && !field['facet']
-          collection_schema.update({ fields: [{ name: name, drop: true }, field.merge({ facet: true })] })
+          fields_to_update.push({ name: name, drop: true }, field.merge({ facet: true }))
         elsif name.include?('coordinates') && !name.include?('geometry') && field['type'] != 'geopoint[]'
-          collection_schema.update({ fields: [{ name: name, drop: true }, field.merge({ type: 'geopoint[]', sort: true })] })
+          fields_to_update.push({ name: name, drop: true }, field.merge({ type: 'geopoint[]', sort: true }))
         end
       end
+
+      collection_schema.update({ fields: fields_to_update })
     end
   end
 end

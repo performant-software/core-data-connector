@@ -9,7 +9,7 @@ module CoreDataConnector
         end
 
         def search_query(query)
-          query.merge(self.with_centroid)
+          query.merge(self.with_search_geometry)
         end
       end
 
@@ -24,8 +24,12 @@ module CoreDataConnector
           place_names.map(&:name)
         end
 
-        search_attribute(:geometry) do
-          Geometry.to_geojson(place_geometry&.geometry)
+        search_attribute(:geometry) do |options|
+          if options[:polygons] && self.respond_to?(:simplified_geometry) && simplified_geometry.present?
+            Geometry.to_geojson(self.simplified_geometry)
+          elsif self.respond_to?(:geometry_center) && geometry_center.present?
+            Geometry.to_geojson(geometry_center)
+          end
         end
 
         search_attribute(:coordinates) do
@@ -35,7 +39,6 @@ module CoreDataConnector
           [geometry_center.y, geometry_center.x]
         end
       end
-
     end
   end
 end

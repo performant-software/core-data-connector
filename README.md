@@ -81,7 +81,7 @@ bundle exec rake typesense:delete -- -h host -p port -r protocol -a api_key -c c
 
 #### Index documents into a collection
 ```bash
-bundle exec rake typesense:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids
+bundle exec rake typesense:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids --polygons
 ```
 
 **Note:** This task expects the entire collection to be indexed. Any records not included in the batch will be removed from the index.

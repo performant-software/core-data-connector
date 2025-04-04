@@ -43,7 +43,7 @@ namespace :typesense do
   desc 'Index documents into Typesense'
   task index: :environment do
     options = Typesense::Options.parse(ARGV) do |opts, options|
-      opts.banner = 'Usage: typesense:index -- --host --port --protocol --api-key --collection-name --project-models'
+      opts.banner = 'Usage: typesense:index -- --host --port --protocol --api-key --collection-name --project-models --polygons'
       opts.on('-m', '--project-models ARG', Array) { |ids| options[:project_model_ids] = ids.map(&:to_i) }
     end
 
@@ -55,7 +55,7 @@ namespace :typesense do
       collection_name: options[:collection_name]
     )
 
-    helper.index options[:project_model_ids]
+    helper.index options[:project_model_ids], { polygons: options[:polygons] || false }
   end
 
   desc 'Updates the Typesense collection'
