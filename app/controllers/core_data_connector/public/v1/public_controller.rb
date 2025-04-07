@@ -11,7 +11,9 @@ module CoreDataConnector
           return item_class.none unless params[:project_ids].present?
 
           if nested_resource?
-            item_class.joins(build_base_sql)
+            item_class
+              .joins(build_base_sql)
+              .order(:order)
           elsif params[:id].present?
             item_class.where(uuid: params[:id])
           elsif params[:project_ids].present?
@@ -101,6 +103,7 @@ module CoreDataConnector
                               }
                             )
                             .select(Relationship.arel_table[:related_record_id].as('id'))
+                            .select(Relationship.arel_table[:order].as('order'))
 
           if params[:project_model_relationship_uuid].present?
             primary_query = primary_query
@@ -123,6 +126,7 @@ module CoreDataConnector
                               }
                             )
                             .select(Relationship.arel_table[:primary_record_id].as('id'))
+                            .select(Relationship.arel_table[:order].as('order'))
 
           if params[:project_model_relationship_uuid].present?
             related_query = related_query
