@@ -25,17 +25,21 @@ module CoreDataConnector
       # Relationships should always to scoped to a project model relationship. For inverse relationships, we'll
       # use the related record.
       if params[:inverse]
-        query = Relationship.where(
-          project_model_relationship_id: params[:project_model_relationship_id],
-          related_record_id: params[:record_id],
-          related_record_type: params[:record_type]
-        )
+        query = Relationship
+          .where(
+            project_model_relationship_id: params[:project_model_relationship_id],
+            related_record_id: params[:record_id],
+            related_record_type: params[:record_type]
+          )
+          .order(:order)
       else
-        query = Relationship.where(
-          project_model_relationship_id: params[:project_model_relationship_id],
-          primary_record_id: params[:record_id],
-          primary_record_type: params[:record_type]
-        )
+        query = Relationship
+          .where(
+            project_model_relationship_id: params[:project_model_relationship_id],
+            primary_record_id: params[:record_id],
+            primary_record_type: params[:record_type]
+          )
+          .order(:order)
       end
 
       # Include preloads for the different model types
