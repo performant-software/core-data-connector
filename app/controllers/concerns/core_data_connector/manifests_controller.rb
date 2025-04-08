@@ -8,6 +8,7 @@ module CoreDataConnector
       # Actions
       after_action :update_manifests_on_upload, only: :upload
       after_action :update_manifests_on_delete, only: :destroy
+      after_action :update_manifests_on_update, only: :update
       before_action :set_record_for_manifest, only: :destroy
 
       private
@@ -42,6 +43,20 @@ module CoreDataConnector
         service.reset_manifests_by_type(@record.class, {
           id: @record.id,
           project_model_relationship_id: @project_model_relationship_id,
+          limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
+        })
+      end
+
+      # After updating a relationship, generate the manifests for the target models
+      def update_manifests_on_update
+        relationship = Relationship.find(params[:id])
+
+        record = record_to_update(relationship)
+
+        service = Iiif::Manifest.new
+        service.reset_manifests_by_type(record.class, {
+          id: record.id,
+          project_model_relationship_id: relationship.project_model_relationship_id,
           limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
         })
       end

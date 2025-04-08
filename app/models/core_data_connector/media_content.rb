@@ -10,6 +10,10 @@ module CoreDataConnector
     include TripleEyeEffable::Resourceable
     include UserDefinedFields::Fieldable
 
+    def metadata
+      self.user_defined.to_json
+    end
+
     # User defined fields parent
     resolve_defineable -> (media_content) { media_content.project_model }
   end
