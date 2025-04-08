@@ -65,7 +65,8 @@ module CoreDataConnector
                 data[filename][:data] << {
                   import: merge_row_hash,
                   db: merge_row_hash,
-                  merged: merge_record.record_merges.map { |rm| rm.merged_uuid }
+                  merged: merge_record.record_merges.map { |rm| rm.merged_uuid },
+                  result: merge_row_hash
                 }
               end
             end
