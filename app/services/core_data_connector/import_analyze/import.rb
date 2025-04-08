@@ -46,7 +46,8 @@ module CoreDataConnector
             data[filename][:data] << {
               import: row_hash,
               db: db,
-              merged: merged
+              merged: merged,
+              result: db || row_hash
             }
 
             # If the current record has been merged and removed, add a row for the record existing in the database. The
