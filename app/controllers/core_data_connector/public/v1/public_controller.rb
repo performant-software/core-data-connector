@@ -13,7 +13,7 @@ module CoreDataConnector
           if nested_resource?
             item_class
               .joins(build_base_sql)
-              .order(:order)
+              .order('record.order')
           elsif params[:id].present?
             item_class.where(uuid: params[:id])
           elsif params[:project_ids].present?
