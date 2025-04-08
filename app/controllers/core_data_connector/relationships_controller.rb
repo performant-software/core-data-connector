@@ -31,7 +31,6 @@ module CoreDataConnector
             related_record_id: params[:record_id],
             related_record_type: params[:record_type]
           )
-          .order(:order)
       else
         query = Relationship
           .where(
@@ -39,7 +38,6 @@ module CoreDataConnector
             primary_record_id: params[:record_id],
             primary_record_type: params[:record_type]
           )
-          .order(:order)
       end
 
       # Include preloads for the different model types
