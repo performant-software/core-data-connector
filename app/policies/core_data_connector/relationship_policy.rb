@@ -50,6 +50,7 @@ module CoreDataConnector
         :primary_record_type,
         :related_record_id,
         :related_record_type,
+        :order,
         user_defined: {}
       ]
     end
