@@ -11,7 +11,20 @@ module CoreDataConnector
     include UserDefinedFields::Fieldable
 
     def metadata
-      self.user_defined.to_json
+      udf_uuids = self.user_defined.keys
+
+      udfs = UserDefinedFields::UserDefinedField.where(uuid: udf_uuids)
+
+      values = []
+
+      udfs.each do |udf|
+        values.push({
+          label: udf[:column_name],
+          value: self.user_defined[udf[:uuid]]
+        })
+      end
+
+      values.to_json
     end
 
     # User defined fields parent
