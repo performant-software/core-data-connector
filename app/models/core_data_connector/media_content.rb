@@ -10,6 +10,15 @@ module CoreDataConnector
     include TripleEyeEffable::Resourceable
     include UserDefinedFields::Fieldable
 
+    def metadata
+      UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
+        {
+          label: udf[:column_name],
+          value: self.user_defined[udf[:uuid]]
+        }
+      end
+    end
+
     # User defined fields parent
     resolve_defineable -> (media_content) { media_content.project_model }
   end

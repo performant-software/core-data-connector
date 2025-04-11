@@ -124,6 +124,7 @@ module CoreDataConnector
       def apply_preloads(query, options)
         relationships_scope = Relationship
                                 .where(related_record_type: MediaContent.to_s)
+                                .order(:order)
 
         if options[:project_model_relationship_id].present?
           relationships_scope = relationships_scope.where(
@@ -145,6 +146,7 @@ module CoreDataConnector
                                         .where(project_model_relationship: {
                                           allow_inverse: true
                                         })
+                                        .order(:order)
 
         if options[:project_model_relationship_id].present?
           related_relationships_scope = related_relationships_scope.where(
