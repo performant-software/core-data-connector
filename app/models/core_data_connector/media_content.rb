@@ -12,7 +12,7 @@ module CoreDataConnector
 
     def metadata
       if !self.user_defined || self.user_defined.keys.count == 0
-        return '{}'
+        return '[]'
       end
 
       UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
