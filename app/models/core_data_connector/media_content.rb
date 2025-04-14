@@ -11,6 +11,10 @@ module CoreDataConnector
     include UserDefinedFields::Fieldable
 
     def metadata
+      if !self.user_defined || self.user_defined.keys.count == 0
+        return '{}'
+      end
+
       UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
         {
           label: udf[:column_name],
