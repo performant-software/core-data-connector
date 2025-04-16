@@ -15,12 +15,14 @@ module CoreDataConnector
         return '[]'
       end
 
-      UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
+      fields = UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
         {
           label: udf[:column_name],
           value: self.user_defined[udf[:uuid]]
         }
       end
+
+      fields.to_json
     end
 
     # User defined fields parent
