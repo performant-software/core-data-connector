@@ -123,8 +123,12 @@ module CoreDataConnector
 
       def apply_preloads(query, options)
         relationships_scope = Relationship
-                                .where(related_record_type: MediaContent.to_s)
-                                .order(:order)
+                                .joins(:related_media_content)
+                                .order(
+                                  Relationship.arel_table[:order],
+                                  MediaContent.arel_table[:name],
+                                  MediaContent.arel_table[:id]
+                                )
 
         if options[:project_model_relationship_id].present?
           relationships_scope = relationships_scope.where(
@@ -142,11 +146,13 @@ module CoreDataConnector
 
         related_relationships_scope = Relationship
                                         .joins(:project_model_relationship)
-                                        .where(primary_record_type: MediaContent.to_s)
-                                        .where(project_model_relationship: {
-                                          allow_inverse: true
-                                        })
-                                        .order(:order)
+                                        .joins(:inverse_related_media_content)
+                                        .where(project_model_relationship: { allow_inverse: true })
+                                        .order(
+                                          Relationship.arel_table[:order],
+                                          MediaContent.arel_table[:name],
+                                          MediaContent.arel_table[:id]
+                                        )
 
         if options[:project_model_relationship_id].present?
           related_relationships_scope = related_relationships_scope.where(
