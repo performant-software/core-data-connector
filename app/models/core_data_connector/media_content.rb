@@ -13,26 +13,26 @@ module CoreDataConnector
     after_save :update_manifests
 
     def update_manifests
-      self.related_relationships.each do |relationship|
-        if relationship.primary_record_type == 'CoreDataConnector::MediaContent'
-          model_class = relationship.related_record_type.constantize
-        else
-          model_class = relationship.primary_record_type.constantize
-        end
+      iiif_service = Iiif::Manifest.new
 
-        if relationship.primary_record_id == self.id
-          related_record_id = relationship.related_record_id
-        else
-          related_record_id = relationship.primary_record_id
-        end
+      self.relationships.each { |r| update_relationship_manifests(r, iiif_service, true) }
+      self.related_relationships.each { |r| update_relationship_manifests(r, iiif_service, false) }
+    end
 
-        service = Iiif::Manifest.new
-        service.reset_manifests_by_type(model_class, {
-          id: related_record_id,
-          project_model_relationship_id: relationship.project_model_relationship_id,
-          limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
-        })
+    def update_relationship_manifests(relationship, service, is_primary)
+      if is_primary
+        model_class = relationship.related_record_type.constantize
+        related_record_id = relationship.related_record_id
+      else
+        model_class = relationship.primary_record_type.constantize
+        related_record_id = relationship.primary_record_id
       end
+
+      service.reset_manifests_by_type(model_class, {
+        id: related_record_id,
+        project_model_relationship_id: relationship.project_model_relationship_id,
+        limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
+      })
     end
 
     def metadata
