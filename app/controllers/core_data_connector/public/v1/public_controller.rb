@@ -10,10 +10,10 @@ module CoreDataConnector
         def base_query
           return item_class.none unless params[:project_ids].present?
 
-          if nested_resource?
-            item_class
-              .joins(build_base_sql)
-              .order('record.order')
+          if nested_resource? && current_record.present?
+            item_class.joins(build_base_sql).order('record.order')
+          elsif nested_resource?
+            item_class.none
           elsif params[:id].present?
             item_class.where(uuid: params[:id])
           elsif params[:project_ids].present?
@@ -27,7 +27,7 @@ module CoreDataConnector
         def preloads(query)
           super
 
-          return unless nested_resource?
+          return unless nested_resource? && current_record.present?
 
           primary_scope = Relationship
                             .joins(project_model_relationship: :related_model)
