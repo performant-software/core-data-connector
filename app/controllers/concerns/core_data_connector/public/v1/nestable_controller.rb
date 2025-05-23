@@ -14,7 +14,7 @@ module CoreDataConnector
           before_action :set_current_record
 
           def nested_resource?
-            NESTABLE_PARAMS.any? { |p| params[p].present? } && current_record.present?
+            NESTABLE_PARAMS.any? { |p| params[p].present? }
           end
 
           private
