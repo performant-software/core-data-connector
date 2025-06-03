@@ -78,6 +78,12 @@ en:
       show?: "You do not have permission to view this taxonomy."
       update?: "You do not have permission to update this taxonomy."
 
+    core_data_connector/user_project_policy:
+      create?: "You do not have permission to create an add users to this project."
+      delete?: "You do not have permission to delete users from this project."
+      show?: "You do not have permission to view users in this project."
+      update?: "You do not have permission to update users in this project."
+
     core_data_connector/work_policy:
       create?: "You do not have permission to create a work."
       delete?: "You do not have permission to delete this work."
@@ -104,10 +110,14 @@ en:
       authorize: "You do not have permission to import these records. Please contact your system administrator."
       import_configuration: "Configuration file required"
       import_data: "Importable contents required"
+    user_projects:
+      roles: "Invalid role"
+      unique: "This user cannot be added to the same project multiple times."
     users:
+      not_found: "User not found"
       password:
         sso: "Cannot reset passwords for SSO users"
-      not_found: "User not found"
+      roles: "Invalid role"
     web_authorities_controller:
       find:
         identifier: "An identifier is required"

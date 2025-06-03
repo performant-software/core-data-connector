@@ -16,8 +16,8 @@ module CoreDataConnector
     attr_accessor :name, :email, :password, :password_confirmation
 
     # Validations
-    validates :role, inclusion:  { in: ALLOWED_ROLES, message: I18n.t('errors.user_project.roles') }
-    validates :user_id, uniqueness: { scope: :project_id, message: I18n.t('errors.user_project.unique') }
+    validates :role, inclusion:  { in: ALLOWED_ROLES, message: I18n.t('errors.user_projects.roles') }
+    validates :user_id, uniqueness: { scope: :project_id, message: I18n.t('errors.user_projects.unique') }
 
     # Callbacks
     before_update :reset_password
@@ -36,7 +36,8 @@ module CoreDataConnector
         user.assign_attributes(
           name: name,
           password: password,
-          password_confirmation: password_confirmation
+          password_confirmation: password_confirmation,
+          role: User::ROLE_GUEST
         )
       end
 

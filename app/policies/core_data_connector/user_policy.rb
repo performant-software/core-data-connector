@@ -39,7 +39,7 @@ module CoreDataConnector
     # Allowed create/update attributes.
     def permitted_attributes
       params = [:name, :email, :password, :password_confirmation]
-      params << :admin if current_user.admin?
+      params << :role if current_user.admin?
       params
     end
 

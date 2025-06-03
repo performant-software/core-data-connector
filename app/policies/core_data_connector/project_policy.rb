@@ -21,9 +21,9 @@ module CoreDataConnector
       project_owner?
     end
 
-    # Any user can create a new project.
+    # Users with an "admin" or "member" role can create projects.
     def create?
-      true
+      current_user.admin? || current_user.member?
     end
 
     # A user can view any project for which they are a member.
