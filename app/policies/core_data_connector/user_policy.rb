@@ -20,16 +20,16 @@ module CoreDataConnector
       current_user.admin?
     end
 
-    # Only admin users can view users outside the context of a project. Users can view themselves outside the
-    # context of a project.
+    # Only admin users can view users outside the context of a project. Users can view
+    # themselves outside the context of a project.
     def show?
       return true if current_user.admin?
 
       current_user.id == user.id
     end
 
-    # Only admin users can update users outside the context of a project. Users can update themselves outside the
-    # context of a project.
+    # Only admin users can update users outside the context of a project. Users can update
+    # themselves outside the context of a project.
     def update?
       return true if current_user.admin?
 
@@ -38,9 +38,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      params = [:name, :email, :password, :password_confirmation]
-      params << :role if current_user.admin?
-      params
+      [:name, :email, :role, :password, :password_confirmation]
     end
 
     # Users can only view themselves outside of a project context.
