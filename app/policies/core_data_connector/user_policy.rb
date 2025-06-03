@@ -43,12 +43,12 @@ module CoreDataConnector
       params
     end
 
-    # Only admin users can view users outside of a project context
+    # Users can only view themselves outside of a project context.
     class Scope < BaseScope
       def resolve
         return scope.all if current_user.admin?
 
-        scope.none
+        User.where(id: current_user.id)
       end
     end
   end
