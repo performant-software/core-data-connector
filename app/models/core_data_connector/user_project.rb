@@ -16,6 +16,7 @@ module CoreDataConnector
     attr_accessor :name, :email, :password, :password_confirmation
 
     # Validations
+    validate :validate_project_owner
     validates :role, inclusion:  { in: ALLOWED_ROLES, message: I18n.t('errors.user_projects.roles') }
     validates :user_id, uniqueness: { scope: :project_id, message: I18n.t('errors.user_projects.unique') }
 
@@ -52,6 +53,19 @@ module CoreDataConnector
         password: password,
         password_confirmation: password_confirmation
       )
+    end
+
+    # Validates that the project has at least one owner
+    def validate_project_owner
+      return unless role == ROLE_EDITOR
+
+      has_owner = project
+                    .user_projects
+                    .where(role: ROLE_OWNER)
+                    .where.not(id: id)
+                    .exists?
+
+      errors.add(:role, I18n.t('errors.user_projects.role_owner')) unless has_owner
     end
   end
 end

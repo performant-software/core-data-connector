@@ -111,6 +111,7 @@ en:
       import_configuration: "Configuration file required"
       import_data: "Importable contents required"
     user_projects:
+      role_owner: "Projects must have an owner."
       roles: "Invalid role"
       unique: "This user cannot be added to the same project multiple times."
     users:
