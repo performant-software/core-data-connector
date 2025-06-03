@@ -43,27 +43,12 @@ module CoreDataConnector
       params
     end
 
-    # A user can view another user if they have access to the same project.
+    # Only admin users can view users outside of a project context
     class Scope < BaseScope
       def resolve
         return scope.all if current_user.admin?
 
-        user_projects = UserProject.arel_table.alias('b')
-
-        scope.where(
-          UserProject
-            .where(UserProject.arel_table[:user_id].eq(User.arel_table[:id]))
-            .where(
-              UserProject
-                .arel_table
-                .project(1)
-                .from(user_projects)
-                .where(user_projects[:project_id].eq(UserProject.arel_table[:project_id]))
-                .where(user_projects[:user_id].eq(current_user.id))
-                .exists
-                .to_sql
-            ).arel.exists
-        )
+        scope.none
       end
     end
   end
