@@ -34,6 +34,7 @@ module CoreDataConnector
     belongs_to :inverse_related_place_with_search_geometry, -> { merge(Place.with_search_geometry) }, class_name: Place.to_s, foreign_key: :primary_record_id, optional: true
 
     # Delegates
+    delegate :project, to: :project_model_relationship
     delegate :project_id, to: :project_model_relationship
 
     # User defined fields parent

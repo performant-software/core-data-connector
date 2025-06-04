@@ -7,7 +7,7 @@ module CoreDataConnector
       def create?
         return true if current_user.admin?
 
-        member?
+        !project.archived? && member?
       end
 
       # A user can delete an owned record if they are a member of the owning project and the record has not been
@@ -15,7 +15,7 @@ module CoreDataConnector
       def destroy?
         return true if current_user.admin?
 
-        member? && !shared?
+        !project.archived? && member? && !shared?
       end
 
       # A user can view an owned record if they are a member of the owning project or a member of a project
@@ -23,7 +23,7 @@ module CoreDataConnector
       def show?
         return true if current_user.admin?
 
-        member? || access_member?
+        !project.archived? && (member? || access_member?)
       end
 
       # A user can update an owned record if they are a member of the owning project or a member of a project
@@ -31,7 +31,7 @@ module CoreDataConnector
       def update?
         return true if current_user.admin?
 
-        member? || access_member?
+        !project.archived? && (member? || access_member?)
       end
 
       protected
