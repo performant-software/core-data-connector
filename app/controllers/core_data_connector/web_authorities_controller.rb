@@ -30,13 +30,13 @@ module CoreDataConnector
     protected
 
     def base_query
-      # Return the super method if an "id" is provided
-      return super if params[:id].present?
-
       # For index routes, require the project_id to be provided
-      return WebAuthority.none unless params[:project_id].present?
+      return WebAuthority.none unless params[:project_id].present? || params[:id].present?
 
-      WebAuthority.where(project_id: params[:project_id])
+      query = super
+      query = query.where(project_id: params[:project_id]) if params[:project_id].present?
+
+      query
     end
   end
 end

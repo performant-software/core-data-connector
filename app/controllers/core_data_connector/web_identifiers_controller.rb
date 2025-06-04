@@ -12,15 +12,17 @@ module CoreDataConnector
     protected
 
     def base_query
-      # Return the super method if an "id" is provided
-      return super if params[:id].present?
+      return WebIdentifier.none unless (params[:identifiable_id].present? && params[:identifiable_type].present?) || params[:id].present?
 
-      # For index routes, require the identifiable_id and identifiable_type to be provided
-      return WebIdentifier.none unless params[:identifiable_id].present? && params[:identifiable_type].present?
+      query = super
 
-      WebIdentifier
-        .where(identifiable_id: params[:identifiable_id])
-        .where(identifiable_type: params[:identifiable_type])
+      if params[:identifiable_id].present? && params[:identifiable_type].present?
+        query = query
+                  .where(identifiable_id: params[:identifiable_id])
+                  .where(identifiable_type: params[:identifiable_type])
+      end
+
+      query
     end
   end
 end
