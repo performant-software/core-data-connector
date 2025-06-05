@@ -20,16 +20,16 @@ module CoreDataConnector
       current_user.admin?
     end
 
-    # Only admin users can view users outside the context of a project. Users can view themselves outside the
-    # context of a project.
+    # Only admin users can view users outside the context of a project. Users can view
+    # themselves outside the context of a project.
     def show?
       return true if current_user.admin?
 
       current_user.id == user.id
     end
 
-    # Only admin users can update users outside the context of a project. Users can update themselves outside the
-    # context of a project.
+    # Only admin users can update users outside the context of a project. Users can update
+    # themselves outside the context of a project.
     def update?
       return true if current_user.admin?
 
@@ -38,32 +38,15 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      params = [:name, :email, :password, :password_confirmation]
-      params << :admin if current_user.admin?
-      params
+      [:name, :email, :role, :password, :password_confirmation]
     end
 
-    # A user can view another user if they have access to the same project.
+    # Users can only view themselves outside of a project context.
     class Scope < BaseScope
       def resolve
         return scope.all if current_user.admin?
 
-        user_projects = UserProject.arel_table.alias('b')
-
-        scope.where(
-          UserProject
-            .where(UserProject.arel_table[:user_id].eq(User.arel_table[:id]))
-            .where(
-              UserProject
-                .arel_table
-                .project(1)
-                .from(user_projects)
-                .where(user_projects[:project_id].eq(UserProject.arel_table[:project_id]))
-                .where(user_projects[:user_id].eq(current_user.id))
-                .exists
-                .to_sql
-            ).arel.exists
-        )
+        User.where(id: current_user.id)
       end
     end
   end

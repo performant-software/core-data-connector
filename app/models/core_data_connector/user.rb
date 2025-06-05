@@ -1,5 +1,16 @@
 module CoreDataConnector
   class User < ApplicationRecord
+    # Roles
+    ROLE_ADMIN = 'admin'
+    ROLE_MEMBER = 'member'
+    ROLE_GUEST = 'guest'
+
+    ALLOWED_ROLES = [
+      ROLE_ADMIN,
+      ROLE_MEMBER,
+      ROLE_GUEST
+    ]
+
     # Domains that have SSO enabled
     SSO_DOMAINS = ENV['REACT_APP_SSO_DOMAINS'] ? ENV['REACT_APP_SSO_DOMAINS'].split(',') : []
 
@@ -9,11 +20,27 @@ module CoreDataConnector
     # JWT
     has_secure_password
 
+    # Actions
     before_validation :set_sso_password, on: :create
 
     # Validations
-    validates :email, uniqueness: true
     validate :validate_sso_password
+    validates :email, uniqueness: true
+    validates :role, inclusion:  { in: ALLOWED_ROLES, message: I18n.t('errors.users.roles') }
+
+    def admin?
+      role === ROLE_ADMIN
+    end
+
+    def guest?
+      role === ROLE_GUEST
+    end
+
+    def member?
+      role === ROLE_MEMBER
+    end
+
+    private
 
     # Add a long, random password for accounts created via SSO
     def set_sso_password

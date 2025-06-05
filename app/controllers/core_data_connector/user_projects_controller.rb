@@ -1,7 +1,7 @@
 module CoreDataConnector
   class UserProjectsController < ApplicationController
     # Search attributes
-    search_attributes 'users.name', 'users.email', 'projects.name', 'projects.description'
+    search_attributes 'core_data_connector_users.name', 'core_data_connector_users.email', 'core_data_connector_projects.name', 'core_data_connector_projects.description'
 
     # Joins
     joins :user, :project
