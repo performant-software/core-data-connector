@@ -21,6 +21,7 @@ module CoreDataConnector
     has_secure_password
 
     # Actions
+    before_save :set_require_password_change
     before_validation :set_sso_password, on: :create
 
     # Validations
@@ -41,6 +42,10 @@ module CoreDataConnector
     end
 
     private
+
+    def set_require_password_change
+      self.require_password_change = false if password_digest_changed?
+    end
 
     # Add a long, random password for accounts created via SSO
     def set_sso_password

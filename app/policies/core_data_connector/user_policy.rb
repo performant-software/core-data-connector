@@ -38,7 +38,7 @@ module CoreDataConnector
 
     # Allowed create/update attributes.
     def permitted_attributes
-      [:name, :email, :role, :password, :password_confirmation]
+      [:name, :email, :role, :password, :password_confirmation, :require_password_change]
     end
 
     # Users can only view themselves outside of a project context.
