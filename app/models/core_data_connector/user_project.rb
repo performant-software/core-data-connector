@@ -13,7 +13,7 @@ module CoreDataConnector
     belongs_to :project
 
     # Transient attributes
-    attr_accessor :name, :email, :password, :password_confirmation
+    attr_accessor :name, :email
 
     # Validations
     validate :validate_project_owner
@@ -29,17 +29,22 @@ module CoreDataConnector
     # Create the user record at the same time if the correct attributes are provided and no user_id is set. We'll
     # only update the name and password if the user is a new record.
     def find_or_create_user
-      return unless user_id.nil? && name.present? && email.present? && password.present? && password_confirmation.present?
+      return unless user_id.nil? && name.present? && email.present?
 
       user = User.find_or_create_by(email: email) do |user|
         next unless user.new_record?
 
+        password = SecureRandom.hex(6)
+
         user.assign_attributes(
           name: name,
           password: password,
-          password_confirmation: password_confirmation,
-          role: User::ROLE_GUEST
+          password_confirmation: password,
+          role: User::ROLE_GUEST,
+          require_password_change: true
         )
+
+        # TODO: Send email to user with password
       end
 
       self.user_id = user.id

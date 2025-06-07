@@ -43,8 +43,12 @@ module CoreDataConnector
 
     private
 
+    # Set the require_password_change attribute to "false" if the user has changed their password and this
+    # is not a new record.
     def set_require_password_change
-      self.require_password_change = false if password_digest_changed?
+      if password_digest_changed? && !new_record?
+        self.require_password_change = false
+      end
     end
 
     # Add a long, random password for accounts created via SSO

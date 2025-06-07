@@ -36,9 +36,11 @@ module CoreDataConnector
       current_user.id == user.id
     end
 
-    # Allowed create/update attributes.
+    # Allowed create/update attributes. Non-admin users can only change their password.
     def permitted_attributes
-      [:name, :email, :role, :password, :password_confirmation, :require_password_change]
+      attributes = [:password, :password_confirmation]
+      attributes += [:name, :email, :role, :require_password_change] if current_user.admin?
+      attributes
     end
 
     # Users can only view themselves outside of a project context.
