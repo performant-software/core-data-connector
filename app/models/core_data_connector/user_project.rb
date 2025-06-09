@@ -21,7 +21,7 @@ module CoreDataConnector
     validates :user_id, uniqueness: { scope: :project_id, message: I18n.t('errors.user_projects.unique') }
 
     # Callbacks
-    before_update :reset_password
+    after_create :send_invitation
     before_validation :find_or_create_user, on: :create
 
     private
@@ -34,30 +34,26 @@ module CoreDataConnector
       user = User.find_or_create_by(email: email) do |user|
         next unless user.new_record?
 
-        password = SecureRandom.hex(6)
+        # Generate a temporary password in order to create the user record. The password sent to the user
+        # will be generated after the record is saved.
+        temporary_password = Users::Passwords.generate_user_password
 
         user.assign_attributes(
           name: name,
-          password: password,
-          password_confirmation: password,
+          password: temporary_password,
+          password_confirmation: temporary_password,
           role: User::ROLE_GUEST,
           require_password_change: true
         )
-
-        # TODO: Send email to user with password
       end
 
       self.user_id = user.id
     end
 
-    # Reset the user's password if the password and password confirmation attributes are provided
-    def reset_password
-      return unless user_id.present? && password.present? && password_confirmation.present?
+    def send_invitation
+      return unless user.last_sign_in_at.nil?
 
-      user.update(
-        password: password,
-        password_confirmation: password_confirmation
-      )
+      Users::Invitations.new.send_invitation(self)
     end
 
     # Validates that the project has at least one owner

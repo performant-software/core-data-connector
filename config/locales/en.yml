@@ -1,4 +1,8 @@
 en:
+  app:
+    name: "Core Data Cloud"
+    company_name: "Performant Software Solutions"
+    company_address: "Charlottesville, VA and Boston, MA"
 
   authorization:
     core_data_connector/event_policy:

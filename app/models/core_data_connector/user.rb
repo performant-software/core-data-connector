@@ -21,7 +21,6 @@ module CoreDataConnector
     has_secure_password
 
     # Actions
-    before_save :set_require_password_change
     before_validation :set_sso_password, on: :create
 
     # Validations
@@ -31,6 +30,15 @@ module CoreDataConnector
 
     def admin?
       role === ROLE_ADMIN
+    end
+
+    def authenticate(password)
+      success = super
+
+      # Update the user's last sign in at timestamp
+      update(last_sign_in_at: DateTime.now) if success
+
+      success
     end
 
     def guest?
@@ -43,18 +51,10 @@ module CoreDataConnector
 
     private
 
-    # Set the require_password_change attribute to "false" if the user has changed their password and this
-    # is not a new record.
-    def set_require_password_change
-      if password_digest_changed? && !new_record?
-        self.require_password_change = false
-      end
-    end
-
     # Add a long, random password for accounts created via SSO
     def set_sso_password
       if SSO_DOMAINS.any? { |d| self.email.end_with?(d) }
-        random_password = SecureRandom.base64(50)
+        random_password = Users::Passwords.generate_sso_password
         self.password = random_password
         self.password_confirmation = random_password
       end
