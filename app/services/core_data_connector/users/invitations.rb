@@ -11,6 +11,7 @@ module CoreDataConnector
 
         # Update the user's password
         user.update(
+          last_invited_at: Time.now.utc,
           password: password,
           password_confirmation: password,
           require_password_change: true

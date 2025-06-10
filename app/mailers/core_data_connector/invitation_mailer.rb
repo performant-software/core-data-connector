@@ -20,7 +20,7 @@ module CoreDataConnector
       mail(
         postmark_template_alias: 'user-invitation',
         to: user.email,
-        from: ENV['POSTMARK_EMAIL_FROM']
+        from: ENV['POSTMARK_FROM']
       )
     end
   end

@@ -60,7 +60,9 @@ module Admin
         post :merge, on: :collection
       end
 
-      resources :user_projects
+      resources :user_projects do
+        post :invite, on: :member
+      end
 
       resources :users
 

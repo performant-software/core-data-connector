@@ -36,7 +36,7 @@ module CoreDataConnector
       success = super
 
       # Update the user's last sign in at timestamp
-      update(last_sign_in_at: DateTime.now) if success
+      update(last_sign_in_at: Time.now.utc) if success
 
       success
     end

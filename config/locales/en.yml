@@ -85,6 +85,7 @@ en:
     core_data_connector/user_project_policy:
       create?: "You do not have permission to create an add users to this project."
       delete?: "You do not have permission to delete users from this project."
+      invite?: "You do not have permission to invite this user to this project."
       show?: "You do not have permission to view users in this project."
       update?: "You do not have permission to update users in this project."
 
