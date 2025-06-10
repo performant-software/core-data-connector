@@ -38,7 +38,8 @@ module CoreDataConnector
 
     # Allowed create/update attributes. Non-admin users can only change their password.
     def permitted_attributes
-      attributes = [:password, :password_confirmation]
+      attributes = []
+      attributes += [:password, :password_confirmation] if current_user.admin? || current_user.sso_id.blank?
       attributes += [:name, :email, :role, :require_password_change] if current_user.admin?
       attributes
     end
