@@ -25,6 +25,7 @@ module CoreDataConnector
 
     # Validations
     validates :email, uniqueness: true
+    validates :password, presence: true, length: { in: 8..128 }, format: { with: Users::Passwords::PASSWORD_FORMAT }
     validates :role, inclusion:  { in: ALLOWED_ROLES, message: I18n.t('errors.users.roles') }
 
     def admin?
