@@ -42,6 +42,7 @@ module CoreDataConnector
           name: name,
           password: temporary_password,
           password_confirmation: temporary_password,
+          password_temporary: true,
           role: User::ROLE_GUEST,
           require_password_change: true
         )

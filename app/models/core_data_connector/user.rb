@@ -20,12 +20,19 @@ module CoreDataConnector
     # JWT
     has_secure_password
 
+    # Transient attributes
+    attr_accessor :password_temporary
+
     # Actions
     before_validation :set_sso_password, on: :create
 
     # Validations
     validates :email, uniqueness: true
-    validates :password, presence: true, length: { in: 8..128 }, format: { with: Users::Passwords::PASSWORD_FORMAT }
+    validates :password,
+              presence: true,
+              length: { in: 8..128 },
+              format: { with: Users::Passwords::PASSWORD_FORMAT },
+              unless: :password_temporary
     validates :role, inclusion:  { in: ALLOWED_ROLES, message: I18n.t('errors.users.roles') }
 
     def admin?

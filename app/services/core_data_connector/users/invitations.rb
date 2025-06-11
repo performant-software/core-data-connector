@@ -14,6 +14,7 @@ module CoreDataConnector
           last_invited_at: Time.now.utc,
           password: password,
           password_confirmation: password,
+          password_temporary: true,
           require_password_change: true
         )
 
