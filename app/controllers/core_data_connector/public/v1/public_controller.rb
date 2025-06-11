@@ -4,6 +4,7 @@ module CoreDataConnector
       class PublicController < ApplicationController
         # Includes
         include NestableController
+        include UnauthorizeableController
 
         protected
 
@@ -28,7 +29,7 @@ module CoreDataConnector
         end
 
         def find_record(query)
-          query.find_by(uuid: params[:uuid])
+          query.find_by!(uuid: params[:id])
         end
 
         def policy_class

@@ -98,6 +98,8 @@ en:
       update?: "You do not have permission to update this record."
 
   errors:
+    general:
+      not_found: "This record cannot be found"
     http:
       general: "An error occurred when making your request"
       no_response: "No response from the server"
