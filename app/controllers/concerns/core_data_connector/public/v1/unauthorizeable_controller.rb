@@ -10,7 +10,7 @@ module CoreDataConnector
           rescue_from ActiveRecord::RecordNotFound, with: :unauthorized
 
           def unauthorized
-            render json: { errors: [{ base: I18n.t('errors.general.not_found') }] }, status: :unauthorized
+            render json: { errors: [{ base: I18n.t('errors.general.not_found') }] }, status: :not_found
           end
 
         end
