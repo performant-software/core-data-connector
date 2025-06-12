@@ -53,6 +53,7 @@ PATH
       fuzzy_dates
       jwt (~> 2.7.1)
       jwt_auth
+      postmark-rails (~> 0.22.1)
       rack-cors (~> 2.0.1)
       rails (>= 6.0.3.2, < 8)
       resource_api
@@ -152,6 +153,7 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    json (2.12.2)
     jwt (2.7.1)
     loofah (2.21.3)
       crass (~> 1.0.2)
@@ -186,6 +188,11 @@ GEM
     oj (3.14.3)
     pagy (5.10.1)
       activesupport
+    postmark (1.25.1)
+      json
+    postmark-rails (0.22.1)
+      actionmailer (>= 3.0.0)
+      postmark (>= 1.21.3, < 2.0)
     pundit (2.3.1)
       activesupport (>= 3.0.0)
     racc (1.7.1)

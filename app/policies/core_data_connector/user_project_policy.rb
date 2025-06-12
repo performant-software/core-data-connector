@@ -2,34 +2,58 @@ module CoreDataConnector
   class UserProjectPolicy < BasePolicy
     attr_accessor :current_user, :user_project, :project
 
+    DEFAULT_INTERVAL = '24'
+    SECONDS_TO_HOURS = 60 * 60
+
     def initialize(current_user, user_project)
       @current_user = current_user
       @user_project = user_project
       @project = user_project&.project
     end
 
-    # A user can create user projects only for projects which they are an owner.
+    # A "member" user can create user projects only for projects which they are an owner.
     def create?
       return true if current_user.admin?
 
       !project.archived? && owner? && current_user.member?
     end
 
-    # A user can destroy user projects only for projects which they are an owner.
+    # A "member" user can destroy user projects only for projects which they are an owner.
     def destroy?
       return true if current_user.admin?
 
       !project.archived? && owner? && current_user.member?
     end
 
-    # A user can view user projects for projects which they are a member.
+    # An admin user can invite users. A project owner with a "member" user role can invite a user who has not already
+    # been invited within the last 24 hours if that user has not yet logged in.
+    def invite?
+      # Admin users can always invite a user
+      return true if current_user.admin?
+
+      # Only project owners with a "member" user role can invite users
+      return false unless owner? && current_user.member?
+
+      user = user_project.user
+
+      # Users cannot be invited if they have already logged in
+      return false unless user.last_sign_in_at.nil?
+
+      # Users cannot be invited if they have been invited within the last 24 hours
+      last_invited_at = user_project.user.last_invited_at
+      interval = ENV.fetch('POSTMARK_INTERVAL') { DEFAULT_INTERVAL }.to_i
+
+      last_invited_at.nil? || ((Time.now.utc - last_invited_at) / SECONDS_TO_HOURS > interval)
+    end
+
+    # A "member" user can view user projects for projects which they are a member.
     def show?
       return true if current_user.admin?
 
       !project.archived? && owner? && current_user.member?
     end
 
-    # A user can update user projects only for projects which they are an owner.
+    # A "member" user can update user projects only for projects which they are an owner.
     def update?
       return true if current_user.admin?
 

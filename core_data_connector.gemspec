@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'fuzzy_dates'
   spec.add_dependency 'jwt', '~> 2.7.1'
   spec.add_dependency 'jwt_auth'
+  spec.add_dependency 'postmark-rails', '~> 0.22.1'
   spec.add_dependency 'rack-cors', '~> 2.0.1'
   spec.add_dependency 'rgeo-geojson', '~> 2.1'
   spec.add_dependency 'resource_api'

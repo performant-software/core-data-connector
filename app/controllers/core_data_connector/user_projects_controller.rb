@@ -9,6 +9,27 @@ module CoreDataConnector
     # Preloads
     preloads :user, :project
 
+    def invite
+      user_project = UserProject.find(params[:id])
+      authorize user_project, :invite?
+
+      begin
+        service = Users::Invitations.new
+        service.send_invitation user_project
+      rescue StandardError => error
+        errors = [error]
+
+        # Log the error
+        log_error(error)
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: :bad_request
+      end
+    end
+
     protected
 
     def base_query
