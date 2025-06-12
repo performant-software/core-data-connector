@@ -1,10 +1,11 @@
 module CoreDataConnector
   class ProjectModelAccessPolicy < BasePolicy
-    attr_accessor :current_user, :project_model_access
+    attr_accessor :current_user, :project_model_access, :project
 
     def initialize(current_user, project_model_access)
       @current_user = current_user
       @project_model_access = project_model_access
+      @project = project_model_access&.project_model&.project
     end
 
     # A user cannot create a project_model_access via the /project_model_accesses API
@@ -35,8 +36,10 @@ module CoreDataConnector
 
         scope.where(
           UserProject
+            .joins(:project)
             .where(UserProject.arel_table[:project_id].eq(ProjectModelAccess.arel_table[:project_id]))
             .where(user_id: current_user.id)
+            .where.not(project: { archived: true })
             .arel
             .exists
         )

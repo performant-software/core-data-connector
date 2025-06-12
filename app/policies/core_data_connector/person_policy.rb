@@ -3,13 +3,14 @@ module CoreDataConnector
     include MergeablePolicy
     include OwnablePolicy
 
-    attr_reader :current_user, :person, :project_model_id, :project_id
+    attr_reader :current_user, :person, :project_model_id, :project, :project_id
 
     def initialize(current_user, person)
       @current_user = current_user
       @person = person
 
       @project_model_id = person&.project_model_id
+      @project = person&.project
       @project_id = person&.project_id
     end
 

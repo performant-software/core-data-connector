@@ -1,17 +1,18 @@
 module CoreDataConnector
   class ProjectModelPolicy < BasePolicy
-    attr_reader :current_user, :project_model
+    attr_reader :current_user, :project_model, :project
 
     def initialize(current_user, project_model)
       @current_user = current_user
       @project_model = project_model
+      @project = project_model&.project
     end
 
     # A user can create project models if they are the owner of the project.
     def create?
       return true if current_user.admin?
 
-      owner?
+      !project.archived? && owner?
     end
 
     # A user can delete project models if they are the owner of the project and the model is not shared with
@@ -19,21 +20,21 @@ module CoreDataConnector
     def destroy?
       return true if current_user.admin?
 
-      owner? && !shared?
+      !project.archived? && owner? && !shared?
     end
 
     # A user can view project models if they are a member of the project.
     def show?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can update project models if they are the owner of the project.
     def update?
       return true if current_user.admin?
 
-      owner?
+      !project.archived? && owner?
     end
 
     def permitted_attributes
@@ -80,8 +81,10 @@ module CoreDataConnector
 
         scope.where(
           UserProject
+            .joins(:project)
             .where(UserProject.arel_table[:project_id].eq(ProjectModel.arel_table[:project_id]))
             .where(user_id: current_user.id)
+            .where.not(project: { archived: true })
             .arel
             .exists
         )

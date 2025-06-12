@@ -11,6 +11,7 @@ module CoreDataConnector
     has_many :manifests, dependent: :destroy
 
     # Delegates
+    delegate :project, to: :primary_model
     delegate :project_id, to: :primary_model
 
     # Validations

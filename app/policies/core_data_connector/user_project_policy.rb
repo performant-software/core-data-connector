@@ -1,38 +1,39 @@
 module CoreDataConnector
   class UserProjectPolicy < BasePolicy
-    attr_accessor :current_user, :user_project
+    attr_accessor :current_user, :user_project, :project
 
     def initialize(current_user, user_project)
       @current_user = current_user
       @user_project = user_project
+      @project = user_project&.project
     end
 
     # A user can create user projects only for projects which they are an owner.
     def create?
       return true if current_user.admin?
 
-      owner? && current_user.member?
+      !project.archived? && owner? && current_user.member?
     end
 
     # A user can destroy user projects only for projects which they are an owner.
     def destroy?
       return true if current_user.admin?
 
-      owner? && current_user.member?
+      !project.archived? && owner? && current_user.member?
     end
 
     # A user can view user projects for projects which they are a member.
     def show?
       return true if current_user.admin?
 
-      owner? && current_user.member?
+      !project.archived? && owner? && current_user.member?
     end
 
     # A user can update user projects only for projects which they are an owner.
     def update?
       return true if current_user.admin?
 
-      owner? && current_user.member?
+      !project.archived? && owner? && current_user.member?
     end
 
     # Allowed attributes.
@@ -68,6 +69,7 @@ module CoreDataConnector
 
         user_projects = UserProject.arel_table.alias('b')
         users = User.arel_table
+        projects = Project.arel_table
 
         UserProject.where(
           UserProject
@@ -75,10 +77,12 @@ module CoreDataConnector
             .project(1)
             .from(user_projects)
             .join(users).on(users[:id].eq(user_projects[:user_id]))
+            .join(projects).on(projects[:id].eq(user_projects[:project_id]))
             .where(user_projects[:project_id].eq(UserProject.arel_table[:project_id]))
             .where(user_projects[:user_id].eq(current_user.id))
             .where(user_projects[:role].eq(UserProject::ROLE_OWNER))
             .where(users[:role].eq(User::ROLE_MEMBER))
+            .where(projects[:archived].not_eq(true))
             .exists
             .to_sql
         )

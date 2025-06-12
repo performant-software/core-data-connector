@@ -1,10 +1,11 @@
 module CoreDataConnector
   class WebIdentifierPolicy < BasePolicy
-    attr_reader :current_user, :web_identifier, :project_id
+    attr_reader :current_user, :web_identifier, :project, :project_id
 
     def initialize(current_user, web_identifier)
       @current_user = current_user
       @web_identifier = web_identifier
+      @project_id = web_identifier&.web_authority&.project
       @project_id = web_identifier&.web_authority&.project_id
     end
 
@@ -12,28 +13,28 @@ module CoreDataConnector
     def create?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can delete a web identifier if they are an admin user or member of owning the project.
     def destroy?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can view a web identifier if they are an admin user or member of owning the project.
     def show?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can update a web identifier if they are an admin user or member of owning the project.
     def update?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # Allowed create/update attributes
@@ -61,6 +62,7 @@ module CoreDataConnector
             .joins(project: :web_authorities)
             .where(WebAuthority.arel_table[:id].eq(WebIdentifier.arel_table[:web_authority_id]))
             .where(user_id: current_user.id)
+            .where.not(project: { archived: true })
             .arel
             .exists
         )

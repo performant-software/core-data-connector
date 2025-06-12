@@ -1,10 +1,11 @@
 module CoreDataConnector
   class RelationshipPolicy < BasePolicy
-    attr_reader :current_user, :relationship, :project_id
+    attr_reader :current_user, :relationship, :project, :project_id
 
     def initialize(current_user, relationship)
       @current_user = current_user
       @relationship = relationship
+      @project = relationship&.project
       @project_id = relationship&.project_id
     end
 
@@ -12,28 +13,28 @@ module CoreDataConnector
     def create?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can create a relationship if they are an admin or a member of the owning project.
     def destroy?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can view a relationship if they are an admin or a member of the owning project.
     def show?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can update a relationship if they are an admin or a member of the owning project.
     def update?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # Returns true if the current user has a `user_projects` record for the project that owns the current record.
@@ -71,6 +72,7 @@ module CoreDataConnector
               .joins(project: [project_models: :project_model_relationships])
               .where(ProjectModelRelationship.arel_table[:id].eq(ownable_table[:project_model_relationship_id]))
               .where(user_id: current_user.id)
+              .where.not(project: { archived: true })
               .arel
               .exists
           )

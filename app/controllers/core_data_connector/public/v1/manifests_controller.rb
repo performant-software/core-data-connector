@@ -5,6 +5,7 @@ module CoreDataConnector
         # Includes
         include NestableController
         include UnauthenticateableController
+        include UnauthorizeableController
 
         # Disable pagination
         per_page 0
@@ -18,7 +19,9 @@ module CoreDataConnector
           # If not retrieving a single manifest, the project_ids parameter is required
           return Manifest.none unless params[:project_ids].present? || params[:id].present?
 
-          query = Manifest
+          query = super
+
+          query = query
                     .joins(project_model_relationship: [:primary_model, :related_model])
                     .where(
                       manifestable_id: current_record.id,
@@ -71,7 +74,11 @@ module CoreDataConnector
             .where(project_model_relationship: {
               uuid: params[:id]
             })
-            .take
+            .take!
+        end
+
+        def policy_class
+          CoreDataConnector::Public::V1::ManifestPolicy
         end
 
         private

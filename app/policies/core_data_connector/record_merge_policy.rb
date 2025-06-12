@@ -1,10 +1,11 @@
 module CoreDataConnector
   class RecordMergePolicy < BasePolicy
-    attr_reader :current_user, :record_merge, :project_id
+    attr_reader :current_user, :record_merge, :project, :project_id
 
     def initialize(current_user, record_merge)
       @current_user = current_user
       @record_merge = record_merge
+      @project = record_merge&.mergeable&.project
       @project_id = record_merge&.mergeable&.project_id
     end
 
@@ -17,7 +18,7 @@ module CoreDataConnector
     def destroy?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A record_merge cannot be viewed via the API.
@@ -36,7 +37,9 @@ module CoreDataConnector
     def member?
       current_user
         .user_projects
+        .joins(:project)
         .where(project_id: project_id)
+        .where.not(project: { archived: true })
         .exists?
     end
   end
