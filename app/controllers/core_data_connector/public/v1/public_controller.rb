@@ -4,23 +4,36 @@ module CoreDataConnector
       class PublicController < ApplicationController
         # Includes
         include NestableController
+        include UnauthorizeableController
 
         protected
 
         def base_query
           return item_class.none unless params[:project_ids].present?
 
+          query = super
+
           if nested_resource? && current_record.present?
-            item_class.joins(build_base_sql).order('record.order')
+            query = query.joins(build_base_sql).order('record.order')
           elsif nested_resource?
-            item_class.none
+            query = item_class.none
           elsif params[:id].present?
-            item_class.where(uuid: params[:id])
+            query = query.where(uuid: params[:id])
           elsif params[:project_ids].present?
-            item_class.all_records_by_project(params[:project_ids])
+            query = query.merge(item_class.all_records_by_project(params[:project_ids]))
           else
-            item_class.none
+            query = item_class.none
           end
+
+          query
+        end
+
+        def find_record(query)
+          query.find_by!(uuid: params[:id])
+        end
+
+        def policy_class
+          CoreDataConnector::Public::V1::PublicPolicy
         end
 
         # Preloads the relationships records scoped to the passed project_ids

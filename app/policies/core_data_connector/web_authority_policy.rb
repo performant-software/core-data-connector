@@ -1,10 +1,11 @@
 module CoreDataConnector
   class WebAuthorityPolicy < BasePolicy
-    attr_reader :current_user, :web_authority, :project_id
+    attr_reader :current_user, :web_authority, :project, :project_id
 
     def initialize(current_user, web_authority)
       @current_user = current_user
       @web_authority = web_authority
+      @project = web_authority&.project
       @project_id = web_authority&.project_id
     end
 
@@ -12,42 +13,42 @@ module CoreDataConnector
     def create?
       return true if current_user.admin?
 
-      owner?
+      !project.archived? && owner?
     end
 
     # A user can find a web authority entity if they are an admin user or a member of the project.
     def find?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can delete a web authority if they are an admin user or the owner of the project.
     def destroy?
       return true if current_user.admin?
 
-      owner?
+      !project.archived? && owner?
     end
 
     # A user can search a web authority if they are an admin user or a member of the project.
     def search?
       return true if current_user.admin?
 
-      member?
+      !project.archived? && member?
     end
 
     # A user can view a web authority if they are an admin user or the owner of the project.
     def show?
       return true if current_user.admin?
 
-      owner?
+      !project.archived? && owner?
     end
 
     # A user can update a web authority if they are an admin user or the owner of the project.
     def update?
       return true if current_user.admin?
 
-      owner?
+      !project.archived? && owner?
     end
 
     def permitted_attributes
@@ -80,9 +81,11 @@ module CoreDataConnector
 
         scope.where(
           UserProject
+            .joins(:project)
             .where(UserProject.arel_table[:project_id].eq(WebAuthority.arel_table[:project_id]))
             .where(user_id: current_user.id)
             .where(role: UserProject::ROLE_OWNER)
+            .where.not(project: { archived: true })
             .arel
             .exists
         )

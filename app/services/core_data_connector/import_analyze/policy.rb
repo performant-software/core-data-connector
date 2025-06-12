@@ -72,6 +72,7 @@ module CoreDataConnector
               .joins(:user_projects)
               .where(Project.arel_table[:id].eq(ProjectModel.arel_table[:project_id]))
               .where(user_projects: { user_id: current_user.id })
+              .where.not(archived: true)
               .arel
               .exists
           )
@@ -86,6 +87,7 @@ module CoreDataConnector
                 ProjectModel.arel_table[:id].eq(ProjectModelRelationship.arel_table[:primary_model_id])
                             .or(ProjectModel.arel_table[:id].eq(ProjectModelRelationship.arel_table[:related_model_id])))
               .where(user_projects: { user_id: current_user.id })
+              .where.not(project: { archived: true })
               .arel
               .exists
           )

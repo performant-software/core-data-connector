@@ -96,7 +96,15 @@ en:
       show?: "You do not have permission to view this work."
       update?: "You do not have permission to update this work."
 
+    core_data_connector/public/v1/public_policy:
+      create?: "You do not have permission to create a record."
+      delete?: "You do not have permission to delete this record."
+      show?: "You do not have permission to view this record."
+      update?: "You do not have permission to update this record."
+
   errors:
+    general:
+      not_found: "This record cannot be found"
     http:
       general: "An error occurred when making your request"
       no_response: "No response from the server"

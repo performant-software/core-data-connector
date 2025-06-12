@@ -18,7 +18,7 @@ module CoreDataConnector
     def clear?
       return true if current_user.admin?
 
-      project_owner?
+      !project.archived? && project_owner?
     end
 
     # Users with an "admin" or "member" role can create projects.
@@ -30,21 +30,21 @@ module CoreDataConnector
     def show?
       return true if current_user.admin?
 
-      project_member?
+      !project.archived? && project_member?
     end
 
     # A user can delete a project if they are an admin or an owner of the project.
     def destroy?
       return true if current_user.admin?
 
-      project_owner?
+      !project.archived? && project_owner?
     end
 
     # A user can export a project's configuration if they are an admin or an owner of the project.
     def export_configuration?
       return true if current_user.admin?
 
-      project_owner?
+      !project.archived? && project_owner?
     end
 
     # A user can export data from a project if they are an admin.
@@ -58,7 +58,7 @@ module CoreDataConnector
     def export_variables?
       return true if current_user.admin?
 
-      project_owner?
+      !project.archived? && project_owner?
     end
 
     # A user can import data into a project if they are an admin.
@@ -72,7 +72,7 @@ module CoreDataConnector
     def import_configuration?
       return true if current_user.admin?
 
-      project_owner?
+      !project.archived? && project_owner?
     end
 
     # A user can import data into a project if they are an admin.
@@ -86,19 +86,21 @@ module CoreDataConnector
     def map_library?
       return true if current_user.admin?
 
-      project_member?
+      !project.archived? && project_member?
     end
 
     # A user can update a project if they are an admin or an owner of the project.
     def update?
       return true if current_user.admin?
 
-      project_owner?
+      !project.archived? && project_owner?
     end
 
     # Allowed create/update attributes.
     def permitted_attributes
-      [:name, :description, :discoverable, :faircopy_cloud_url, :faircopy_cloud_project_model_id, :map_library_url]
+      attributes = [:name, :description, :discoverable, :faircopy_cloud_url, :faircopy_cloud_project_model_id, :map_library_url]
+      attributes << :archived if current_user.admin?
+      attributes
     end
 
     private

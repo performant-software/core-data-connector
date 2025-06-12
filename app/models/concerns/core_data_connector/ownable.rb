@@ -7,6 +7,7 @@ module CoreDataConnector
       belongs_to :project_model
 
       # Delegates
+      delegate :project, to: :project_model, allow_nil: true
       delegate :project_id, to: :project_model, allow_nil: true
 
       def self.all_records_by_project(project_id)
