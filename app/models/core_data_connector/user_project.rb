@@ -21,7 +21,7 @@ module CoreDataConnector
     validates :user_id, uniqueness: { scope: :project_id, message: I18n.t('errors.user_projects.unique') }
 
     # Callbacks
-    after_create :send_invitation
+    after_commit :send_invitation, on: :create
     before_validation :find_or_create_user, on: :create
 
     private
