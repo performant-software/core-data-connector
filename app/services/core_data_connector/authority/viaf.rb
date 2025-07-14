@@ -14,11 +14,15 @@ module CoreDataConnector
       end
 
       def search(query, options = {})
+        headers = {
+          'Accept': 'application/json'
+        }
+
         params = {
           query: query
         }
 
-        send_request("#{BASE_URL}/viaf/AutoSuggest", method: :get, params: params) do |body|
+        send_request("#{BASE_URL}/viaf/AutoSuggest", method: :get, headers:, params:) do |body|
           JSON.parse(body)
         end
       end
