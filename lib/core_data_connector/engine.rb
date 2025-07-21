@@ -1,3 +1,5 @@
+require 'rack/cors'
+
 module CoreDataConnector
   class Engine < ::Rails::Engine
     isolate_namespace CoreDataConnector
