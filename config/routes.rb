@@ -1,13 +1,14 @@
-require_relative 'routes/admin'
-require_relative 'routes/public/v0'
-require_relative 'routes/public/v1'
-
 CoreDataConnector::Engine.routes.draw do
+  # JWT authentication
   mount JwtAuth::Engine => '/auth'
 
-  extend Admin
-  extend Public::V0
-  extend Public::V1
-
+  # SSO authentication
   get 'auth/sso/callback', to: 'sso#login'
+
+  # Admin API endpoints
+  draw(:admin)
+
+  # Public API endpoints
+  draw(:v0)
+  draw(:v1)
 end
