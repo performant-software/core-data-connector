@@ -38,8 +38,8 @@ module CoreDataConnector
         data = service.analyze(directory)
 
         # Check that the user is authorized to import all of the records in the file
-        policy = Policy.new(user)
-        raise Pundit::NotAuthorizedError, I18n.t('errors.import.authorize') unless policy.has_analyze_access?(data)
+        policy = Policy.new(user, data)
+        raise Pundit::NotAuthorizedError, I18n.t('errors.import.authorize') unless policy.has_analyze_access?
 
         # Remove the temporary directory
         FileSystem.remove_directory(directory)
@@ -49,25 +49,39 @@ module CoreDataConnector
 
       def import(files, user, project_id)
         # Check that the user is authorized to import all of the records in the file
-        policy = Policy.new(user)
-        raise Pundit::NotAuthorizedError, I18n.t('errors.import.authorize') unless policy.has_import_access?(files)
+        policy = Policy.new(user, files)
+        raise Pundit::NotAuthorizedError, I18n.t('errors.import.authorize') unless policy.has_import_access?
 
         # Generate the CSV files and compress them in a ZIP
         service = Import.new
         zip_filepath = service.create_zip(files)
 
-        # Run the importer with the new ZIP file
-        zip_importer = CoreDataConnector::Import::ZipHelper.new
-        ok, errors = zip_importer.import_zip(zip_filepath)
+        # Create the background job
+        filenames = files
+                      .keys
+                      .filter_map { |filename| filename if files[filename][:remove_duplicates].to_s.to_bool }
+                      .compact
 
-        # Remove duplicates for any marked files
-        service.remove_duplicates(files, project_id)
+        extra = { filenames: }
+
+        file = {
+          io: File.open(zip_filepath),
+          filename: File.basename(zip_filepath)
+        }
+
+        job = Job.create(
+          extra:,
+          file:,
+          job_type: Job::JOB_TYPE_IMPORT,
+          project_id:,
+          user:
+        )
 
         # Remove the ZIP file directory
         directory = File.dirname(zip_filepath)
         FileSystem.remove_directory(directory)
 
-        errors
+        job.errors
       end
     end
   end

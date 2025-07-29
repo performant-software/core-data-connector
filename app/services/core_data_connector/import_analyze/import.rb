@@ -164,20 +164,20 @@ module CoreDataConnector
         zipfile_name
       end
 
-      def remove_duplicates(files, project_id)
+      def remove_duplicates(project_id, filenames)
+        return unless project_id.present? && filenames.present?
+
         service = Merge::Merger.new
 
-        files.keys.each do |filename|
-          next unless files[filename][:remove_duplicates].to_s.to_bool
-
+        filenames.each do |filename|
           klass = find_class(filename)
           grouped_duplicates = klass.find_duplicates(project_id)
 
           next if grouped_duplicates.empty?
 
           grouped_duplicates.each do |group|
-            primary = klass.preload(Helper::PRELOADS).find(group.primary_id)
-            duplicates = klass.preload(Helper::PRELOADS).where(id: group.duplicate_ids)
+            primary = klass.preload(ImportAnalyze::Helper::PRELOADS).find(group.primary_id)
+            duplicates = klass.preload(ImportAnalyze::Helper::PRELOADS).where(id: group.duplicate_ids)
 
             service.merge(primary, duplicates)
           end

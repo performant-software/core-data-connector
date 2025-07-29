@@ -15,7 +15,7 @@ module CoreDataConnector
 
     def analyze_import
       item = find_record(item_class)
-      authorize item if authorization_valid?
+      authorize item
 
       errors = nil
       data = nil
@@ -49,7 +49,7 @@ module CoreDataConnector
 
     def import
       item = find_record(item_class)
-      authorize item if authorization_valid?
+      authorize item
 
       begin
         service = ImportAnalyze::Helper.new
@@ -64,7 +64,7 @@ module CoreDataConnector
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
       else
-        render json: { errors: errors }, status: :bad_request
+        render json: { errors: errors }, status: :unprocessable_entity
       end
     end
   end
