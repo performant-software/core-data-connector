@@ -87,6 +87,10 @@ module CoreDataConnector
             FROM core_data_connector_items items
            WHERE items.z_item_id IS NOT NULL
            UNION
+          SELECT id, uuid, 'CoreDataConnector::MediaContent' AS type
+            FROM core_data_connector_media_contents media_contents
+           WHERE media_contents.z_media_content_id IS NOT NULL
+           UNION
           SELECT id, uuid, 'CoreDataConnector::Organization' AS type
             FROM core_data_connector_organizations organizations
            WHERE organizations.z_organization_id IS NOT NULL
