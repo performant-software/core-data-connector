@@ -105,7 +105,7 @@ module CoreDataConnector
 
       def upload_attachment(media_content)
         media_content.content = ActionDispatch::Http::UploadedFile.new(
-          tempfile: Http::Stream.new(media_content.import_url).download,
+          tempfile: Http::Stream.new(media_content.import_url, followlocation: true).download,
           filename: media_content.name
         )
 
