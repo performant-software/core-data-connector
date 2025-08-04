@@ -20,6 +20,11 @@ module CoreDataConnector
       current_user.admin?
     end
 
+    # Only admin users can view background jobs.
+    def jobs?
+      current_user.admin?
+    end
+
     # Only admin users can view users outside the context of a project. Users can view
     # themselves outside the context of a project.
     def show?

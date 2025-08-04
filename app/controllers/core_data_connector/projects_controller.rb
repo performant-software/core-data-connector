@@ -7,7 +7,7 @@ module CoreDataConnector
       render json: { errors: [I18n.t('errors.projects.import_data')] }, status: :bad_request and return unless params[:file].present?
 
       project = Project.find(params[:id])
-      authorize project if authorization_valid?
+      authorize project
 
       service = ImportAnalyze::Helper.new
 
@@ -29,7 +29,7 @@ module CoreDataConnector
 
     def clear
       project = Project.find(params[:id])
-      authorize project, :clear?
+      authorize project
 
       # Query for models that are not shared with other projects
       project_models = ProjectModel
@@ -54,7 +54,7 @@ module CoreDataConnector
 
     def export_configuration
       project = Project.find(params[:id])
-      authorize project, :export_configuration?
+      authorize project
 
       options = load_records(project)
       serializer = ProjectConfigurationsSerializer.new(current_user, options)
@@ -65,7 +65,7 @@ module CoreDataConnector
 
     def export_data
       project = Project.find(params[:id])
-      authorize project, :export_data?
+      authorize project
 
       begin
         directory = FileSystem.create_directory
@@ -98,7 +98,7 @@ module CoreDataConnector
 
     def export_variables
       project = Project.find(params[:id])
-      authorize project, :export_variables?
+      authorize project
 
       serializer = ProjectVariablesSerializer.new(current_user)
 
@@ -108,7 +108,7 @@ module CoreDataConnector
 
     def import_analyze
       project = Project.find(params[:id])
-      authorize project if authorization_valid?
+      authorize project
 
       begin
         service = ImportAnalyze::Helper.new
@@ -123,7 +123,7 @@ module CoreDataConnector
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
       else
-        render json: { errors: errors }, status: :bad_request
+        render json: { errors: errors }, status: :unprocessable_entity
       end
     end
 
@@ -131,7 +131,7 @@ module CoreDataConnector
       render json: { errors: [I18n.t('errors.projects.import_configuration')] }, status: :bad_request and return unless params[:file].present?
 
       project = Project.find(params[:id])
-      authorize project, :import_configuration?
+      authorize project
 
       begin
         service = Configuration.new(project, params[:file])
@@ -154,31 +154,34 @@ module CoreDataConnector
       render json: { errors: [I18n.t('errors.projects.import_data')] }, status: :bad_request and return unless params[:file].present?
 
       project = Project.find(params[:id])
-      authorize project, :import_data?
+      authorize project
 
       begin
-        zip_importer = Import::ZipHelper.new
-        ok, errors = zip_importer.import_zip(params[:file].tempfile)
+        job = Job.create(
+          file: params[:file],
+          job_type: Job::JOB_TYPE_IMPORT,
+          user: current_user,
+          project:
+        )
+
+        errors = job&.errors
       rescue StandardError => error
         errors = [error]
-
-        # Log the error
-        log_error(error)
       end
+
+      # Log any errors
+      errors.each { |e| log_error(e) }
 
       if errors.nil? || errors.empty?
         render json: { }, status: :ok
       else
-        # Log the error
-        log_error(errors.first)
-
         render json: { errors: errors }, status: :unprocessable_entity
       end
     end
 
     def map_library
       project = Project.find(params[:id])
-      authorize project, :map_library?
+      authorize project
 
       library = MapLibrary.new(project.map_library_url)
       json = library.fetch_library || []

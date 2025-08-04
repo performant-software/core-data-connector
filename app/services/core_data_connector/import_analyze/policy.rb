@@ -2,15 +2,16 @@ module CoreDataConnector
   module ImportAnalyze
     class Policy
 
-      attr_reader :current_user
+      attr_reader :current_user, :files
 
-      def initialize(current_user)
+      def initialize(current_user, files)
         @current_user = current_user
+        @files = files
       end
 
       # A user can analyze the set of files if they are an admin or have access to the project(s) containing all of the
       # models and relationships they are attempting to import.
-      def has_analyze_access?(files)
+      def has_analyze_access?
         return true if current_user.admin?
 
         project_model_ids = files
@@ -30,7 +31,7 @@ module CoreDataConnector
 
       # A user can import the set of files if they are an admin or have access to the project(s) containing all of the
       # models and relationships they are attempting to import.
-      def has_import_access?(files)
+      def has_import_access?
         return true if current_user.admin?
 
         project_model_ids = files

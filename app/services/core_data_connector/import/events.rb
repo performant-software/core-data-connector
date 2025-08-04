@@ -29,7 +29,7 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE fuzzy_dates_fuzzy_dates fuzzy_dates
-             SET accuracy = #{FuzzyDates::FuzzyDate.accuraries['date']},
+             SET accuracy = #{FuzzyDates::FuzzyDate.accuracies['date']},
                  range = FALSE,
                  start_date = z_events.start_date_start_date,
                  end_date = z_events.start_date_end_date,
@@ -43,7 +43,7 @@ module CoreDataConnector
 
         execute <<-SQL.squish
           UPDATE fuzzy_dates_fuzzy_dates fuzzy_dates
-             SET accuracy = #{FuzzyDates::FuzzyDate.accuraries['date']},
+             SET accuracy = #{FuzzyDates::FuzzyDate.accuracies['date']},
                  range = FALSE,
                  start_date = z_events.end_date_start_date,
                  end_date = z_events.end_date_end_date,
@@ -103,7 +103,7 @@ module CoreDataConnector
           SELECT insert_events.event_id,
                  'CoreDataConnector::Event',
                  'start_date',
-                  #{FuzzyDates::FuzzyDate::accuraries['date']},
+                  #{FuzzyDates::FuzzyDate::accuracies['date']},
                   false,
                   z_events.start_date_start_date,
                   z_events.start_date_end_date,
@@ -132,7 +132,7 @@ module CoreDataConnector
           SELECT insert_events.event_id,
                  'CoreDataConnector::Event',
                  'end_date',
-                  #{FuzzyDates::FuzzyDate::accuraries['date']},
+                  #{FuzzyDates::FuzzyDate::accuracies['date']},
                   false,
                   z_events.end_date_start_date,
                   z_events.end_date_end_date,
