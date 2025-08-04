@@ -12,7 +12,31 @@ module CoreDataConnector
     include TripleEyeEffable::Resourceable
     include UserDefinedFields::Fieldable
 
+    # Delegates
+    delegate :storage_key, to: :project, allow_nil: true
+
+    # Callbacks
     after_save :update_manifests
+
+    # User defined fields parent
+    resolve_defineable -> (media_content) { media_content.project_model }
+
+    def metadata
+      if !self.user_defined || self.user_defined.keys.count == 0
+        return '[]'
+      end
+
+      fields = UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
+        {
+          label: udf[:column_name],
+          value: self.user_defined[udf[:uuid]]
+        }
+      end
+
+      fields.to_json
+    end
+
+    private
 
     def update_manifests
       iiif_service = Iiif::Manifest.new
@@ -36,23 +60,5 @@ module CoreDataConnector
         limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
       })
     end
-
-    def metadata
-      if !self.user_defined || self.user_defined.keys.count == 0
-        return '[]'
-      end
-
-      fields = UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
-        {
-          label: udf[:column_name],
-          value: self.user_defined[udf[:uuid]]
-        }
-      end
-
-      fields.to_json
-    end
-
-    # User defined fields parent
-    resolve_defineable -> (media_content) { media_content.project_model }
   end
 end
