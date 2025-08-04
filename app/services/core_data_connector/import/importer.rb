@@ -109,6 +109,8 @@ module CoreDataConnector
           filename: media_content.name
         )
 
+        media_content.import_url_processed = true
+
         media_content.save
       end
     end
