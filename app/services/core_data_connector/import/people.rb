@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_people
              SET z_person_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_people, core_data_connector_person_names
+        SQL
       end
 
       def load

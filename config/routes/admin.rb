@@ -14,7 +14,7 @@ resources :items do
   post :merge, on: :collection
 end
 
-resources :jobs, only: :index
+resources :jobs, only: [:destroy, :index]
 
 resources :media_contents do
   post :merge, on: :collection

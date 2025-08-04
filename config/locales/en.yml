@@ -158,6 +158,8 @@ en:
         end_date_description: "End date description"
         start_date: "Start date"
         start_date_description: "Start date description"
+      media_contents:
+        import_url: "Import URL"
       organizations:
         description: "Description"
       people:

@@ -10,6 +10,10 @@ module CoreDataConnector
           UPDATE core_data_connector_events
              SET z_event_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_events
+        SQL
       end
 
       def load

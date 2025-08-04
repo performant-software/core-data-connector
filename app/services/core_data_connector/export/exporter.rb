@@ -16,6 +16,9 @@ module CoreDataConnector
         class: CoreDataConnector::Instance,
         filename: 'instances.csv'
      }, {
+        class: CoreDataConnector::MediaContent,
+        filename: 'media_contents.csv'
+     }, {
         class: CoreDataConnector::Organization,
         filename: 'organizations.csv'
       }, {

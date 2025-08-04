@@ -13,6 +13,9 @@ module CoreDataConnector
         importer_class: Items,
         filename: 'items.csv'
       }, {
+        importer_class: MediaContent,
+        filename: 'media_contents.csv'
+      }, {
         importer_class: Organizations,
         filename: 'organizations.csv'
       }, {
@@ -38,17 +41,6 @@ module CoreDataConnector
         filename: 'web_identifiers.csv'
       }]
 
-      def populate_importer(importer, directory)
-        filename = importer[:filename]
-        klass = importer[:importer_class]
-
-        filepath = "#{directory}/#{filename}"
-
-        if File.exist? filepath
-          @importers << klass.new(filepath, import_id)
-        end
-      end
-
       def initialize(directory)
         @importers = []
         @import_id = SecureRandom.uuid
@@ -59,6 +51,13 @@ module CoreDataConnector
 
         RELATIONSHIP_IMPORTERS.each do |importer|
           populate_importer(importer, directory)
+        end
+      end
+
+      def close
+        # Iterate over each importer and perform any cleanup
+        importers.each do |importer|
+          importer.cleanup
         end
       end
 
@@ -77,12 +76,44 @@ module CoreDataConnector
           importer.load
         end
 
-        # Iterate over each importer and perform any cleanup
-        importers.each do |importer|
-          importer.cleanup
-        end
+        # Upload any attachments for media_contents
+        upload_attachments
 
+        # Return the import ID
         import_id
+      end
+
+      private
+
+      def populate_importer(importer, directory)
+        filename = importer[:filename]
+        klass = importer[:importer_class]
+
+        filepath = "#{directory}/#{filename}"
+
+        if File.exist? filepath
+          @importers << klass.new(filepath, import_id)
+        end
+      end
+
+      def upload_attachments
+        query = CoreDataConnector::MediaContent
+                  .where(import_id:)
+                  .where.not(import_url: nil)
+                  .where.not(import_url_processed: true)
+
+        query.find_each { |m| upload_attachment m }
+      end
+
+      def upload_attachment(media_content)
+        media_content.content = ActionDispatch::Http::UploadedFile.new(
+          tempfile: Http::Stream.new(media_content.import_url, followlocation: true).download,
+          filename: media_content.name
+        )
+
+        media_content.import_url_processed = true
+
+        media_content.save
       end
     end
   end

@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_relationships
              SET z_relationship_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_relationships
+        SQL
       end
 
       def load
@@ -86,6 +90,10 @@ module CoreDataConnector
           SELECT id, uuid, 'CoreDataConnector::Item' AS type
             FROM core_data_connector_items items
            WHERE items.z_item_id IS NOT NULL
+           UNION
+          SELECT id, uuid, 'CoreDataConnector::MediaContent' AS type
+            FROM core_data_connector_media_contents media_contents
+           WHERE media_contents.z_media_content_id IS NOT NULL
            UNION
           SELECT id, uuid, 'CoreDataConnector::Organization' AS type
             FROM core_data_connector_organizations organizations

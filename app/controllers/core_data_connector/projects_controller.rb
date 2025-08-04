@@ -68,31 +68,23 @@ module CoreDataConnector
       authorize project
 
       begin
-        directory = FileSystem.create_directory
-        filename = "#{project.name.gsub(/\s+/, "")}.zip"
+        job = Job.create(
+          job_type: Job::JOB_TYPE_EXPORT,
+          project_id: project.id,
+          user: current_user
+        )
 
-        # Run the exporter to generate the CSV files
-        exporter = Export::Exporter.new(project.id)
-        exporter.run(directory)
-
-        # Create a zip file of the CSVs in the passed directory
-        FileSystem.create_zip directory, filename
-
-        # Send the file to the client
-        zip = File.join(directory, filename)
-
-        File.open(zip, 'r') do |file|
-          send_data file.read, filename: filename, type: 'application/zip', disposition: 'attachment'
-        end
+        errors = job&.errors
       rescue StandardError => error
-        # Log the error
-        log_error(error)
+        errors = [error]
 
-        # Render a 400 response if an errors occur
-        render json: { errors: [error] }, status: :bad_request
-      ensure
-        # Remove the temporary directory
-        FileSystem.remove_directory directory
+        log_error error
+      end
+
+      if errors.nil? || errors.empty?
+        render json: { }, status: :ok
+      else
+        render json: { errors: errors }, status: :bad_request
       end
     end
 
@@ -167,10 +159,9 @@ module CoreDataConnector
         errors = job&.errors
       rescue StandardError => error
         errors = [error]
-      end
 
-      # Log any errors
-      errors.each { |e| log_error(e) }
+        log_error(error)
+      end
 
       if errors.nil? || errors.empty?
         render json: { }, status: :ok

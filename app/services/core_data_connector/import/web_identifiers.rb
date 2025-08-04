@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_web_identifiers
             SET z_web_identifier_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_web_identifiers
+        SQL
       end
 
       def load
