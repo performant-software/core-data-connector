@@ -20,7 +20,7 @@ module CoreDataConnector
 
     # Callbacks
     after_create_commit :queue_export_job, if: :export?
-    after_update_commit :queue_import_job, if: :import?
+    after_create_commit :queue_import_job, if: :import?
 
     def download_url
       return nil unless file.attached?
