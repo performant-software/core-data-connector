@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_organizations
              SET z_organization_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_organizations, core_data_connector_organization_names
+        SQL
       end
 
       def load

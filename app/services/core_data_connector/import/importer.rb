@@ -54,6 +54,13 @@ module CoreDataConnector
         end
       end
 
+      def close
+        # Iterate over each importer and perform any cleanup
+        importers.each do |importer|
+          importer.cleanup
+        end
+      end
+
       def run
         importers.each do |importer|
           # Setup necessary schema
@@ -67,11 +74,6 @@ module CoreDataConnector
 
           # Load the data into the appropriate tables
           importer.load
-        end
-
-        # Iterate over each importer and perform any cleanup
-        importers.each do |importer|
-          importer.cleanup
         end
 
         # Upload any attachments for media_contents

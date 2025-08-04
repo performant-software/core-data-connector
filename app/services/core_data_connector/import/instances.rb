@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_instances
             SET z_instance_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_instances, core_data_connector_source_names
+        SQL
       end
 
       def load

@@ -8,6 +8,12 @@ module CoreDataConnector
           UPDATE core_data_connector_places
              SET z_place_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_places, 
+                         core_data_connector_place_names, 
+                         core_data_connector_place_geometries
+        SQL
       end
 
       def load

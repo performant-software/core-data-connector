@@ -9,6 +9,10 @@ module CoreDataConnector
           UPDATE core_data_connector_media_contents
              SET z_media_content_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_media_contents
+        SQL
       end
 
       def load

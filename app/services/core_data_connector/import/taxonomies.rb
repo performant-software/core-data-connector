@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_taxonomies
              SET z_taxonomy_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_taxonomies
+        SQL
       end
 
       def load

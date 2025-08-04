@@ -8,6 +8,10 @@ module CoreDataConnector
           UPDATE core_data_connector_relationships
              SET z_relationship_id = NULL
         SQL
+
+        execute <<-SQL.squish
+          VACUUM ANALYZE core_data_connector_relationships
+        SQL
       end
 
       def load
