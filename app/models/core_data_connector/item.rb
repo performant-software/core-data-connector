@@ -9,6 +9,7 @@ module CoreDataConnector
     include Mergeable
     include Nameable
     include Ownable
+    include Reconcile::Item
     include Relateable
     include UserDefinedFields::Fieldable
     include Search::Item
