@@ -10,6 +10,7 @@ module CoreDataConnector
         allow do
           origins '*'
           resource '/core_data/public/*', methods: :get
+          resource '/core_data/reconcile/*', methods: [:get, :post]
         end
       end
     end
