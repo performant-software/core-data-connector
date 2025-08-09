@@ -18,7 +18,24 @@ module CoreDataConnector
       private
 
       def build_params(queries, collection)
-        { searches: queries.keys.map { |key| { collection:, q: queries[key][:query] } } }
+        searches = []
+
+        queries.keys.each do |key|
+          query = queries[key]
+
+          # Append "collection" and "query" parameters
+          search = { collection:, q: query[:query] }
+
+          # Append "filter_by" parameter, if present
+          search[:filter_by] = "type:#{query[:type]}" if query[:type].present?
+
+          # Append "limit" parameter, if present
+          search[:limit] = query[:limit] if query[:limit].present?
+
+          searches << search
+        end
+
+        { searches: }
       end
 
       def transform(response, keys)
