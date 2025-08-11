@@ -14,8 +14,15 @@ module CoreDataConnector
         # Per the spec, a request to the API without any parameters should return the service manifest
         render json: serializer.render_manifest, status: :ok and return unless params[:queries].present?
 
+        # Allow request body to be sent as application/json or x-www-form-urlencoded
+        if params[:queries].is_a?(String)
+          queries = JSON.parse(params[:queries]).deep_symbolize_keys
+        else
+          queries = params[:queries]
+        end
+
         manager = Reconcile::Manager.new
-        items = manager.send_request(params[:queries], credentials)
+        items = manager.send_request(queries, credentials)
 
         render json: serializer.render_multiple(items), status: :ok
       end
