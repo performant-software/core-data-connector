@@ -2,7 +2,7 @@ module CoreDataConnector
   module Reconcile
     class ProjectsSerializer < BaseSerializer
 
-      index_attributes :id, :name, :score, :match, :type
+      index_attributes :id, :name, :description, :score, :match, :type
 
       def render_multiple(searches)
         searches.keys.inject({}) do |hash, key|
@@ -44,10 +44,7 @@ module CoreDataConnector
           identifierSpace: "#{ENV['HOSTNAME']}/core_data/public/v1",
           name: I18n.t('services.reconcile.name'),
           schemaSpace: "#{ENV['HOSTNAME']}/core_data/reconcile",
-          view: {
-            url: "#{ENV['HOSTNAME']}/core_data/public/v1/:entity/:id"
-          },
-          versions: ['0.2']
+          versions: %w(0.1 0.2)
         }
       end
 
