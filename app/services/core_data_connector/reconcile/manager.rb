@@ -54,10 +54,10 @@ module CoreDataConnector
         attributes = {
           score: result['text_match'],
           match: false,
-          type: {
+          type: [{
             id: klass.to_s,
             name: klass.name.demodulize
-          }
+          }]
         }
 
         all_attributes = result['document'].merge(attributes).symbolize_keys
