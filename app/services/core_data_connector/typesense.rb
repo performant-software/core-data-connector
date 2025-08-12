@@ -5,12 +5,8 @@ module CoreDataConnector
 
     def self.create_client(host:, port:, protocol:, api_key:)
       ::Typesense::Client.new(
-        nodes: [{
-          host: host || 'localhost',
-          port: port|| 8108,
-          protocol: protocol || 'http'
-        }],
-        api_key: api_key || 'xyz',
+        nodes: [{ host:, port:, protocol: }],
+        api_key:,
         num_retries: 10,
         healthcheck_interval_seconds: 1,
         retry_interval_seconds: 0.01,
