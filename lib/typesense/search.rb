@@ -72,29 +72,29 @@ module Typesense
         name: collection_name,
         enable_nested_fields: true,
         fields: [{
-                   name: 'geometry',
-                   type: 'object',
-                   index: false,
-                   facet: false,
-                   optional: true
-                 }, {
-                   name: 'coordinates',
-                   type: 'geopoint',
-                   facet: false,
-                   optional: true
-                 }, {
-                   name: 'name',
-                   type: 'string',
-                   sort: true,
-                   optional: true
-                 }, {
-                   name: '.*_facet',
-                   type: 'auto',
-                   facet: true
-                 }, {
-                   name: '.*',
-                   type: 'auto'
-                 }]
+          name: 'geometry',
+          type: 'object',
+          index: false,
+          facet: false,
+          optional: true
+        }, {
+          name: 'coordinates',
+          type: 'geopoint',
+          facet: false,
+          optional: true
+        }, {
+          name: 'name',
+          type: 'string',
+          sort: true,
+          optional: true
+        }, {
+          name: '.*_facet',
+          type: 'auto',
+          facet: true
+        }, {
+          name: '.*',
+          type: 'auto'
+       }]
       }
     end
   end
