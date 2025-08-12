@@ -5,7 +5,7 @@ module CoreDataConnector
 
       class_methods do
 
-        def apply_r_preloads(records)
+        def apply_reconcile_preloads(records)
           # Preload any associations from the concrete class
           if self.respond_to?(:preloads) && preloads.present?
             Preloader.new(
@@ -24,7 +24,7 @@ module CoreDataConnector
 
           query.find_in_batches(batch_size: 1000) do |records|
             # Apply the preloads for the current batch
-            apply_r_preloads records
+            apply_reconcile_preloads records
 
             # Call the block for the current batch
             block.call(records)
