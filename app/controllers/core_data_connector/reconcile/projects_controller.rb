@@ -9,7 +9,7 @@ module CoreDataConnector
 
         render json: { }, status: :not_found and return unless valid_credentials? credentials
 
-        serializer = serializer_class.new
+        serializer = ProjectsSerializer.new
 
         # Per the spec, a request to the API without any parameters should return the service manifest
         render json: serializer.render_manifest, status: :ok and return unless params[:queries].present?
@@ -25,12 +25,6 @@ module CoreDataConnector
         items = manager.send_request(queries, credentials)
 
         render json: serializer.render_multiple(items), status: :ok
-      end
-
-      protected
-
-      def serializer_class
-        "CoreDataConnector::Reconcile::#{"#{controller_name}_serializer".classify}".constantize
       end
 
       private
