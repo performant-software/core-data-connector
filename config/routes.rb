@@ -11,4 +11,7 @@ CoreDataConnector::Engine.routes.draw do
   # Public API endpoints
   draw(:v0)
   draw(:v1)
+
+  # Reconciliation API endpoints
+  draw(:reconcile)
 end

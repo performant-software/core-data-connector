@@ -71,28 +71,71 @@ Data can be indexed into a Typesense search index using the following commands:
 
 #### Create a new collection
 ```bash
-bundle exec rake typesense:create -- -h host -p port -r protocol -a api_key -c collection_name
+bundle exec rake typesense:search:create -- -h host -p port -r protocol -a api_key -c collection_name
 ```
 
 #### Delete a collection
 ```bash
-bundle exec rake typesense:delete -- -h host -p port -r protocol -a api_key -c collection_name
+bundle exec rake typesense:search:delete -- -h host -p port -r protocol -a api_key -c collection_name
 ```
 
 #### Index documents into a collection
 ```bash
-bundle exec rake typesense:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids --polygons
+bundle exec rake typesense:search:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids --polygons
 ```
 
 **Note:** This task expects the entire collection to be indexed. Any records not included in the batch will be removed from the index.
 
 #### Update a collection
 ```bash
-bundle exec rake typesense:update -- -h host -p port -r protocol -a api_key -c collection_name
+bundle exec rake typesense:search:update -- -h host -p port -r protocol -a api_key -c collection_name
 ```
 
 **Note:** This task was added as a workaround for an issue in Typesense indexing nested facetable fields using auto-detection schema. This task should be run _after_ the indexing process to update the "facet" attribute on any fields that should be facetable.
 
+## Reconciliation API
+
+### Indexing Data
+
+Data can be indexed into a Typesense search index using the following commands. The search index is used as the data store for results returned from the Reconciliation API.
+
+#### Create a new collection
+```bash
+bundle exec rake typesense:reconcile:create -- -h host -p port -r protocol -a api_key -c collection_name
+```
+
+#### Delete a collection
+```bash
+bundle exec rake typesense:reconcile:delete -- -h host -p port -r protocol -a api_key -c collection_name
+```
+
+#### Index documents into a collection
+```bash
+bundle exec rake typesense:reconcile:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids --polygons
+```
+
+**Note:** This task expects the entire collection to be indexed. Any records not included in the batch will be removed from the index.
+
+#### Update a collection
+```bash
+bundle exec rake typesense:reconcile:update -- -h host -p port -r protocol -a api_key -c collection_name
+```
+
+### Update Project
+
+In order to make requests to the Reconciliation API, the project record must be updated with Typesense credentials.
+
+### Requests
+
+Requests can be made to the Reconciliation API via the following URLs. Follow the [spec](https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#structure-of-a-reconciliation-query) to see how queries and responses should be structured.
+
+```
+GET /core_data/reconcile/projects/:id
+```
+
+```
+POST /core_data/reconcile/projects/:id
+```
 
 ## Public API
 

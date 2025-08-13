@@ -170,3 +170,5 @@ en:
       places:
         latitude: "Latitude"
         longitude: "Longitude"
+    reconcile:
+      name: "Core Data Cloud Reconciliation API"

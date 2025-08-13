@@ -7,6 +7,7 @@ module CoreDataConnector
     include Manifestable
     include Mergeable
     include Ownable
+    include Reconcile::Taxonomy
     include Relateable
     include UserDefinedFields::Fieldable
     include Search::Taxonomy

@@ -1,70 +1,13 @@
-require 'typesense'
+require_relative 'base'
 
 module Typesense
-  class Helper
+  class Search < Base
     attr_reader :client, :collection_name
 
-    def initialize(host:, port:, protocol:, api_key:, collection_name:)
-      @client = Client.new(
-        nodes: [
-          {
-            host: host || 'localhost',
-            port: port|| 8108,
-            protocol: protocol || 'http'
-          }
-        ],
-        api_key: api_key || 'xyz',
-        num_retries: 10,
-        healthcheck_interval_seconds: 1,
-        retry_interval_seconds: 0.01,
-        connection_timeout_seconds: 10,
-        logger: Logger.new($stdout),
-        log_level: Logger::INFO
-      )
-
-      @collection_name = collection_name
-    end
-
-    def create
-      schema = {
-        name: collection_name,
-        enable_nested_fields: true,
-        fields: [{
-          name: 'geometry',
-          type: 'object',
-          index: false,
-          facet: false,
-          optional: true
-        }, {
-          name: 'coordinates',
-          type: 'geopoint',
-          facet: false,
-          optional: true
-        }, {
-          name: 'name',
-          type: 'string',
-          sort: true,
-          optional: true
-        }, {
-          name: '.*_facet',
-          type: 'auto',
-          facet: true
-        }, {
-          name: '.*',
-          type: 'auto'
-        }]
-      }
-
-      client.collections.create(schema)
-    end
-
-    def delete
-      client.collections[collection_name].delete
-    end
-
-    def index(project_model_ids, options)
+    def index(options)
       collection = client.collections[collection_name]
 
+      project_model_ids = options.delete(:project_model_ids)
       options[:include_relationships] = true
 
       # Query project_models and build a hash of class names to arrays if project_model IDs
@@ -120,6 +63,39 @@ module Typesense
       end
 
       collection_schema.update({ fields: fields_to_update })
+    end
+
+    protected
+
+    def schema
+      {
+        name: collection_name,
+        enable_nested_fields: true,
+        fields: [{
+          name: 'geometry',
+          type: 'object',
+          index: false,
+          facet: false,
+          optional: true
+        }, {
+          name: 'coordinates',
+          type: 'geopoint',
+          facet: false,
+          optional: true
+        }, {
+          name: 'name',
+          type: 'string',
+          sort: true,
+          optional: true
+        }, {
+          name: '.*_facet',
+          type: 'auto',
+          facet: true
+        }, {
+          name: '.*',
+          type: 'auto'
+       }]
+      }
     end
   end
 end
