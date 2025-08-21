@@ -1,6 +1,9 @@
 CoreDataConnector::Engine.routes.draw do
   # JWT authentication
-  mount JwtAuth::Engine => '/auth'
+  mount JwtAuth::Engine, at: '/auth'
+
+  # IIIF
+  mount TripleEyeEffable::Engine, at: '/triple_eye_effable'
 
   # SSO authentication
   get 'auth/sso/callback', to: 'sso#login'

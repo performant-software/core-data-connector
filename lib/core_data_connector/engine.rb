@@ -28,6 +28,7 @@ module CoreDataConnector
         config.api_key = ENV['IIIF_CLOUD_API_KEY']
         config.url = ENV['IIIF_CLOUD_URL']
         config.project_id = ENV['IIIF_CLOUD_PROJECT_ID']
+        config.base_controller = 'CoreDataConnector::ApplicationController'
       end
     end
   end

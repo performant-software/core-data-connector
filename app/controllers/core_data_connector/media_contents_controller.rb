@@ -1,6 +1,7 @@
 module CoreDataConnector
   class MediaContentsController < ApplicationController
     # Includes
+    include Api::Uploadable
     include Http::Requestable
     include MergeableController
     include OwnableController
