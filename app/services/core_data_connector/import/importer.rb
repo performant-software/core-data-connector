@@ -1,6 +1,7 @@
 module CoreDataConnector
   module Import
     class Importer
+
       attr_reader :importers, :import_id
 
       IMPORTERS = [{
@@ -77,7 +78,8 @@ module CoreDataConnector
         end
 
         # Upload any attachments for media_contents
-        upload_attachments
+        uploader = Uploader.new(import_id)
+        uploader.upload
 
         # Return the import ID
         import_id
@@ -94,26 +96,6 @@ module CoreDataConnector
         if File.exist? filepath
           @importers << klass.new(filepath, import_id)
         end
-      end
-
-      def upload_attachments
-        query = CoreDataConnector::MediaContent
-                  .where(import_id:)
-                  .where.not(import_url: nil)
-                  .where.not(import_url_processed: true)
-
-        query.find_each { |m| upload_attachment m }
-      end
-
-      def upload_attachment(media_content)
-        media_content.content = ActionDispatch::Http::UploadedFile.new(
-          tempfile: Http::Stream.new(media_content.import_url, followlocation: true).download,
-          filename: media_content.name
-        )
-
-        media_content.import_url_processed = true
-
-        media_content.save
       end
     end
   end
