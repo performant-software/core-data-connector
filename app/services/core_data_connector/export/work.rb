@@ -5,7 +5,7 @@ module CoreDataConnector
 
       class_methods do
         def export_preloads
-          [:primary_name]
+          [:ordered_names]
         end
       end
 
@@ -16,7 +16,7 @@ module CoreDataConnector
         # Export attributes
         export_attribute :project_model_id
         export_attribute :uuid
-        export_attribute :name
+        export_attribute(:name) { format_name }
       end
     end
   end

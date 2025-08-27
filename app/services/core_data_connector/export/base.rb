@@ -8,7 +8,7 @@ module CoreDataConnector
           name, options = attrs
 
           @export_attrs ||= []
-          @export_attrs << { name: name, block: block}.merge(options || {})
+          @export_attrs << { name: name, block: block }.merge(options || {})
         end
 
         def export_attributes

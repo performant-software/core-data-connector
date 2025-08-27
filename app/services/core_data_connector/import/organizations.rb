@@ -1,6 +1,9 @@
 module CoreDataConnector
   module Import
     class Organizations < Base
+      # Includes
+      include Nameable
+
       def cleanup
         super
 
@@ -17,11 +20,8 @@ module CoreDataConnector
       def load
         super
 
+        # Update existing organizations
         execute <<-SQL.squish
-          WITH
-          
-          update_organizations AS (
-          
           UPDATE core_data_connector_organizations organizations
              SET z_organization_id = z_organizations.id,
                  description = z_organizations.description,
@@ -30,17 +30,9 @@ module CoreDataConnector
                  updated_at = current_timestamp
             FROM #{table_name} z_organizations
            WHERE z_organizations.organization_id = organizations.id
-
-          )
-          
-          UPDATE core_data_connector_organization_names organization_names
-             SET name = z_organizations.name,
-                 updated_at = current_timestamp
-            FROM #{table_name} z_organizations
-           WHERE z_organizations.organization_id = organization_names.organization_id
-             AND organization_names.primary = TRUE
         SQL
 
+        # Insert new organizations
         execute <<-SQL.squish
           WITH 
           
@@ -67,22 +59,71 @@ module CoreDataConnector
            WHERE z_organizations.organization_id IS NULL
           RETURNING id AS organization_id, z_organization_id
 
-          ),
-
-          insert_organization_names AS (
-
-          INSERT INTO core_data_connector_organization_names (organization_id, name, "primary", created_at, updated_at)
-          SELECT insert_organizations.organization_id, z_organizations.name, TRUE, current_timestamp, current_timestamp
-            FROM insert_organizations
-            JOIN #{table_name} z_organizations ON z_organizations.id = insert_organizations.z_organization_id
-          RETURNING id
-
           )
 
           UPDATE #{table_name} z_organizations
              SET organization_id = insert_organizations.organization_id
             FROM insert_organizations
            WHERE insert_organizations.z_organization_id = z_organizations.id
+        SQL
+
+        # Insert new organization_names
+        execute <<-SQL.squish
+          WITH 
+ 
+          all_organization_names AS (
+            
+          SELECT z_organizations.organization_id AS organization_id, z_organizations.primary_name AS name
+            FROM #{table_name} z_organizations
+           UNION ALL
+          SELECT z_organizations.organization_id AS organization_id, unnest(z_organizations.additional_names) AS name
+            FROM #{table_name} z_organizations
+          
+          )
+
+          INSERT INTO core_data_connector_organization_names (
+            organization_id, 
+            name, 
+            created_at, 
+            updated_at
+          )
+          SELECT all_organization_names.organization_id, 
+                 all_organization_names.name, 
+                 current_timestamp, 
+                 current_timestamp
+            FROM all_organization_names
+           WHERE NOT EXISTS ( SELECT 1
+                                FROM core_data_connector_organization_names organization_names
+                               WHERE organization_names.organization_id = all_organization_names.organization_id
+                                 AND organization_names.name = all_organization_names.name )
+        SQL
+
+        # Reset all organization_names "primary" indicator to FALSE
+        execute <<-SQL.squish
+          UPDATE core_data_connector_organization_names organization_names
+             SET "primary" = FALSE,
+                 updated_at = current_timestamp
+            FROM #{table_name} z_organizations
+           WHERE z_organizations.organization_id = organization_names.organization_id
+        SQL
+
+        # Set organization_names "primary" indicator to TRUE
+        execute <<-SQL.squish
+          WITH 
+              
+          primary_organization_names AS (
+              
+          SELECT z_organizations.organization_id AS organization_id, z_organizations.primary_name AS name
+            FROM #{table_name} z_organizations
+
+          )
+
+          UPDATE core_data_connector_organization_names organization_names
+             SET "primary" = TRUE,
+                 updated_at = current_timestamp
+            FROM primary_organization_names
+           WHERE primary_organization_names.organization_id = organization_names.organization_id
+             AND primary_organization_names.name = organization_names.name
         SQL
       end
 
@@ -95,6 +136,8 @@ module CoreDataConnector
            WHERE organizations.uuid = z_organizations.uuid
              AND z_organizations.uuid IS NOT NULL
         SQL
+
+        transform_names
 
         super
       end
@@ -121,6 +164,12 @@ module CoreDataConnector
          }, {
            name: 'organization_id',
            type: 'INTEGER'
+         }, {
+           name: 'primary_name',
+           type: 'VARCHAR'
+         }, {
+           name: 'additional_names',
+           type: 'TEXT[]'
          }, {
            name: 'user_defined',
            type: 'JSONB'

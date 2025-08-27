@@ -9,26 +9,21 @@ module CoreDataConnector
         end
 
         def export_preloads
-          [:primary_name]
+          [:ordered_names]
         end
       end
 
       included do
         # Includes
         include Base
+        include Nameable
 
         # Export attributes
         export_attribute :project_model_id
         export_attribute :uuid
-        export_attribute :name
-
-        export_attribute(:latitude) do
-          geometry_center&.y
-        end
-
-        export_attribute(:longitude) do
-          geometry_center&.x
-        end
+        export_attribute(:name) { format_name }
+        export_attribute(:latitude) { geometry_center&.y }
+        export_attribute(:longitude) { geometry_center&.x }
       end
     end
   end

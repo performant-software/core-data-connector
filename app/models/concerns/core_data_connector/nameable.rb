@@ -8,9 +8,11 @@ module CoreDataConnector
         if options && options[:as]
           self.send(:has_many, name.to_sym, dependent: :destroy, as: options[:as])
           has_one :primary_name, -> { where(primary: true) }, class_name: name.to_s.classify, as: options[:as]
+          has_many :ordered_names, -> { order(primary: :desc) }, class_name: name.to_s.classify, as: options[:as]
         else
           self.send(:has_many, name.to_sym, dependent: :destroy)
           has_one :primary_name, -> { where(primary: true) }, class_name: name.to_s.classify
+          has_many :ordered_names, -> { order(primary: :desc) }, class_name: name.to_s.classify
         end
 
         # Nested attributes
