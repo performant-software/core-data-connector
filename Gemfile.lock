@@ -18,8 +18,8 @@ GIT
 
 GIT
   remote: https://github.com/performant-software/resource-api.git
-  revision: ab5afbdfedfd4e89309d748b46167652562a22bf
-  tag: v0.5.14
+  revision: 2307a221fec5a06949dc039537d4b24cbcf8b649
+  tag: v0.5.15
   specs:
     resource_api (0.1.0)
       pagy (~> 5.10)
@@ -28,8 +28,8 @@ GIT
 
 GIT
   remote: https://github.com/performant-software/triple-eye-effable.git
-  revision: b0399727e0c5eaa3afc31b127069f5b53a867811
-  tag: v0.2.5
+  revision: 924c64241ab2151c9e0e4ea002b352051e838008
+  tag: v0.2.6
   specs:
     triple_eye_effable (0.1.0)
       httparty (~> 0.20.0)

@@ -18,6 +18,7 @@ resources :jobs, only: [:destroy, :index]
 
 resources :media_contents do
   post :merge, on: :collection
+  post :upload, on: :collection
 end
 
 resources :organizations do
