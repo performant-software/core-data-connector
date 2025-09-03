@@ -18,7 +18,7 @@ module CoreDataConnector
         include Base
 
         # Search attributes
-        search_attribute :name
+        search_attribute :name, facet: true
 
         search_attribute(:names, facet: true) do
           place_names.map(&:name)
