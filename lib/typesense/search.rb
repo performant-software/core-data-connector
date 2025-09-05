@@ -57,8 +57,8 @@ module Typesense
 
         if name.end_with?('_facet') && !field['facet']
           fields_to_update.push({ name: name, drop: true }, field.merge({ facet: true }))
-        elsif name.include?('coordinates') && !name.include?('geometry') && field['type'] != 'geopoint'
-          fields_to_update.push({ name: name, drop: true }, field.merge({ type: 'geopoint', sort: true }))
+        elsif name.include?('.coordinates') && !name.include?('geometry') && field['type'] != 'geopoint[]'
+          fields_to_update.push({ name: name, drop: true }, field.merge({ type: 'geopoint[]', sort: true }))
         end
       end
 
