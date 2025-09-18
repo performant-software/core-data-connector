@@ -5,8 +5,8 @@ module CoreDataConnector
     def initialize(current_user, web_identifier)
       @current_user = current_user
       @web_identifier = web_identifier
-      @project_id = web_identifier&.web_authority&.project
-      @project_id = web_identifier&.web_authority&.project_id
+      @project = web_identifier&.project
+      @project_id = web_identifier&.project_id
     end
 
     # A user can create a web identifier if they are an admin user or member of owning the project.
