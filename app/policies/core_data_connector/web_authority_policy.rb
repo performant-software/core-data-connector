@@ -37,11 +37,11 @@ module CoreDataConnector
       !project.archived? && member?
     end
 
-    # A user can view a web authority if they are an admin user or the owner of the project.
+    # A user can view a web authority if they are an admin user or a member of the project.
     def show?
       return true if current_user.admin?
 
-      !project.archived? && owner?
+      !project.archived? && member?
     end
 
     # A user can update a web authority if they are an admin user or the owner of the project.
@@ -74,7 +74,7 @@ module CoreDataConnector
         .exists?
     end
 
-    # A user can view web authorities for any project they own.
+    # A user can view web authorities for any project for which they are a member.
     class Scope < BaseScope
       def resolve
         return scope.all if current_user.admin?
@@ -84,7 +84,6 @@ module CoreDataConnector
             .joins(:project)
             .where(UserProject.arel_table[:project_id].eq(WebAuthority.arel_table[:project_id]))
             .where(user_id: current_user.id)
-            .where(role: UserProject::ROLE_OWNER)
             .where.not(project: { archived: true })
             .arel
             .exists

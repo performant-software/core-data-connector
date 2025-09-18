@@ -10,6 +10,10 @@ module CoreDataConnector
     # Callbacks
     before_create :find_identifier
 
+    # Delegates
+    delegate :project, to: :web_authority, allow_nil: true
+    delegate :project_id, to: :web_authority, allow_nil: true
+
     def self.all_records_by_project(project_id)
       WebIdentifier
         .joins(:web_authority)
