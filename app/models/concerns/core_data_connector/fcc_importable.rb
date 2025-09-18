@@ -8,7 +8,7 @@ module CoreDataConnector
         project = project_model.project
         return nil unless project_model.id == project.faircopy_cloud_project_model_id
 
-        "#{project.faircopy_cloud_url}/documents/#{faircopy_cloud_id}/csv"
+        "#{project.faircopy_cloud_url}/#{faircopy_cloud_id}/csv"
       end
     end
   end
