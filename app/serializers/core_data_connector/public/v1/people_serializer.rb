@@ -7,7 +7,8 @@ module CoreDataConnector
 
         index_attributes :uuid, :first_name, :middle_name, :last_name
         show_attributes :uuid, :first_name, :middle_name, :last_name, :biography,
-                        person_names: [:id, :first_name, :middle_name, :last_name, :primary]
+                        person_names: [:id, :first_name, :middle_name, :last_name, :primary],
+                        web_identifiers: WebIdentifiersSerializer
       end
     end
   end
