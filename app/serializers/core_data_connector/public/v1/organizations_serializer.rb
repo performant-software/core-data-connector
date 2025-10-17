@@ -6,7 +6,7 @@ module CoreDataConnector
         include UserDefineableSerializer
 
         index_attributes :uuid, :name
-        show_attributes :uuid, :name, :description, organization_names: [:id, :name, :primary]
+        show_attributes :uuid, :name, :description, organization_names: [:id, :name, :primary], web_identifiers: WebIdentifiersSerializer
       end
     end
   end
