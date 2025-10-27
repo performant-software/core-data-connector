@@ -44,14 +44,29 @@ module CoreDataConnector
         .select(arel_table[Arel.star], centroid_function)
     end
 
-    def self.simplified_geometry_function(tolerance = 0.01)
+    def self.simplified_geometry_function(base_tolerance = 0.004)
+      geometry_column = PlaceGeometry.arel_table[:geometry]
+
+      tolerance = Arel::Nodes::NamedFunction.new(
+        'greatest',
+        [
+          Arel::Nodes.build_quoted(base_tolerance),
+          Arel::Nodes::Multiplication.new(
+            Arel::Nodes.build_quoted(base_tolerance),
+            Arel::Nodes::NamedFunction.new('sqrt', [
+              Arel::Nodes::NamedFunction.new('st_area', [geometry_column])
+            ])
+          )
+        ]
+      )
+
       Arel::Nodes::NamedFunction.new(
         'st_simplify',
-        [PlaceGeometry.arel_table[:geometry], Arel::Nodes.build_quoted(tolerance)]
+        [geometry_column, Arel::Nodes.build_quoted(tolerance)]
       ).as('simplified_geometry')
     end
 
-    def self.with_search_geometry(simplify_tolerance = 0.01)
+    def self.with_search_geometry
       left_joins(:place_geometry)
         .select(
           arel_table[Arel.star],
