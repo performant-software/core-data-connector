@@ -508,14 +508,14 @@ module CoreDataConnector
         def set_thumbnail_url(hash)
           media_content_relationships.each do |rel|
             if rel.related_record.content_thumbnail_url.present?
-              hash['thumbnail_url'] = rel.related_record.content_thumbnail_url
+              hash['thumbnail'] = rel.related_record.content_thumbnail_url
               return
             end
           end
 
           media_content_related_relationships.each do |rel|
             if rel.primary_record.content_thumbnail_url.present?
-              hash['thumbnail_url'] = rel.primary_record.content_thumbnail_url
+              hash['thumbnail'] = rel.primary_record.content_thumbnail_url
               return
             end
           end

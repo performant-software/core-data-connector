@@ -88,7 +88,7 @@ module Typesense
           sort: true,
           optional: true
         }, {
-          name: 'thumbnail_url',
+          name: 'thumbnail',
           type: 'string',
           facet: false,
           optional: true,
