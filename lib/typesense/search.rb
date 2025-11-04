@@ -88,6 +88,12 @@ module Typesense
           sort: true,
           optional: true
         }, {
+          name: 'thumbnail_url',
+          type: 'string',
+          facet: false,
+          optional: true,
+          index: false
+        }, {
           name: '.*_facet',
           type: 'auto',
           facet: true

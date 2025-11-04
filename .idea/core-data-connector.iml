@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RUBY_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="RailsFacetType" name="Ruby on Rails">
+      <configuration>
+        <RAILS_FACET_CONFIG_ID NAME="RAILS_FACET_SUPPORT_REMOVED" VALUE="false" />
+        <RAILS_FACET_CONFIG_ID NAME="RAILS_TESTS_SOURCES_PATCHED" VALUE="true" />
+        <RAILS_FACET_CONFIG_ID NAME="RAILS_FACET_APPLICATION_ROOT" VALUE="$MODULE_DIR$" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="ModuleRunConfigurationManager">
+    <shared />
+  </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/features" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/components" />
+      <excludeFolder url="file://$MODULE_DIR$/log" />
+      <excludeFolder url="file://$MODULE_DIR$/public/packs" />
+      <excludeFolder url="file://$MODULE_DIR$/public/system" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/cache" />
+    </content>
+    <orderEntry type="jdk" jdkName="rbenv: 3.4.5" jdkType="RUBY_SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="actioncable (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="actionmailbox (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="actionmailer (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="actionpack (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="actiontext (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="actionview (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="activejob (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="activemodel (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="activerecord (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="activerecord-postgis-adapter (v11.0.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="activestorage (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="activesupport (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="base64 (v0.3.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="benchmark (v0.4.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bigdecimal (v3.2.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="builder (v3.3.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v2.4.19, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="concurrent-ruby (v1.3.5, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="connection_pool (v2.5.3, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="crass (v1.0.6, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="date (v3.4.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="drb (v2.2.3, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="erb (v5.0.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="erubi (v1.13.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ethon (v0.16.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="faker (v3.2.3, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ffi (v1.17.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="fuzzy_dates (v0.1.0@c83271, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="globalid (v1.2.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="httparty (v0.20.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="i18n (v1.14.7, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="io-console (v0.8.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="irb (v1.15.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="json (v2.12.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jwt (v3.1.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jwt_auth (v0.1.0@993b47, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="logger (v1.7.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="loofah (v2.24.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="mail (v2.8.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="marcel (v1.0.4, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="mime-types (v3.7.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="mime-types-data (v3.2025.0708, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="mini_mime (v1.1.5, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="minitest (v5.25.5, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="multi_json (v1.16.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="multi_xml (v0.7.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="net-imap (v0.5.9, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="net-pop (v0.1.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="net-protocol (v0.2.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="net-smtp (v0.5.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="nio4r (v2.7.4, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.18.8, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="oj (v3.16.11, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ostruct (v0.6.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pagy (v5.10.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="postmark (v1.25.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="postmark-rails (v0.22.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pp (v0.6.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="prettyprint (v0.2.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="psych (v5.2.6, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pundit (v2.3.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="racc (v1.8.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack (v3.1.16, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack-cors (v3.0.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack-session (v2.1.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack-test (v2.2.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rackup (v2.2.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rails (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rails-dom-testing (v2.3.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rails-html-sanitizer (v1.6.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="railties (v8.0.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rake (v13.3.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rdoc (v6.14.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="reline (v0.6.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="resource_api (v0.1.0@2307a2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rgeo (v3.0.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rgeo-activerecord (v8.0.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rgeo-geojson (v2.2.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rubyzip (v2.3.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="securerandom (v0.4.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sqlite3 (v2.7.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="stringio (v3.1.7, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="thor (v1.3.2, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="timeout (v0.4.3, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="triple_eye_effable (v0.1.0@2fc8e3, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="typesense (v0.15.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="typhoeus (v1.4.1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="tzinfo (v2.0.6, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="uri (v1.0.3, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="user_defined_fields (v0.1.0@9799f1, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="useragent (v0.16.11, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="websocket-driver (v0.8.0, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="websocket-extensions (v0.1.5, rbenv: 3.4.5) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="zeitwerk (v2.7.3, rbenv: 3.4.5) [gem]" level="application" />
+  </component>
+  <component name="RModuleSettingsStorage">
+    <LOAD_PATH number="0" />
+    <I18N_FOLDERS number="1" string0="$MODULE_DIR$/config/locales" />
+  </component>
+  <component name="RailsPaths" isManagedAutomatically="true">
+    <entry key="app">
+      <value>file://$MODULE_DIR$/app</value>
+    </entry>
+    <entry key="app/assets">
+      <value>file://$MODULE_DIR$/app/assets</value>
+    </entry>
+    <entry key="app/channels">
+      <value>file://$MODULE_DIR$/app/channels</value>
+    </entry>
+    <entry key="app/controllers">
+      <value>file://$MODULE_DIR$/app/controllers</value>
+    </entry>
+    <entry key="app/helpers">
+      <value>file://$MODULE_DIR$/app/helpers</value>
+    </entry>
+    <entry key="app/mailers">
+      <value>file://$MODULE_DIR$/app/mailers</value>
+    </entry>
+    <entry key="app/models">
+      <value>file://$MODULE_DIR$/app/models</value>
+    </entry>
+    <entry key="app/views">
+      <value>file://$MODULE_DIR$/app/views</value>
+    </entry>
+    <entry key="config">
+      <value>file://$MODULE_DIR$/config</value>
+    </entry>
+    <entry key="config/cable">
+      <value>file://$MODULE_DIR$/config/cable.yml</value>
+    </entry>
+    <entry key="config/database">
+      <value>file://$MODULE_DIR$/config/database.yml</value>
+    </entry>
+    <entry key="config/environment">
+      <value>file://$MODULE_DIR$/config/environment.rb</value>
+    </entry>
+    <entry key="config/environments">
+      <value>file://$MODULE_DIR$/config/environments</value>
+    </entry>
+    <entry key="config/initializers">
+      <value>file://$MODULE_DIR$/config/initializers</value>
+    </entry>
+    <entry key="config/locales">
+      <value>file://$MODULE_DIR$/config/locales</value>
+    </entry>
+    <entry key="config/routes">
+      <value>file://$MODULE_DIR$/config/routes</value>
+    </entry>
+    <entry key="config/routes.rb">
+      <value>file://$MODULE_DIR$/config/routes.rb</value>
+    </entry>
+    <entry key="config/secrets">
+      <value>file://$MODULE_DIR$/config</value>
+    </entry>
+    <entry key="db">
+      <value>file://$MODULE_DIR$/db</value>
+    </entry>
+    <entry key="db/migrate">
+      <value>file://$MODULE_DIR$/db/migrate</value>
+    </entry>
+    <entry key="db/seeds.rb">
+      <value>file://$MODULE_DIR$/db/seeds.rb</value>
+    </entry>
+    <entry key="lib">
+      <value>file://$MODULE_DIR$/lib</value>
+    </entry>
+    <entry key="lib/assets">
+      <value>file://$MODULE_DIR$/lib/assets</value>
+    </entry>
+    <entry key="lib/tasks">
+      <value>file://$MODULE_DIR$/lib/tasks</value>
+    </entry>
+    <entry key="lib/templates">
+      <value>file://$MODULE_DIR$/lib/templates</value>
+    </entry>
+    <entry key="log">
+      <value>file://$MODULE_DIR$/log/development.log</value>
+    </entry>
+    <entry key="public">
+      <value>file://$MODULE_DIR$/public</value>
+    </entry>
+    <entry key="public/javascripts">
+      <value>file://$MODULE_DIR$/public/javascripts</value>
+    </entry>
+    <entry key="public/stylesheets">
+      <value>file://$MODULE_DIR$/public/stylesheets</value>
+    </entry>
+    <entry key="tmp">
+      <value>file://$MODULE_DIR$/tmp</value>
+    </entry>
+    <entry key="vendor">
+      <value>file://$MODULE_DIR$/vendor</value>
+    </entry>
+    <entry key="vendor/assets">
+      <value>file://$MODULE_DIR$/vendor/assets</value>
+    </entry>
+  </component>
+</module>
