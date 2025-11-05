@@ -343,6 +343,9 @@ module CoreDataConnector
 
           projects = []
 
+          # Add a thumbnail URL if one is available
+          set_thumbnail_url(hash)
+
           # Include related records
           if options[:include_relationships]
             build_relationships(hash, projects, options.merge(include_relationships: false))
@@ -500,6 +503,22 @@ module CoreDataConnector
           place_related_relationships.each { |r| build_inverse_place_relationship(r, hash, projects, options) }
           taxonomy_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
           work_related_relationships.each { |r| build_inverse_relationship(r, hash, projects, options) }
+        end
+
+        def set_thumbnail_url(hash)
+          media_content_relationships.each do |rel|
+            if rel.related_record.content_thumbnail_url.present?
+              hash['thumbnail'] = rel.related_record.content_thumbnail_url
+              return
+            end
+          end
+
+          media_content_related_relationships.each do |rel|
+            if rel.primary_record.content_thumbnail_url.present?
+              hash['thumbnail'] = rel.primary_record.content_thumbnail_url
+              return
+            end
+          end
         end
 
         def build_user_defined(record, user_defined_fields)
