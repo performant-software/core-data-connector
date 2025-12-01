@@ -12,6 +12,7 @@ module CoreDataConnector
       included do
         # Includes
         include Base
+        include Nameable
 
         # Export attributes
         export_attribute :project_model_id
