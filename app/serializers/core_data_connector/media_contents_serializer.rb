@@ -4,7 +4,7 @@ module CoreDataConnector
     include TripleEyeEffable::ResourceableSerializer
     include UserDefinedFields::FieldableSerializer
 
-    index_attributes :id, :name
-    show_attributes :id, :name
+    index_attributes :id, :name, :content_warning
+    show_attributes :id, :name, :content_warning
   end
 end

@@ -17,6 +17,7 @@ module CoreDataConnector
         export_attribute :project_model_id
         export_attribute :uuid
         export_attribute :name
+        export_attribute :content_warning
 
         export_attribute(:import_url) do
           import_url || content_download_url
