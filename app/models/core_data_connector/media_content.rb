@@ -22,15 +22,23 @@ module CoreDataConnector
     resolve_defineable -> (media_content) { media_content.project_model }
 
     def metadata
+      fields = [{
+        label: 'Content Warning',
+        value: self[:content_warning]
+      }]
+
+      puts 'DEBUG'
+      puts fields.inspect
+
       if !self.user_defined || self.user_defined.keys.count == 0
-        return '[]'
+        return fields.to_json
       end
 
-      fields = UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).map do |udf|
-        {
-          label: udf[:column_name],
-          value: self.user_defined[udf[:uuid]]
-        }
+      UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).each do |udf|
+        fields.push({
+                      label: udf[:column_name],
+                      value: self.user_defined[udf[:uuid]]
+                    })
       end
 
       fields.to_json
