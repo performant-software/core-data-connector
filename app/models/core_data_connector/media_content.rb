@@ -27,9 +27,6 @@ module CoreDataConnector
         value: self[:content_warning]
       }]
 
-      puts 'DEBUG'
-      puts fields.inspect
-
       if !self.user_defined || self.user_defined.keys.count == 0
         return fields.to_json
       end
