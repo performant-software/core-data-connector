@@ -23,7 +23,7 @@ module CoreDataConnector
 
     def metadata
       fields = [{
-        label: 'Content Warning',
+        label: I18n.t('services.iiif.manifest.content_warning'),
         value: self[:content_warning]
       }]
 
@@ -33,9 +33,9 @@ module CoreDataConnector
 
       UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).each do |udf|
         fields.push({
-                      label: udf[:column_name],
-                      value: self.user_defined[udf[:uuid]]
-                    })
+          label: udf[:column_name],
+          value: self.user_defined[udf[:uuid]]
+        })
       end
 
       fields.to_json
