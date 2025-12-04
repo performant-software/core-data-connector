@@ -20,6 +20,7 @@ module CoreDataConnector
       [ *ownable_attributes,
         :name,
         :content,
+        :content_warning,
         user_defined: {}
       ]
     end

@@ -23,6 +23,7 @@ module CoreDataConnector
             SET z_media_content_id = z_media_contents.id,
                 name = z_media_contents.name,
                 import_url = z_media_contents.import_url,
+                content_warning = COALESCE(z_media_contents.content_warning, FALSE),
                 import_url_processed = z_media_contents.import_url_processed,
                 user_defined = z_media_contents.user_defined,
                 import_id = z_media_contents.import_id,
@@ -42,6 +43,7 @@ module CoreDataConnector
             z_media_content_id,
             name,
             import_url,
+            content_warning,
             user_defined,
             import_id,
             created_at, 
@@ -52,6 +54,7 @@ module CoreDataConnector
                  z_media_contents.id,
                  z_media_contents.name,
                  z_media_contents.import_url,
+                 COALESCE(z_media_contents.content_warning, FALSE),
                  z_media_contents.user_defined,
                  z_media_contents.import_id,
                  current_timestamp,
@@ -109,6 +112,10 @@ module CoreDataConnector
            name: 'import_url',
            type: 'VARCHAR',
            copy: true
+         }, {
+          name: 'content_warning',
+          type: 'BOOLEAN',
+          copy: true
          }, {
            name: 'media_content_id',
            type: 'INTEGER'

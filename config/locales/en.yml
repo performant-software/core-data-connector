@@ -148,6 +148,7 @@ en:
     iiif:
       manifest:
         label: "%{name}: %{relationship}"
+        content_warning: "Content Warning"
     import_analyze:
       common:
         name: "Name"
