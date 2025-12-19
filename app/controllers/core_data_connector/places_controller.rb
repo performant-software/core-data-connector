@@ -1,6 +1,7 @@
 module CoreDataConnector
   class PlacesController < ApplicationController
     # Includes
+    include ManifestableController
     include MergeableController
     include NameableController
     include OwnableController

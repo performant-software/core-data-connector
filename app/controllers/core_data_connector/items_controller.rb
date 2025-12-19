@@ -2,6 +2,7 @@ module CoreDataConnector
   class ItemsController < ApplicationController
     # Includes
     include Http::Requestable
+    include ManifestableController
     include MergeableController
     include NameableController
     include OwnableController

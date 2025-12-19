@@ -1,6 +1,7 @@
 module CoreDataConnector
   class TaxonomiesController < ApplicationController
     # Includes
+    include ManifestableController
     include MergeableController
     include OwnableController
     include UserDefinedFields::Queryable

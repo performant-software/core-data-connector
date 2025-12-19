@@ -22,7 +22,7 @@ module CoreDataConnector
           record = relationship.related_record
         end
 
-        # Only create manifests for models that include the Manifestale concern
+        # Only create manifests for models that include the Manifestable concern
         return nil unless record.is_a?(Manifestable)
 
         record
