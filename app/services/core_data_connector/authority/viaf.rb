@@ -4,11 +4,14 @@ module CoreDataConnector
       include Http::Requestable
 
       BASE_URL = 'https://viaf.org'
-
       DEFAULT_LIMIT = 20
 
       def find(id, options = {})
-        send_request("#{BASE_URL}/viaf/#{id}/viaf.json", method: :get) do |body|
+        headers = {
+          'Accept': 'application/json'
+        }
+
+        send_request("#{BASE_URL}/viaf/#{id}", method: :get, headers:) do |body|
           JSON.parse(body)
         end
       end
