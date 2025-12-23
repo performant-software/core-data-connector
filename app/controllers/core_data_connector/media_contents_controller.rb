@@ -3,6 +3,7 @@ module CoreDataConnector
     # Includes
     include Api::Uploadable
     include Http::Requestable
+    include ManifestableController
     include MergeableController
     include OwnableController
     include TripleEyeEffable::ResourceableController

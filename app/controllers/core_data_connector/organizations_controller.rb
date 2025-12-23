@@ -1,6 +1,7 @@
 module CoreDataConnector
   class OrganizationsController < ApplicationController
     # Includes
+    include ManifestableController
     include MergeableController
     include NameableController
     include OwnableController

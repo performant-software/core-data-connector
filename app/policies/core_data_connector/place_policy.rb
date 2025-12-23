@@ -1,6 +1,7 @@
 module CoreDataConnector
   class PlacePolicy < BasePolicy
     # Includes
+    include ManifestablePolicy
     include MergeablePolicy
     include OwnablePolicy
 

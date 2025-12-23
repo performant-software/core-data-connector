@@ -1,37 +1,33 @@
 # Admin CMS routes
 
-resources :events do
+concern :manifestable do
+  post :create_manifests, on: :member
+end
+
+concern :mergeable do
   post :merge, on: :collection
 end
 
-resources :instances do
-  post :merge, on: :collection
-end
+resources :events, concerns: [:manifestable, :mergeable]
 
-resources :items do
+resources :instances, concerns: [:manifestable, :mergeable]
+
+resources :items, concerns: [:manifestable, :mergeable] do
   get :analyze_import, on: :member
   post :import, on: :member
-  post :merge, on: :collection
 end
 
 resources :jobs, only: [:destroy, :index]
 
-resources :media_contents do
-  post :merge, on: :collection
+resources :media_contents, concerns: [:manifestable, :mergeable] do
   post :upload, on: :collection
 end
 
-resources :organizations do
-  post :merge, on: :collection
-end
+resources :organizations, concerns: [:manifestable, :mergeable]
 
-resources :people do
-  post :merge, on: :collection
-end
+resources :people, concerns: [:manifestable, :mergeable]
 
-resources :places do
-  post :merge, on: :collection
-end
+resources :places, concerns: [:manifestable, :mergeable]
 
 resources :project_models do
   get :model_classes, on: :collection
@@ -57,9 +53,7 @@ resources :relationships do
   post :upload, on: :collection
 end
 
-resources :taxonomies do
-  post :merge, on: :collection
-end
+resources :taxonomies, concerns: [:manifestable, :mergeable]
 
 resources :user_projects do
   post :invite, on: :member
@@ -74,7 +68,5 @@ end
 
 resources :web_identifiers
 
-resources :works do
-  post :merge, on: :collection
-end
+resources :works, concerns: [:manifestable, :mergeable]
 
