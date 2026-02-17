@@ -31,7 +31,11 @@ module CoreDataConnector
         return fields.to_json
       end
 
-      UserDefinedFields::UserDefinedField.where(uuid: self.user_defined.keys).each do |udf|
+      udfs = UserDefinedFields::UserDefinedField
+        .where(uuid: self.user_defined.keys)
+        .order(:order)
+
+      udfs.each do |udf|
         fields.push({
           label: udf[:column_name],
           value: self.user_defined[udf[:uuid]]
