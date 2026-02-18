@@ -37,8 +37,8 @@ GIT
 
 GIT
   remote: https://github.com/performant-software/user-defined-fields.git
-  revision: 9799f151ab51506eef42177c756b762060a9838a
-  tag: v0.1.14
+  revision: 3fe09c999fa5193e8de9e1253e60d25c95a40af8
+  tag: v0.1.15
   specs:
     user_defined_fields (0.1.0)
       rails (>= 6.0.3.2, < 9)
@@ -157,6 +157,7 @@ GEM
     faker (3.2.3)
       i18n (>= 1.8.11, < 2)
     ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     globalid (1.2.1)
       activesupport (>= 6.1)
     httparty (0.20.0)
@@ -202,6 +203,8 @@ GEM
       net-protocol
     nio4r (2.7.4)
     nokogiri (1.18.8-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.8-x86_64-linux-gnu)
       racc (~> 1.4)
     oj (3.16.11)
       bigdecimal (>= 3.0)
@@ -279,6 +282,7 @@ GEM
     rubyzip (2.3.2)
     securerandom (0.4.1)
     sqlite3 (2.7.2-arm64-darwin)
+    sqlite3 (2.7.2-x86_64-linux-gnu)
     stringio (3.1.7)
     thor (1.3.2)
     timeout (0.4.3)
@@ -300,6 +304,7 @@ GEM
 PLATFORMS
   arm64-darwin-22
   arm64-darwin-24
+  x86_64-linux
 
 DEPENDENCIES
   core_data_connector!
