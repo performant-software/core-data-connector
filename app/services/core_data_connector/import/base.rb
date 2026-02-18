@@ -41,7 +41,7 @@ module CoreDataConnector
 
       def setup
         column_names = columns
-                         .map{ |column| "#{column[:name]} #{column[:type]}" }
+                         .map{ |column| "#{column[:name]} #{column[:type]} #{column[:options]}" }
                          .join(', ')
 
         execute <<-SQL.squish

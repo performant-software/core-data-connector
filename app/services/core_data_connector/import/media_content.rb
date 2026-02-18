@@ -121,7 +121,8 @@ module CoreDataConnector
            type: 'INTEGER'
          }, {
            name: 'import_url_processed',
-           type: 'BOOLEAN'
+           type: 'BOOLEAN',
+           options: 'NOT NULL DEFAULT FALSE'
          }, {
            name: 'user_defined',
            type: 'JSONB'
