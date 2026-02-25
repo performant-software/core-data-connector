@@ -21,10 +21,12 @@ module CoreDataConnector
     has_secure_password
 
     # Transient attributes
-    attr_accessor :password_temporary
+    attr_accessor :password_temporary, :skip_invitation
 
     # Actions
     before_validation :set_sso_password, on: :create
+    before_validation :set_temp_password, on: :create
+    after_commit :send_invitation, on: :create
 
     # Validations
     validates :email, uniqueness: true
@@ -56,15 +58,35 @@ module CoreDataConnector
       role === ROLE_MEMBER
     end
 
+    def sso_user?
+      SSO_DOMAINS.any? { |d| self.email.end_with?(d) }
+    end
+
     private
 
     # Add a long, random password for accounts created via SSO
     def set_sso_password
-      if SSO_DOMAINS.any? { |d| self.email.end_with?(d) }
+      if sso_user?
         random_password = Users::Passwords.generate_sso_password
         self.password = random_password
         self.password_confirmation = random_password
       end
+    end
+
+    def set_temp_password
+      return if password.present?
+      temp = Users::Passwords.generate_user_password
+      self.assign_attributes(
+        password: temp,
+        password_confirmation: temp,
+        password_temporary: true,
+        require_password_change: true
+      )
+    end
+
+    def send_invitation
+      return if last_sign_in_at.present? || sso_user? || skip_invitation
+      Users::Invitations.new.send_invitation(self)
     end
   end
 end

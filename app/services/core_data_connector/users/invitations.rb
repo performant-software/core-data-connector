@@ -2,9 +2,9 @@ module CoreDataConnector
   module Users
     class Invitations
 
-      def send_invitation(user_project)
-        user = user_project.user
-        project = user_project.project
+      def send_invitation(recipient)
+        user = recipient.is_a?(UserProject) ? recipient.user : recipient
+        project = recipient.is_a?(UserProject) ? recipient.project : nil
 
         # Generate a new password
         password = Passwords.generate_user_password

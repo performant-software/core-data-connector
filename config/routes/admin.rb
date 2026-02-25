@@ -59,7 +59,9 @@ resources :user_projects do
   post :invite, on: :member
 end
 
-resources :users
+resources :users do
+  post :invite, on: :member
+end
 
 resources :web_authorities do
   get :find, on: :member
