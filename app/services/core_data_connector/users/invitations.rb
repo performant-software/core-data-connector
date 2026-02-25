@@ -10,7 +10,7 @@ module CoreDataConnector
         password = Passwords.generate_user_password
 
         # Update the user's password
-        user.update(
+        user.update!(
           last_invited_at: Time.now.utc,
           password: password,
           password_confirmation: password,
