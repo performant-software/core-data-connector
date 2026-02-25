@@ -29,7 +29,7 @@ module CoreDataConnector
     # Validations
     validates :email, uniqueness: true
     validates :password,
-              presence: true,
+              allow_nil: true,
               length: { in: 8..128 },
               format: { with: Users::Passwords::PASSWORD_FORMAT },
               unless: :password_temporary
