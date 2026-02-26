@@ -9,7 +9,7 @@ module CoreDataConnector
         product_url: ENV['HOSTNAME'],
         product_name: I18n.t('app.name'),
         name: user.name,
-        project_name: project.name,
+        project_name: project&.name,
         password: password,
         action_url: ENV['HOSTNAME'],
         company_name: I18n.t('app.company_name'),

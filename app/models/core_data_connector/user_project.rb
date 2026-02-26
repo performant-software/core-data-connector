@@ -44,7 +44,8 @@ module CoreDataConnector
           password_confirmation: temporary_password,
           password_temporary: true,
           role: User::ROLE_GUEST,
-          require_password_change: true
+          require_password_change: true,
+          skip_invitation: true  # prevent double invitation email from User callback
         )
       end
 
@@ -52,7 +53,7 @@ module CoreDataConnector
     end
 
     def send_invitation
-      return unless user.last_sign_in_at.nil?
+      return if user.last_sign_in_at.present? || user.last_invited_at.present?
 
       Users::Invitations.new.send_invitation(self)
     end
