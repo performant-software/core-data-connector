@@ -16,6 +16,8 @@ module CoreDataConnector
 
       # Returns the record to update the manifest for the passed relationship.
       def record_to_update(relationship)
+        record = nil
+  
         if relationship.related_record_type == MediaContent.to_s
           record = relationship.primary_record
         elsif relationship.primary_record_type == MediaContent.to_s && relationship.project_model_relationship.allow_inverse?
@@ -52,6 +54,8 @@ module CoreDataConnector
 
         record = record_to_update(relationship)
 
+        return if record.nil?
+
         service = Iiif::Manifest.new
         service.reset_manifests_by_type(record.class, {
           id: record.id,
@@ -77,6 +81,8 @@ module CoreDataConnector
         relationship = Relationship.find(params[:id])
 
         record = record_to_update(relationship)
+
+        return if record.nil?
 
         service = Iiif::Manifest.new
         service.reset_manifests_by_type(record.class, {
