@@ -19,7 +19,7 @@ module CoreDataConnector
         client_id: ENV['SSO_CLIENT_ID'],
         client_secret: ENV['SSO_CLIENT_SECRET'],
         grant_type: 'authorization_code',
-        redirect_uri: ENV['REACT_APP_SSO_REDIRECT_URI']
+        redirect_uri: ENV['VITE_SSO_REDIRECT_URI']
       }
 
       token_req = Typhoeus::Request.new(

@@ -12,7 +12,7 @@ module CoreDataConnector
     ]
 
     # Domains that have SSO enabled
-    SSO_DOMAINS = ENV.fetch('REACT_APP_SSO_DOMAINS') { '' }.split(',')
+    SSO_DOMAINS = ENV.fetch('VITE_SSO_DOMAINS') { '' }.split(',')
 
     # Relationships
     has_many :user_projects, dependent: :destroy
