@@ -5,9 +5,6 @@ CoreDataConnector::Engine.routes.draw do
   # IIIF
   mount TripleEyeEffable::Engine, at: '/triple_eye_effable'
 
-  # SSO authentication
-  get 'auth/sso/callback', to: 'sso#login'
-
   # Admin API endpoints
   draw(:admin)
 

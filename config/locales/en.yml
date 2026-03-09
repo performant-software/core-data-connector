@@ -129,6 +129,7 @@ en:
       unique: "This user cannot be added to the same project multiple times."
     users:
       not_found: "User not found"
+      unauthorized: "Unauthorized"
       password:
         sso: "Cannot reset passwords for SSO users"
       roles: "Invalid role"
