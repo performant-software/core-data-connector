@@ -30,9 +30,11 @@ module CoreDataConnector
     def me
       authenticate_clerk_request
 
-      return unless @current_user && @clerk_user
+      return unless @current_user
 
-      update_user_from_sso(@current_user, @clerk_user)
+      clerk_user = get_clerk_data(@current_user.sso_id)
+
+      update_user_from_sso(@current_user, clerk_user)
 
       render json: @current_user, status: :ok
     end

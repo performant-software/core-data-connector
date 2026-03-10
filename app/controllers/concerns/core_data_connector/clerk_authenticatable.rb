@@ -9,7 +9,6 @@ module CoreDataConnector
       clerk_session = clerk_client.verify_token(token)
       clerk_id = clerk_session["sub"]
 
-      @clerk_user = clerk_client.users.get(user_id: clerk_id).user
       @current_user = User.find_by(sso_id: clerk_id)
 
       return render_not_found unless @current_user
@@ -18,6 +17,10 @@ module CoreDataConnector
     rescue StandardError => error
       log_error(error)
       render_unauthorized
+    end
+
+    def get_clerk_data(clerk_id)
+      clerk_client.users.get(user_id: clerk_id).user
     end
 
     def clerk_client
