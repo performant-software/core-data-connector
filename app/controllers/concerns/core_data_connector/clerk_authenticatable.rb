@@ -3,7 +3,7 @@ module CoreDataConnector
     private
 
     def authenticate_clerk_request
-      token = clerk_bearer_token
+      token = request.cookies["__session"]
       return render_unauthorized unless token.present?
 
       clerk_session = clerk_client.verify_token(token)
@@ -18,10 +18,6 @@ module CoreDataConnector
     rescue StandardError => error
       log_error(error)
       render_unauthorized
-    end
-
-    def clerk_bearer_token
-      request.headers["Authorization"]&.split(" ")&.last
     end
 
     def clerk_client
