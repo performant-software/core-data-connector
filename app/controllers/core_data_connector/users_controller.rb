@@ -32,7 +32,7 @@ module CoreDataConnector
 
       return unless @current_user
 
-      clerk_user = get_clerk_data(@current_user.sso_id)
+      clerk_user = get_clerk_data
 
       update_user_from_sso(@current_user, clerk_user)
 

@@ -19,8 +19,8 @@ module CoreDataConnector
       render_unauthorized
     end
 
-    def get_clerk_data(clerk_id)
-      clerk_client.users.get(user_id: clerk_id).user
+    def get_clerk_data
+      clerk_client.users.get(user_id: @current_user.sso_id).user
     end
 
     def clerk_client
