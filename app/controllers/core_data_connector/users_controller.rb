@@ -50,7 +50,8 @@ module CoreDataConnector
     def update_user_from_sso(local_user, sso_user)
       local_user.update(
         sso_id: sso_user.id,
-        name: build_name(sso_user.first_name, sso_user.last_name)
+        name: build_name(sso_user.first_name, sso_user.last_name),
+        avatar_url: sso_user.profile_image_url
       )
     end
 
