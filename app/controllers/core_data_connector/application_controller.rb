@@ -1,9 +1,3 @@
-# Conditionally require Clerk because it injects some sort of
-# extra auth layer that breaks username/password auth.
-if ENV['VITE_AUTH_PROVIDER'] == 'clerk'
-  require 'clerk'
-end
-
 module CoreDataConnector
   class ApplicationController < Api::ResourceController
     # Includes
@@ -25,11 +19,21 @@ module CoreDataConnector
     private
 
     def handle_authentication
-      if ENV['VITE_AUTH_PROVIDER'] == 'clerk'
+      if is_clerk?
         authenticate_clerk_request
       else
         authenticate_request
       end
+    end
+
+    def is_clerk?
+      # backward compat for FCC 1's username/password login
+      return false if request.headers['server'] == 'Netlify'
+
+      # backward compat for FCC 2's username/password login
+      return false if request.headers['access-control-expose-headers'] && request.headers['access-control-expose-headers'].include?('x-trigger-jwt')
+
+      ENV['VITE_AUTH_PROVIDER'] == 'clerk'
     end
 
     def log_error(error)

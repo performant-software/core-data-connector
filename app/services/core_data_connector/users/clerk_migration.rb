@@ -39,7 +39,7 @@ module CoreDataConnector
 
               response = clerk.users.create(request: create_request)
               clerk_user = response.user
-              puts "#{user.email} created in Clerk"
+              Rails.logger.info "#{user.email} created in Clerk"
             end
 
             email_domain = user.email.split('@').last
@@ -62,13 +62,13 @@ module CoreDataConnector
                 }
                 clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
 
-                puts "#{user.email} added to organization: #{email_domain}"
+                Rails.logger.info "#{user.email} added to organization: #{email_domain}"
               end
             end
 
             user.update!(sso_id: clerk_user.id)
           rescue StandardError => e
-            puts "Error migrating user #{user.email}: #{e.message}"
+            Rails.logger.info "Error migrating user #{user.email}: #{e.message}"
           end
         end
       end
@@ -88,11 +88,11 @@ module CoreDataConnector
         users.user_list.each do |user|
           sleep 2
           clerk.users.delete(user_id: user.id)
-          puts "Deleted user #{user.id} with email #{user.email_addresses.first.email_address}"
+          Rails.logger.info "Deleted user #{user.id} with email #{user.email_addresses.first.email_address}"
         end
 
         User.update_all(sso_id: nil)
-        puts "Cleared sso_id for all users"
+        Rails.logger.info "Cleared sso_id for all users"
       end
     end
   end

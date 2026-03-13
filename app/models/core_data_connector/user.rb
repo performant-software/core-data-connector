@@ -11,9 +11,6 @@ module CoreDataConnector
       ROLE_GUEST
     ]
 
-    # Domains that have SSO enabled
-    SSO_DOMAINS = ENV.fetch('VITE_SSO_DOMAINS') { '' }.split(',')
-
     # Relationships
     has_many :user_projects, dependent: :destroy
 
@@ -24,7 +21,6 @@ module CoreDataConnector
     attr_accessor :password_temporary, :skip_invitation
 
     # Actions
-    before_validation :set_sso_password, on: :create
     before_validation :set_temp_password, on: :create
     after_commit :send_invitation, on: :create
 
@@ -58,20 +54,7 @@ module CoreDataConnector
       role === ROLE_MEMBER
     end
 
-    def sso_user?
-      SSO_DOMAINS.any? { |d| self.email.end_with?(d) }
-    end
-
     private
-
-    # Add a long, random password for accounts created via SSO
-    def set_sso_password
-      if sso_user?
-        random_password = Users::Passwords.generate_sso_password
-        self.password = random_password
-        self.password_confirmation = random_password
-      end
-    end
 
     def set_temp_password
       return if password.present?
@@ -85,7 +68,8 @@ module CoreDataConnector
     end
 
     def send_invitation
-      return if last_sign_in_at.present? || sso_user? || skip_invitation
+      return false if last_sign_in_at.present? || skip_invitation
+
       Users::Invitations.new.send_invitation(self)
     end
   end

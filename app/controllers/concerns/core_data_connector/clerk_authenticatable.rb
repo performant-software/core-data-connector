@@ -1,3 +1,9 @@
+# Conditionally require Clerk because it injects some sort of
+# extra auth layer that breaks username/password auth.
+if ENV['VITE_AUTH_PROVIDER'] == 'clerk'
+  require 'clerk'
+end
+
 module CoreDataConnector
   module ClerkAuthenticatable
     private

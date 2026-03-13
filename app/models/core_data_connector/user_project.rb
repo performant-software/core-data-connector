@@ -53,7 +53,7 @@ module CoreDataConnector
     end
 
     def send_invitation
-      return if user.last_sign_in_at.present? || user.last_invited_at.present?
+      return if ENV['VITE_AUTH_PROVIDER'] == 'clerk' || user.last_sign_in_at.present? || user.last_invited_at.present?
 
       Users::Invitations.new.send_invitation(self)
     end
