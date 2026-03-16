@@ -17,7 +17,7 @@ module CoreDataConnector
           org_domains[name] = org.id
         end
 
-        User.where(sso_id: nil).limit(100).find_each do |user|
+        User.where(sso_id: nil).find_each do |user|
           begin
             sleep 2
             list_request = Clerk::Models::Operations::GetUserListRequest.new(email_address: [user.email])

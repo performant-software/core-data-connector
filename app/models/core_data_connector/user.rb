@@ -55,7 +55,7 @@ module CoreDataConnector
     end
 
     def split_name
-      user.name&.split(' ', 2)
+      self.name&.split(' ', 2)
     end
 
     private
@@ -72,7 +72,7 @@ module CoreDataConnector
     end
 
     def send_invitation
-      return false if ENV['AUTH_PROVIDER'] == 'clerk' || last_sign_in_at.present? || skip_invitation
+      return false if ENV['VITE_AUTH_PROVIDER'] == 'clerk' || last_sign_in_at.present? || skip_invitation
 
       Users::Invitations.new.send_invitation(self)
     end
