@@ -17,6 +17,13 @@ module CoreDataConnector
 
       @current_user = User.find_by(sso_id: clerk_id)
 
+      # If the user exists in Clerk but not in FairData,
+      # create a local account for them automatically.
+      if @current_user.nil?
+        clerk_user = get_clerk_data(clerk_id)
+        @current_user = create_user_from_clerk(clerk_user)
+      end
+
       return render_not_found unless @current_user
 
       @current_user
@@ -25,8 +32,20 @@ module CoreDataConnector
       render_unauthorized
     end
 
-    def get_clerk_data
-      clerk_client.users.get(user_id: @current_user.sso_id).user
+    def create_user_from_clerk(clerk_user)
+      user = User.new(
+        sso_id: clerk_user.id,
+        email: clerk_user.email_addresses.first.email_address,
+        name: [clerk_user.first_name, clerk_user.last_name].join(" "),
+        role: 'member'
+      )
+      user.save!
+
+      user
+    end
+
+    def get_clerk_data(clerk_id)
+      clerk_client.users.get(user_id: clerk_id).user
     end
 
     def clerk_client

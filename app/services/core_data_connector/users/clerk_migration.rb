@@ -28,7 +28,7 @@ module CoreDataConnector
 
             if clerk_user.nil?
               is_new_user = true
-              first_name, last_name = user.name&.split(' ', 2)
+              first_name, last_name = user.split_name
 
               create_request = Clerk::Models::Operations::CreateUserRequest.new(
                 email_address: [user.email],

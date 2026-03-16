@@ -3,7 +3,7 @@ module CoreDataConnector
     # Includes
     include PostmarkRails::TemplatedMailerMixin
 
-    def invite_user(user, password, project)
+    def invite_user(user:, password:, project:)
       # Setup template variables
       self.template_model = {
         product_url: ENV['HOSTNAME'],
