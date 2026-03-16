@@ -61,6 +61,7 @@ end
 
 resources :users do
   post :invite, on: :member
+  get :me, on: :collection
 end
 
 resources :web_authorities do

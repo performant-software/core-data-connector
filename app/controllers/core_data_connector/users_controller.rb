@@ -27,6 +27,36 @@ module CoreDataConnector
       end
     end
 
+    def me
+      authenticate_clerk_request
+
+      return unless @current_user
+
+      clerk_user = get_clerk_data(@current_user.sso_id)
+
+      update_user_from_sso(@current_user, clerk_user)
+
+      render json: @current_user, status: :ok
+    end
+
+    def build_name(first, last)
+      if first.present? && last.present?
+        name = "#{first} #{last}"
+      elsif first.present?
+        name = first
+      elsif last.present?
+        name = last
+      end
+    end
+
+    def update_user_from_sso(local_user, sso_user)
+      local_user.update(
+        sso_id: sso_user.id,
+        name: build_name(sso_user.first_name, sso_user.last_name),
+        avatar_url: sso_user.profile_image_url
+      )
+    end
+
     protected
 
     def after_update(user)

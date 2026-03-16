@@ -1,7 +1,6 @@
 module CoreDataConnector
   module Users
     class Invitations
-
       def send_invitation(recipient)
         user = recipient.is_a?(UserProject) ? recipient.user : recipient
         project = recipient.is_a?(UserProject) ? recipient.project : nil
@@ -19,9 +18,8 @@ module CoreDataConnector
         )
 
         # Email the user the new password
-        InvitationMailer.invite_user(user, password, project).deliver_later
+        InvitationMailer.invite_user(user: user, password: password, project: project).deliver_later
       end
-
     end
   end
 end

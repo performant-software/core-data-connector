@@ -41,4 +41,18 @@ namespace :core_data_connector do
       service.reset_manifests
     end
   end
+
+  namespace :users do
+    desc 'Migrates local users to Clerk.'
+    task :migrate_to_clerk => :environment do
+      service = CoreDataConnector::Users::ClerkMigration.new
+      service.run
+    end
+
+    desc 'Reset Clerk data'
+    task :reset => :environment do
+      service = CoreDataConnector::Users::ClerkMigration.new
+      service.reset
+    end
+  end
 end
