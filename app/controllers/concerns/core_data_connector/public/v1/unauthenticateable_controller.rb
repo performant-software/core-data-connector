@@ -6,7 +6,7 @@ module CoreDataConnector
 
         included do
           # No user authentication
-          skip_before_action :authenticate_request
+          skip_before_action :handle_authentication
         end
 
       end
