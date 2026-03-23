@@ -52,10 +52,29 @@ module CoreDataConnector
     end
 
     def update_user_from_sso(local_user, sso_user)
+      # default to guest, which means users can't create projects
+      role = 'guest'
+
+      if sso_user.private_metadata['is_performant'] == true
+        # *we* should be CD admins (and no one else!)
+        role = 'admin'
+      else
+        # get user's role from their main organization membership role
+        org_memberships = clerk_client.users.get_organization_memberships(user_id: sso_user.id)
+        main_org = org_memberships.organization_memberships.data.first
+
+        org_role = main_org.role
+
+        # org admins are Performant Studio customers who should be able to create projects,
+        # which means they get the member system role in Core Data
+        role = 'member' if org_role == 'org:admin'
+      end
+
       local_user.update(
         sso_id: sso_user.id,
         name: build_name(sso_user.first_name, sso_user.last_name),
-        avatar_url: sso_user.profile_image_url
+        avatar_url: sso_user.profile_image_url,
+        role: role
       )
     end
 
