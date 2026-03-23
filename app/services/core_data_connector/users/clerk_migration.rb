@@ -26,15 +26,26 @@ module CoreDataConnector
 
             is_new_user = false
 
+            email_domain = user.email.split('@').last
+
             if clerk_user.nil?
               is_new_user = true
               first_name, last_name = user.split_name
+
+              is_performant = email_domain == 'performantsoftware.com'
+
+              private_metadata = {}
+
+              if is_performant
+                private_metadata[:is_performant] = true
+              end
 
               create_request = Clerk::Models::Operations::CreateUserRequest.new(
                 email_address: [user.email],
                 first_name: first_name,
                 last_name: last_name,
-                skip_password_requirement: true
+                skip_password_requirement: true,
+                private_metadata: private_metadata
               )
 
               response = clerk.users.create(request: create_request)
@@ -42,9 +53,8 @@ module CoreDataConnector
               Rails.logger.info "#{user.email} created in Clerk"
             end
 
-            email_domain = user.email.split('@').last
-
-            org_id = org_domains[email_domain]
+            # Default to Performant Software
+            org_id = org_domains[email_domain] || org_domains['performantsoftware.com']
 
             if org_id
               if is_new_user

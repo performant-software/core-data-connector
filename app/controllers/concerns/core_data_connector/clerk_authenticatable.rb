@@ -51,6 +51,10 @@ module CoreDataConnector
       clerk_client.users.get(user_id: clerk_id).user
     end
 
+    def get_clerk_role(clerk_user)
+      clerk_user.public_metadata["role"]
+    end
+
     def clerk_client
       @clerk_client ||= Clerk::SDK.new(secret_key: ENV.fetch("CLERK_SECRET_KEY"))
     end
