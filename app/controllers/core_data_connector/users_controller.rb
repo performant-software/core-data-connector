@@ -47,6 +47,8 @@ module CoreDataConnector
       elsif last.present?
         name = last
       end
+
+      name
     end
 
     def update_user_from_sso(local_user, sso_user)
