@@ -59,5 +59,16 @@ module CoreDataConnector
     def render_not_found
       render json: { error: I18n.t("errors.users.not_found") }, status: :unauthorized
     end
+
+    # Returns whether to use Clerk to authenticate the request
+    def is_clerk?
+      # backward compat for FCC 1's username/password login
+      return false if request.headers['server'] == 'Netlify'
+
+      # backward compat for FCC 2's username/password login
+      return false if request.headers['access-control-expose-headers'] && request.headers['access-control-expose-headers'].include?('x-trigger-jwt')
+
+      ENV['VITE_AUTH_PROVIDER'] == 'clerk'
+    end
   end
 end
