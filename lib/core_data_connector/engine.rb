@@ -21,6 +21,10 @@ module CoreDataConnector
         config.login_attribute = 'email'
         config.user_serializer = 'CoreDataConnector::UsersSerializer'
       end
+
+      config.to_prepare do
+        JwtAuth::AuthenticationController.prepend(CoreDataConnector::AuthenticationControllerOverride)
+      end
     end
 
     initializer :triple_eye_effable do
