@@ -17,7 +17,7 @@ module CoreDataConnector
           org_domains[name] = org.id
         end
 
-        User.where(sso_id: nil).find_each do |user|
+        User.where(sso_id: nil).limit(100).find_each do |user|
           begin
             sleep 2
             list_request = Clerk::Models::Operations::GetUserListRequest.new(email_address: [user.email])
@@ -26,49 +26,56 @@ module CoreDataConnector
 
             is_new_user = false
 
+            email_domain = user.email.split('@').last
+
             if clerk_user.nil?
               is_new_user = true
               first_name, last_name = user.split_name
+
+              is_global_admin = email_domain == ENV['CLERK_MIGRATION_GLOBAL_ADMIN_DOMAIN']
+
+              private_metadata = {}
+
+              if is_global_admin
+                private_metadata[:is_global_admin] = true
+              end
 
               create_request = Clerk::Models::Operations::CreateUserRequest.new(
                 email_address: [user.email],
                 first_name: first_name,
                 last_name: last_name,
-                skip_password_requirement: true
+                skip_password_requirement: true,
+                private_metadata: private_metadata
               )
 
               response = clerk.users.create(request: create_request)
               clerk_user = response.user
-              Rails.logger.info "#{user.email} created in Clerk"
+              puts "#{user.email} created in Clerk"
             end
 
-            email_domain = user.email.split('@').last
+            org_id = org_domains[email_domain] || org_domains[ENV['CLERK_MIGRATION_DEFAULT_DOMAIN']]
 
-            org_id = org_domains[email_domain]
+            if is_new_user
+              needs_membership = true
+            else
+              membership_request = Clerk::Models::Operations::ListOrganizationMembershipsRequest.new(organization_id: org_id)
+              memberships = clerk.organization_memberships.list(request: membership_request)
+              needs_membership = !memberships.organization_memberships.data.any? { |m| m.organization.id == org_id }
+            end
 
-            if org_id
-              if is_new_user
-                needs_membership = true
-              else
-                membership_request = Clerk::Models::Operations::ListOrganizationMembershipsRequest.new(organization_id: org_id)
-                memberships = clerk.organization_memberships.list(request: membership_request)
-                needs_membership = !memberships.organization_memberships.data.any? { |m| m.organization.id == org_id }
-              end
+            if needs_membership
+              org_member_request_body = {
+                user_id: clerk_user.id,
+                role: 'org:member'
+              }
+              clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
 
-              if needs_membership
-                org_member_request_body = {
-                  user_id: clerk_user.id,
-                  role: 'org:member'
-                }
-                clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
-
-                Rails.logger.info "#{user.email} added to organization: #{email_domain}"
-              end
+              puts "#{user.email} added to organization: #{org_id}"
             end
 
             user.update!(sso_id: clerk_user.id)
           rescue StandardError => e
-            Rails.logger.info "Error migrating user #{user.email}: #{e.message}"
+            puts "Error migrating user #{user.email}: #{e.message}"
           end
         end
       end
@@ -88,11 +95,11 @@ module CoreDataConnector
         users.user_list.each do |user|
           sleep 2
           clerk.users.delete(user_id: user.id)
-          Rails.logger.info "Deleted user #{user.id} with email #{user.email_addresses.first.email_address}"
+          puts "Deleted user #{user.id} with email #{user.email_addresses.first.email_address}"
         end
 
         User.update_all(sso_id: nil)
-        Rails.logger.info "Cleared sso_id for all users"
+        puts "Cleared sso_id for all users"
       end
     end
   end

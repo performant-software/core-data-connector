@@ -37,8 +37,11 @@ module CoreDataConnector
         sso_id: clerk_user.id,
         email: clerk_user.email_addresses.first.email_address,
         name: [clerk_user.first_name, clerk_user.last_name].join(" "),
-        role: 'member'
+        role: 'member',
+        # satisfy the Rails validator even though we won't be using this password
+        password: Users::Passwords.generate_user_password
       )
+
       user.save!
 
       user
@@ -46,6 +49,10 @@ module CoreDataConnector
 
     def get_clerk_data(clerk_id)
       clerk_client.users.get(user_id: clerk_id).user
+    end
+
+    def get_clerk_role(clerk_user)
+      clerk_user.public_metadata["role"]
     end
 
     def clerk_client
