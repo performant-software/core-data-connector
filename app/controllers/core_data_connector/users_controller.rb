@@ -55,7 +55,7 @@ module CoreDataConnector
       # default to guest, which means users can't create projects
       role = 'guest'
 
-      if sso_user.private_metadata['is_performant'] == true
+      if sso_user.private_metadata['is_global_admin'] == true
         # *we* should be CD admins (and no one else!)
         role = 'admin'
       else
