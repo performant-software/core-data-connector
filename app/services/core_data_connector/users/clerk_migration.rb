@@ -53,7 +53,7 @@ module CoreDataConnector
               puts "#{user.email} created in Clerk"
             end
 
-            org_id = org_domains[email_domain] || org_domains[ENV['CLERK_MIGRATION_DEFAULT_DOMAIN']]
+            org_id = org_domains[email_domain]
 
             if is_new_user
               needs_membership = true
@@ -64,13 +64,21 @@ module CoreDataConnector
             end
 
             if needs_membership
-              org_member_request_body = {
-                user_id: clerk_user.id,
-                role: 'org:member'
-              }
-              clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
-
-              puts "#{user.email} added to organization: #{org_id}"
+              if org_id
+                org_member_request_body = {
+                  user_id: clerk_user.id,
+                  role: 'org:member'
+                }
+                clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
+                puts "#{user.email} added to organization: #{org_id}"
+              else
+                org_create_request = Clerk::Models::Operations::CreateOrganizationRequest.new(
+                  name: "#{user.name}'s Organization",
+                  created_by: clerk_user.id
+                )
+                clerk.organizations.create(request: org_create_request)
+                puts "#{user.email} created organization: #{org_id}"
+              end
             end
 
             user.update!(sso_id: clerk_user.id)
