@@ -36,7 +36,9 @@ module CoreDataConnector
 
       update_user_from_sso(@current_user, clerk_user)
 
-      render json: @current_user, status: :ok
+      serializer = UsersSerializer.new
+
+      render json: serializer.render_show(@current_user), status: :ok
     end
 
     def build_name(first, last)
@@ -59,15 +61,12 @@ module CoreDataConnector
         # *we* should be CD admins (and no one else!)
         role = 'admin'
       else
-        # get user's role from their main organization membership role
         org_memberships = clerk_client.users.get_organization_memberships(user_id: sso_user.id)
-        main_org = org_memberships.organization_memberships.data.first
-
-        org_role = main_org.role
-
         # org admins are Performant Studio customers who should be able to create projects,
         # which means they get the member system role in Core Data
-        role = 'member' if org_role == 'org:admin'
+        if org_memberships.organization_memberships.data.any? { |o| o.role == 'org:admin' }
+          role = 'member'
+        end
       end
 
       local_user.update(
