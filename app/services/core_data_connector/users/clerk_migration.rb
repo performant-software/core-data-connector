@@ -77,7 +77,7 @@ module CoreDataConnector
                   created_by: clerk_user.id
                 )
                 clerk.organizations.create(request: org_create_request)
-                puts "#{user.email} created organization: #{org_id}"
+                puts "#{user.email} created a personal organization"
               end
             end
 
