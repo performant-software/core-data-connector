@@ -39,7 +39,8 @@ module CoreDataConnector
         name: [clerk_user.first_name, clerk_user.last_name].join(" "),
         role: 'member',
         # satisfy the Rails validator even though we won't be using this password
-        password: Users::Passwords.generate_user_password
+        password: Users::Passwords.generate_user_password,
+        require_password_change: false
       )
 
       user.save!
