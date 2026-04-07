@@ -32,6 +32,8 @@ module CoreDataConnector
 
       return unless @current_user
 
+      puts "Attempting to authenticate user #{@current_user.id}"
+
       clerk_user = get_clerk_data(@current_user.sso_id)
 
       update_user_from_sso(@current_user, clerk_user)
