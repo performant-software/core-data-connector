@@ -32,6 +32,10 @@ module CoreDataConnector
           end
         end
 
+        search_attribute(:properties) do
+          place_geometry&.properties
+        end
+
         search_attribute(:coordinates) do
           # Return if the "geometry_center" attribute is not defined
           next unless self.respond_to?(:geometry_center) && geometry_center.present?
