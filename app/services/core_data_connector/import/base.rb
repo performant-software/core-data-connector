@@ -10,6 +10,7 @@ module CoreDataConnector
         @import_id = import_id
 
         @connection = ActiveRecord::Base.connection
+        @csv_headers = CSV.foreach(filepath).first
         @table_name = create_table_name
         @user_defined_columns = load_user_defined_columns
       end
@@ -123,9 +124,7 @@ module CoreDataConnector
       def load_user_defined_columns
         columns = []
 
-        headers = CSV.foreach(filepath).first
-
-        headers.each do |header|
+        @csv_headers.each do |header|
           next unless ImportAnalyze::Helper.is_user_defined_column?(header)
 
           uuid = ImportAnalyze::Helper.column_name_to_uuid(header)

@@ -40,6 +40,7 @@ module CoreDataConnector
 
           UPDATE core_data_connector_place_geometries place_geometries
              SET geometry = st_makepoint(z_places.longitude, z_places.latitude),
+                 properties = z_places.properties,
                  updated_at = current_timestamp
             FROM #{table_name} z_places
            WHERE z_places.place_id = place_geometries.place_id
@@ -52,20 +53,20 @@ module CoreDataConnector
           insert_places AS (
 
           INSERT INTO core_data_connector_places (
-            project_model_id, 
-            uuid, 
+            project_model_id,
+            uuid,
             z_place_id, 
             user_defined,
             import_id,
-            created_at, 
+            created_at,
             updated_at
           )
-          SELECT z_places.project_model_id, 
-                 z_places.uuid, 
-                 z_places.id, 
+          SELECT z_places.project_model_id,
+                 z_places.uuid,
+                 z_places.id,
                  z_places.user_defined,
                  z_places.import_id,
-                 current_timestamp, 
+                 current_timestamp,
                  current_timestamp
             FROM #{table_name} z_places
            WHERE z_places.place_id IS NULL
@@ -75,8 +76,8 @@ module CoreDataConnector
 
           insert_place_geometries AS (
 
-          INSERT INTO core_data_connector_place_geometries (place_id, geometry, created_at, updated_at)
-          SELECT insert_places.place_id, st_makepoint(z_places.longitude, z_places.latitude), current_timestamp, current_timestamp
+          INSERT INTO core_data_connector_place_geometries (place_id, geometry, properties, created_at, updated_at)
+          SELECT insert_places.place_id, st_makepoint(z_places.longitude, z_places.latitude), z_places.properties, current_timestamp, current_timestamp
             FROM insert_places
             JOIN #{table_name} z_places ON z_places.id = insert_places.z_place_id
           RETURNING id
@@ -145,8 +146,10 @@ module CoreDataConnector
         execute <<-SQL.squish
           UPDATE #{table_name} z_places
              SET place_id = places.id,
-                 user_defined = places.user_defined
+                 user_defined = places.user_defined,
+                 properties = COALESCE(z_places.properties, place_geometries.properties, '{}'::jsonb)
             FROM core_data_connector_places places
+            LEFT JOIN core_data_connector_place_geometries place_geometries ON place_geometries.place_id = places.id
            WHERE places.uuid = z_places.uuid
              AND z_places.uuid IS NOT NULL
         SQL
@@ -180,8 +183,12 @@ module CoreDataConnector
            type: 'DECIMAL',
            copy: true
          }, {
+          name: 'properties',
+          type: 'JSONB',
+          copy: @csv_headers.include?('properties')
+        }, {
            name: 'place_id',
-           type: 'INTEGER',
+           type: 'INTEGER'
         }, {
            name: 'primary_name',
            type: 'VARCHAR'
