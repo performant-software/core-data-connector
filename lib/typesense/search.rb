@@ -78,6 +78,12 @@ module Typesense
           facet: false,
           optional: true
         }, {
+          name: 'properties',
+          type: 'object',
+          index: false,
+          facet: false,
+          optional: true
+        }, {
           name: 'coordinates',
           type: 'geopoint',
           facet: false,

@@ -24,6 +24,9 @@ module CoreDataConnector
         export_attribute(:name) { format_name }
         export_attribute(:latitude) { geometry_center&.y }
         export_attribute(:longitude) { geometry_center&.x }
+        export_attribute(:properties) do
+          JSON.generate(place_geometry&.properties) if place_geometry&.properties
+        end
       end
     end
   end
