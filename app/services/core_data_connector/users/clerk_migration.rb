@@ -1,4 +1,6 @@
-require 'clerk'
+if ENV['VITE_AUTH_PROVIDER'] == 'clerk'
+  require 'clerk'
+end
 
 module CoreDataConnector
   module Users
