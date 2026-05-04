@@ -27,7 +27,10 @@ module CoreDataConnector
           search = { collection:, q: query[:query] }
 
           # Append "filter_by" parameter, if present
-          search[:filter_by] = "type:#{query[:type]}" if query[:type].present?
+          if query[:type].present?
+            types = Array.wrap(query[:type]).join(',')
+            search[:filter_by] = "type:[#{types}]"
+          end
 
           # Append "limit" parameter, if present
           search[:limit] = query[:limit] if query[:limit].present?
