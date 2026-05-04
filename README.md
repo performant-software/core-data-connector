@@ -101,29 +101,24 @@ Data can be indexed into a Typesense search index using the following commands. 
 
 #### Create a new collection
 ```bash
-bundle exec rake typesense:reconcile:create -- -h host -p port -r protocol -a api_key -c collection_name
+bundle exec rake typesense:reconcile:create -- --host=host --port=port --protocol=protocol --api-key=api_key --collection-name=collection_name
 ```
 
 #### Delete a collection
 ```bash
-bundle exec rake typesense:reconcile:delete -- -h host -p port -r protocol -a api_key -c collection_name
+bundle exec rake typesense:reconcile:delete -- --host=host --port=port --protocol=protocol --api-key=api_key --collection-name=collection_name
 ```
 
 #### Index documents into a collection
 ```bash
-bundle exec rake typesense:reconcile:index -- -h host -p port -r protocol -a api_key -c collection_name -m model_ids --polygons
+bundle exec rake typesense:reconcile:index -- --host=host --port=port --protocol=protocol --api-key=api_key --collection-name=collection_name --project-id=project_id
 ```
 
 **Note:** This task expects the entire collection to be indexed. Any records not included in the batch will be removed from the index.
 
-#### Update a collection
-```bash
-bundle exec rake typesense:reconcile:update -- -h host -p port -r protocol -a api_key -c collection_name
-```
-
 ### Update Project
 
-In order to make requests to the Reconciliation API, the project record must be updated with Typesense credentials.
+In order to make requests to the Reconciliation API, the project record must be updated with Typesense credentials. This can be configured in the project's "Project Settings" form in the Core Data user interface.
 
 ### Requests
 
@@ -135,6 +130,11 @@ GET /core_data/reconcile/projects/:id
 
 ```
 POST /core_data/reconcile/projects/:id
+```
+
+The Reconciliation API response for a project includes a `view` property indicating how to structure a view URI. The view URI for an individual record will simply redirect to the CMS edit page for that record:
+```
+GET /core_data/reconcile/projects/:id/view/:record_id
 ```
 
 ## Public API
