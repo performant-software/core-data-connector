@@ -14,7 +14,7 @@ module CoreDataConnector
         end
       end
 
-      def render_manifest
+      def render_manifest(project)
         {
           defaultTypes: [{
             id: CoreDataConnector::Event.to_s,
@@ -44,7 +44,10 @@ module CoreDataConnector
           identifierSpace: "#{ENV['HOSTNAME']}/core_data/public/v1",
           name: I18n.t('services.reconcile.name'),
           schemaSpace: "#{ENV['HOSTNAME']}/core_data/reconcile",
-          versions: %w(0.1 0.2)
+          versions: %w(0.1 0.2),
+          view: {
+            url: "#{ENV['HOSTNAME']}/core_data/reconcile/projects/#{project.id}/view/{{id}}"
+          }
         }
       end
 

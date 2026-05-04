@@ -48,6 +48,7 @@ module CoreDataConnector
         # Include the ID attributes as a string by default
         reconcile_attribute(:id) { uuid }
         reconcile_attribute(:record_id) { id.to_s }
+        reconcile_attribute(:project_model_id) { project_model_id.to_s }
         reconcile_attribute :uuid
         reconcile_attribute(:type) { self.class.to_s }
 
