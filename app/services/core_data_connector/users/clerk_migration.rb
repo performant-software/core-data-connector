@@ -10,13 +10,16 @@ module CoreDataConnector
 
         organization_list_request = Clerk::Models::Operations::ListOrganizationsRequest.new(limit: 200)
         organization_list = clerk.organizations.list(request: organization_list_request)
+        sleep 1
         organizations = organization_list.organizations.data
 
         org_domains = Hash.new
 
         organizations.each do |org|
+          puts "Fetching metadata for organization: #{org.name} (#{org.id})"
           domain_request = Clerk::Models::Operations::ListOrganizationDomainsRequest.new(organization_id: org.id)
           domains = clerk.organization_domains.list(request: domain_request).organization_domains.data
+          sleep 1
           next if domains.empty?
 
           name = domains.first.name
@@ -25,9 +28,10 @@ module CoreDataConnector
 
         User.where(sso_id: nil).find_each do |user|
           begin
-            sleep 2
+            puts "----------------------------------------"
             list_request = Clerk::Models::Operations::GetUserListRequest.new(email_address: [user.email])
             clerk_users = clerk.users.list(request: list_request)
+            sleep 1
             clerk_user = clerk_users.user_list.first
 
             is_new_user = false
@@ -57,6 +61,7 @@ module CoreDataConnector
               )
 
               response = clerk.users.create(request: create_request)
+              sleep 1
               clerk_user = response.user
               puts "#{user.email} created in Clerk"
             end
@@ -68,6 +73,7 @@ module CoreDataConnector
             else
               membership_request = Clerk::Models::Operations::ListOrganizationMembershipsRequest.new(organization_id: org_id)
               memberships = clerk.organization_memberships.list(request: membership_request)
+              sleep 1
               needs_membership = !memberships.organization_memberships.data.any? { |m| m.organization.id == org_id }
             end
 
@@ -78,9 +84,9 @@ module CoreDataConnector
                   role: 'org:member'
                 }
                 clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
+                sleep 1
                 puts "#{user.email} automatically added to organization based on email domain: #{org_id}"
               else
-                puts "----------------------------------------"
                 puts "#{user.email} needs to be added to an organization. Please select one:"
                 organizations.each_with_index do |org, idx|
                   puts "#{idx + 1}. #{org.name} (#{org.id})"
@@ -93,12 +99,16 @@ module CoreDataConnector
                   role: 'org:member'
                 }
                 clerk.organization_memberships.create(body: org_member_request_body, organization_id: organizations[idx].id)
+                sleep 1
 
                 puts "#{user.email} added to #{organizations[idx].name}"
               end
             end
 
             user.update!(sso_id: clerk_user.id)
+          rescue Clerk::Models::Errors::ClerkErrors => e
+            puts "Clerk API error while migrating #{user.email}: #{e.message}"
+            puts e.errors.map { |error| "#{error.code}: #{error.message}" }.join("\n")
           rescue StandardError => e
             puts "Error migrating user #{user.email}: #{e.message}"
           end
