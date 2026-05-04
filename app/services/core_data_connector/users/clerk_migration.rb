@@ -8,14 +8,18 @@ module CoreDataConnector
       def run
         clerk = Clerk::SDK.new(secret_key: ENV.fetch('CLERK_SECRET_KEY'))
 
-        organization_list = clerk.organizations.list(request: Clerk::Models::Operations::ListOrganizationsRequest.new)
+        organization_list_request = Clerk::Models::Operations::ListOrganizationsRequest.new(limit: 200)
+        organization_list = clerk.organizations.list(request: organization_list_request)
         organizations = organization_list.organizations.data
 
         org_domains = Hash.new
 
         organizations.each do |org|
           domain_request = Clerk::Models::Operations::ListOrganizationDomainsRequest.new(organization_id: org.id)
-          name = clerk.organization_domains.list(request: domain_request).organization_domains.data.first.name
+          domains = clerk.organization_domains.list(request: domain_request).organization_domains.data
+          next if domains.empty?
+
+          name = domains.first.name
           org_domains[name] = org.id
         end
 
@@ -36,7 +40,9 @@ module CoreDataConnector
 
               is_global_admin = email_domain == ENV['CLERK_MIGRATION_GLOBAL_ADMIN_DOMAIN']
 
-              private_metadata = {}
+              private_metadata = {
+                migrated_from: 'FairData'
+              }
 
               if is_global_admin
                 private_metadata[:is_global_admin] = true
@@ -72,14 +78,23 @@ module CoreDataConnector
                   role: 'org:member'
                 }
                 clerk.organization_memberships.create(body: org_member_request_body, organization_id: org_id)
-                puts "#{user.email} added to organization: #{org_id}"
+                puts "#{user.email} automatically added to organization based on email domain: #{org_id}"
               else
-                org_create_request = Clerk::Models::Operations::CreateOrganizationRequest.new(
-                  name: "#{user.name}'s Organization",
-                  created_by: clerk_user.id
-                )
-                clerk.organizations.create(request: org_create_request)
-                puts "#{user.email} created a personal organization"
+                puts "----------------------------------------"
+                puts "#{user.email} needs to be added to an organization. Please select one:"
+                organizations.each_with_index do |org, idx|
+                  puts "#{idx + 1}. #{org.name} (#{org.id})"
+                end
+
+                idx = $stdin.gets.chomp.to_i - 1
+
+                org_member_request_body = {
+                  user_id: clerk_user.id,
+                  role: 'org:member'
+                }
+                clerk.organization_memberships.create(body: org_member_request_body, organization_id: organizations[idx].id)
+
+                puts "#{user.email} added to #{organizations[idx].name}"
               end
             end
 
@@ -88,6 +103,8 @@ module CoreDataConnector
             puts "Error migrating user #{user.email}: #{e.message}"
           end
         end
+
+        puts "Migration complete! Make sure to set admin permissions to the relevant users on each organization in Clerk."
       end
 
       def reset
