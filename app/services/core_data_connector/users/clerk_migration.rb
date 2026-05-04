@@ -16,6 +16,7 @@ module CoreDataConnector
         org_domains = Hash.new
 
         organizations.each do |org|
+          puts "Fetching metadata for organization: #{org.name} (#{org.id})"
           domain_request = Clerk::Models::Operations::ListOrganizationDomainsRequest.new(organization_id: org.id)
           domains = clerk.organization_domains.list(request: domain_request).organization_domains.data
           sleep 1
@@ -25,8 +26,9 @@ module CoreDataConnector
           org_domains[name] = org.id
         end
 
-        User.where(sso_id: nil).find_each do |user|
+        User.where(sso_id: nil).limit(90).find_each do |user|
           begin
+            puts "----------------------------------------"
             list_request = Clerk::Models::Operations::GetUserListRequest.new(email_address: [user.email])
             clerk_users = clerk.users.list(request: list_request)
             sleep 1
@@ -85,7 +87,6 @@ module CoreDataConnector
                 sleep 1
                 puts "#{user.email} automatically added to organization based on email domain: #{org_id}"
               else
-                puts "----------------------------------------"
                 puts "#{user.email} needs to be added to an organization. Please select one:"
                 organizations.each_with_index do |org, idx|
                   puts "#{idx + 1}. #{org.name} (#{org.id})"
@@ -105,6 +106,9 @@ module CoreDataConnector
             end
 
             user.update!(sso_id: clerk_user.id)
+          rescue Clerk::Models::Errors::ClerkErrors => e
+            puts "Clerk API error while migrating #{user.email}: #{e.message}"
+            puts e.errors.map { |error| "#{error.code}: #{error.message}" }.join("\n")
           rescue StandardError => e
             puts "Error migrating user #{user.email}: #{e.message}"
           end
