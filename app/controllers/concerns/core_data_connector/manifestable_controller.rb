@@ -8,12 +8,7 @@ module CoreDataConnector
         item = find_record(item_class)
         authorize item
 
-        service = Iiif::Manifest.new
-        service.reset_manifests_by_type(item_class, {
-          id: item.id,
-          project_model_relationship_id: params[:project_model_relationship_id],
-          limit: ENV['IIIF_MANIFEST_ITEM_LIMIT']
-        })
+        Job.create_iiif_manifest_job!(item, params[:project_model_relationship_id], current_user)
 
         render status: :ok
       end
