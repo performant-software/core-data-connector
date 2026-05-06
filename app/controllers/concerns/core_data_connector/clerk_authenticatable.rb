@@ -74,7 +74,7 @@ module CoreDataConnector
       return false if request.headers['server'] == 'Netlify'
 
       # backward compat for FCC 2's username/password login
-      return false if request.headers['access-control-expose-headers'] && request.headers['access-control-expose-headers'].include?('x-trigger-jwt')
+      return false if request.headers['user-agent'] == 'node'
 
       ENV['VITE_AUTH_PROVIDER'] == 'clerk'
     end
