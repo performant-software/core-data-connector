@@ -45,7 +45,7 @@ module CoreDataConnector
           # build and redirect to the core-data-cloud redirect URL
           record = client.collections[collection].documents[record_uuid].retrieve
           project_model_id = record['project_model_id']
-          record_id = document['record_id']
+          record_id = record['record_id']
           redirect_url = "#{ENV['HOSTNAME']}/projects/#{project.id}/#{project_model_id}/#{record_id}"
 
           redirect_to redirect_url, allow_other_host: true
