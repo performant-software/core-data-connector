@@ -118,7 +118,7 @@ bundle exec rake typesense:reconcile:index -- --host=host --port=port --protocol
 
 ### Update Project
 
-In order to make requests to the Reconciliation API, the project record must be updated with Typesense credentials. This can be configured in the project's "Project Settings" form in the Core Data user interface.
+In order to make requests to the Reconciliation API, the project record must be updated with Typesense credentials. This can be configured in the project's "Project Settings" form in the Core Data user interface. The Typesense API key needs at least `"collections:get"`, `"documents:search"`, and `"documents:get"` permissions.
 
 ### Requests
 
