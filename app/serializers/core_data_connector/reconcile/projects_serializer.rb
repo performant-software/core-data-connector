@@ -29,14 +29,14 @@ module CoreDataConnector
           if models.size > 1
             default_types << {
               id: "type:#{model_class_name}",
-              name: "#{model_class_name.demodulize} | All #{model_class_name.demodulize.pluralize}"
+              name: "#{model_class_name.demodulize}: All #{model_class_name.demodulize.pluralize}"
             }
           end
           # add each model on this project as an option
           models.sort_by { |m| [m.order || Float::INFINITY, m.name.downcase] }.each do |pm|
             default_types << {
               id: "model:#{pm.id}",
-              name: "#{model_class_name.demodulize} | #{pm.name}"
+              name: "#{model_class_name.demodulize}: #{pm.name}"
             }
           end
         end
