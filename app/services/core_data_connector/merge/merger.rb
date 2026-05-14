@@ -47,9 +47,6 @@ module CoreDataConnector
 
           # Create a record_merge for the merged record(s)
           unless record.uuid == new_record.uuid
-            puts "MERGING #{record.uuid} INTO #{new_record.uuid}"
-            puts record.inspect
-            puts record.display_name.inspect
             record_merges << RecordMerge.new(
               merged_uuid: record.uuid,
               merged_name: record.display_name
