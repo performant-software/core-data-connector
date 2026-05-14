@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Instance < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Instance
     include Identifiable
     include ImportAnalyze::Instance

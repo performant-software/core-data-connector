@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Person < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Person
     include Identifiable
     include ImportAnalyze::Person
@@ -24,6 +25,10 @@ module CoreDataConnector
 
     def full_name
       [first_name, middle_name, last_name].compact.join(' ')
+    end
+
+    def display_name
+      full_name
     end
   end
 end
