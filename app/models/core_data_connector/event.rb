@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Event < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Event
     include FuzzyDates::FuzzyDateable
     include Identifiable

@@ -46,7 +46,12 @@ module CoreDataConnector
           record.record_merges.each { |record_merge| add_item(record_merges, record_merge, MERGE_ATTRIBUTES) }
 
           # Create a record_merge for the merged record(s)
-          record_merges << RecordMerge.new(merged_uuid: record.uuid) unless record.uuid == new_record.uuid
+          unless record.uuid == new_record.uuid
+            record_merges << RecordMerge.new(
+              merged_uuid: record.uuid,
+              merged_name: record.display_name
+            )
+          end
 
           # Append the relationships from the merged record(s) to the new record
           record.relationships.each { |relationship| add_item(relationships, relationship, RELATIONSHIP_ATTRIBUTES) }

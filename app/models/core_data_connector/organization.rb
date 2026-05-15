@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Organization < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Organization
     include Identifiable
     include ImportAnalyze::Organization

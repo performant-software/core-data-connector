@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Item < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Item
     include FccImportable
     include Identifiable

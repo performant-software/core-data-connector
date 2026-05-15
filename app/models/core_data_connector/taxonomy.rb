@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Taxonomy < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Taxonomy
     include Identifiable
     include ImportAnalyze::Taxonomy

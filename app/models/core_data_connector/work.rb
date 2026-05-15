@@ -1,6 +1,7 @@
 module CoreDataConnector
   class Work < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::Work
     include Identifiable
     include ImportAnalyze::Work

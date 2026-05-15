@@ -3,6 +3,7 @@ module CoreDataConnector
     self.primary_key = :id
 
     # Includes
+    include DisplayNameable
     include Export::Place
     include Identifiable
     include ImportAnalyze::Place
