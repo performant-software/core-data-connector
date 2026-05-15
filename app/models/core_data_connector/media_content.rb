@@ -1,6 +1,7 @@
 module CoreDataConnector
   class MediaContent < ApplicationRecord
     # Includes
+    include DisplayNameable
     include Export::MediaContent
     include Identifiable
     include ImportAnalyze::MediaContent
