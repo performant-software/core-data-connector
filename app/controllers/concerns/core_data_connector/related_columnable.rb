@@ -35,22 +35,27 @@ module CoreDataConnector
 
     def permitted_related_columns
       @permitted_related_columns ||= begin
-                                       raw = params[:related_columns]
-                                       # next [] if raw.blank?
+                                       raw = params[:join_columns]
 
-                                       Array(raw).map { |c| c.respond_to?(:permit) ? c.permit(:pmr_id, :field) : c }
-                                                 .map { |c| { pmr_id: c[:pmr_id].to_i, field: c[:field].to_s } }
-                                                 .reject { |c| c[:pmr_id].zero? || c[:field].empty? }
+                                       base_columns = Array(raw).map do |c|
+                                         split = c.split('_')
+                                         next unless split.length == 3
+
+                                         { pmr_id: split[1].to_i, field: split[2] }
+                                       end
+
+                                       base_columns.map { |c| c.respond_to?(:permit) ? c.permit(:pmr_id, :field) : c }
+                                                   .map { |c| { pmr_id: c[:pmr_id], field: c[:field].to_s } }
+                                                   .reject { |c| c[:pmr_id].zero? || c[:field].empty? }
                                      end
     end
 
     def related_column_aliases
-      permitted_related_columns.each_with_index.map do |c, i|
-        "rel_#{c[:pmr_id]}_#{c[:field].gsub(/\W/, '_')}_#{i}"
+      permitted_related_columns.map do |c|
+        "rel_#{c[:pmr_id]}_#{c[:field].gsub(/\W/, '_')}"
       end
     end
 
-    # Override the gem's hook so the serializer gets the alias list
     def load_records(items)
       super.merge(related_column_aliases: related_column_aliases)
     end

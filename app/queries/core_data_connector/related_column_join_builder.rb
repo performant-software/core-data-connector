@@ -1,12 +1,9 @@
 module CoreDataConnector
   class RelatedColumnJoinBuilder
-    attr_reader :alias_suffix
-
-    def initialize(source_model:, project_model_relationship_id:, field:, alias_suffix:)
+    def initialize(source_model:, project_model_relationship_id:, field:)
       @source_model = source_model
       @pmr_id       = project_model_relationship_id
       @field        = field
-      @alias_suffix = alias_suffix
     end
 
     def joins
@@ -14,8 +11,9 @@ module CoreDataConnector
     end
 
     def select_fragment
+      # todo: handle name joins
       if user_defined_field?
-        key = @field.sub('user_defined.', '')
+        key = @field.sub('udf.', '')
         "(#{target_alias}.user_defined ->> #{quote(key)}) AS #{column_alias}"
       else
         validate_column!
@@ -24,7 +22,7 @@ module CoreDataConnector
     end
 
     def column_alias
-      @column_alias ||= "rel_#{@pmr_id}_#{@field.gsub(/\W/, '_')}_#{@alias_suffix}"
+      @column_alias ||= "rel_#{@pmr_id}_#{@field.gsub(/\W/, '_')}"
     end
 
     def requires_aggregation?
@@ -55,8 +53,8 @@ module CoreDataConnector
                            : pmr.primary_model.model_class).constantize
     end
 
-    def rel_alias    = "rel_#{@alias_suffix}"
-    def target_alias = "tgt_#{@alias_suffix}"
+    def rel_alias    = "rel_#{@pmr_id}"
+    def target_alias = "tgt_#{@pmr_id}"
 
     def relationship_join
       src_id, src_type =
@@ -86,7 +84,7 @@ module CoreDataConnector
     end
 
     def user_defined_field?
-      @field.start_with?('user_defined.')
+      @field.start_with?('udf.')
     end
 
     def validate_column!

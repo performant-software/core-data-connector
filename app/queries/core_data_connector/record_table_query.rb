@@ -2,7 +2,7 @@ module CoreDataConnector
   class RecordTableQuery
     def initialize(source_model:, related_columns: [])
       @source_model     = source_model
-      @related_columns  = related_columns   # [{ pmr_id:, field: }, ...]
+      @related_columns  = related_columns
     end
 
     def call(base_scope = nil)
@@ -19,12 +19,11 @@ module CoreDataConnector
     private
 
     def build_builders
-      @related_columns.each_with_index.map do |col, i|
+      @related_columns.map do |col|
         CoreDataConnector::RelatedColumnJoinBuilder.new(
           source_model: @source_model,
           project_model_relationship_id: col[:pmr_id],
-          field: col[:field],
-          alias_suffix: i.to_s
+          field: col[:field]
         )
       end
     end
