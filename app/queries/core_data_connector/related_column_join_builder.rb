@@ -7,12 +7,19 @@ module CoreDataConnector
     end
 
     def joins
-      [relationship_join, target_join]
+      j = [relationship_join, target_join]
+      j << name_join if @field == 'name' && target_model.respond_to?(:get_names_table)
+      j
     end
 
     def select_fragment
-      # todo: handle name joins
-      if user_defined_field?
+      if @field == 'name'
+        if target_model.respond_to?(:name_column)
+          "#{name_alias}.#{target_model.name_column} AS #{column_alias}"
+        else
+          "#{target_alias}.name AS #{column_alias}"
+        end
+      elsif user_defined_field?
         key = @field.sub('udf.', '')
         "(#{target_alias}.user_defined ->> #{quote(key)}) AS #{column_alias}"
       else
@@ -55,6 +62,7 @@ module CoreDataConnector
 
     def rel_alias    = "rel_#{@pmr_id}"
     def target_alias = "tgt_#{@pmr_id}"
+    def name_alias   = "name_#{@pmr_id}"
 
     def relationship_join
       src_id, src_type =
@@ -81,6 +89,31 @@ module CoreDataConnector
                                                 "AND #{rel_alias}.#{tgt_type} = ?",
                                               target_model.name
                                             ])
+    end
+
+    def name_join
+      names_association = target_model.get_names_table
+      names_model = target_model.reflect_on_association(names_association)&.klass
+      names_table = names_model.table_name
+      nameable_attribute = target_model.nameable_attribute
+
+      if nameable_attribute
+        target_id_column = "#{nameable_attribute}_id"
+        target_type_column = "#{nameable_attribute}_type"
+      else
+        target_id_column = "#{target_model.name.demodulize.underscore}_id"
+        target_type_column = nil
+      end
+
+      sql = "LEFT JOIN #{names_table} #{name_alias} " \
+            "ON #{name_alias}.#{target_id_column} = #{target_alias}.id " \
+            "AND #{name_alias}.primary = #{ActiveRecord::Base.connection.quoted_true}"
+
+      if target_type_column
+        sql << ActiveRecord::Base.sanitize_sql_array([" AND #{name_alias}.#{target_type_column} = ?", target_model.name])
+      end
+
+      sql
     end
 
     def user_defined_field?

@@ -45,7 +45,6 @@ module CoreDataConnector
                                        end
 
                                        base_columns.map { |c| c.respond_to?(:permit) ? c.permit(:pmr_id, :field) : c }
-                                                   .map { |c| { pmr_id: c[:pmr_id], field: c[:field].to_s } }
                                                    .reject { |c| c[:pmr_id].zero? || c[:field].empty? }
                                      end
     end

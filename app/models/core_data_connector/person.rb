@@ -20,6 +20,10 @@ module CoreDataConnector
     # Nameable table
     name_table :person_names
 
+    def self.name_column
+      "CONCAT_WS(' ', first_name, middle_name, last_name)"
+    end
+
     # User defined fields parent
     resolve_defineable -> (person) { person.project_model }
 
