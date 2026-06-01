@@ -10,7 +10,7 @@ module CoreDataConnector
 
         # We assume that if a project ID is configured, that means we should use it; in other words, use the FCC2 URL format
         if project.faircopy_cloud_project_id?
-          return "#{project.faircopy_cloud_url}/#{project.faircopy_cloud_project_id}/tei_documents/#{faircopy_cloud_id}/csv"
+          return "#{project.faircopy_cloud_url}/public/#{project.faircopy_cloud_project_id}/tei_documents/#{faircopy_cloud_id}/csv"
         end
 
         "#{project.faircopy_cloud_url}/documents/#{faircopy_cloud_id}/csv"
