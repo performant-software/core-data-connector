@@ -19,6 +19,16 @@ module CoreDataConnector
 
     protected
 
+    # def apply_related_columns(query)
+    #   cols = permitted_related_columns
+    #   return query if cols.empty?
+    #
+    #   CoreDataConnector::RecordTableQuery.new(
+    #     source_model:    item_class,
+    #     related_columns: cols
+    #   ).call(query)
+    # end
+
     def hydrate_related_columns(items)
       cols = permitted_related_columns
       return items if cols.empty? || items.empty?

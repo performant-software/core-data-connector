@@ -15,7 +15,7 @@ module CoreDataConnector
     def select_fragment
       if @field == 'name'
         if target_model.respond_to?(:name_column)
-          "#{name_alias}.#{target_model.name_column} AS #{column_alias}"
+          "#{target_model.name_column(name_alias)} AS #{column_alias}"
         else
           "#{target_alias}.name AS #{column_alias}"
         end

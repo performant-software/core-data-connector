@@ -20,8 +20,12 @@ module CoreDataConnector
     # Nameable table
     name_table :person_names
 
-    def self.name_column
-      "CONCAT_WS(' ', first_name, middle_name, last_name)"
+    def self.name_column(table_alias = nil)
+      if table_alias
+        "CONCAT_WS(' ', #{table_alias}.first_name, #{table_alias}.middle_name, #{table_alias}.last_name)"
+      else
+        "CONCAT_WS(' ', first_name, middle_name, last_name)"
+      end
     end
 
     # User defined fields parent

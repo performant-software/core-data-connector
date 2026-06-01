@@ -26,7 +26,11 @@ module CoreDataConnector
         @names_table
       end
 
-      def name_column
+      def name_column(table_alias = nil)
+        if table_alias
+          return "#{table_alias}.name"
+        end
+
         "name"
       end
 
