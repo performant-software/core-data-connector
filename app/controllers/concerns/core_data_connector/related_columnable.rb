@@ -1,36 +1,21 @@
 module CoreDataConnector
   module RelatedColumnable
     extend ActiveSupport::Concern
-    def index
-      query = base_query
-      query = build_query(query)
-      query = apply_search(query)
-      query = apply_filters(query)
-      query = apply_sort(query)
-
-      list, items = pagy(query, items: per_page, page: params[:page])
-      metadata = pagy_metadata(list)
-
-      items = hydrate_related_columns(items)
-      preloads(items)
-
-      render json: build_index_response(items, metadata), status: :ok
-    end
 
     protected
 
-    def hydrate_related_columns(items)
+    def prepare_items(items)
       cols = permitted_related_columns
       return items if cols.empty? || items.empty?
 
       ids = items.map(&:id)
-      rehydrated = CoreDataConnector::RecordTableQuery.new(
+      prepared = CoreDataConnector::RecordTableQuery.new(
         source_model:    item_class,
         related_columns: cols
       ).call(item_class.where(id: ids)).index_by(&:id)
 
       # Preserve the order pagy gave us (which respects apply_sort)
-      ids.map { |id| rehydrated[id] }.compact
+      ids.map { |id| prepared[id] }.compact
     end
 
     def permitted_related_columns
