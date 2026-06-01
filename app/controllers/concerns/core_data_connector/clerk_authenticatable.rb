@@ -71,7 +71,7 @@ module CoreDataConnector
     # Returns whether to use Clerk to authenticate the request
     def is_clerk?
       # backward compat for FCC 1's username/password login
-      return false if request.headers['server'] == 'Netlify'
+      return false if request.headers['client'] == 'faircopy-cloud-1'
 
       # backward compat for FCC 2's username/password login
       return false if request.headers['user-agent'] == 'node'
