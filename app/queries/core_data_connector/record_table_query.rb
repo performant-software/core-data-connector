@@ -33,8 +33,11 @@ module CoreDataConnector
       builders.each do |b|
         if b.requires_aggregation?
           expr = strip_alias(b.select_fragment)
-          selects << "string_agg(DISTINCT (#{expr})::text, ', ' " \
-            "ORDER BY (#{expr})::text) AS #{b.column_alias}"
+          selects << "array_to_string((array_agg(DISTINCT (#{expr})::text " \
+            "ORDER BY (#{expr})::text))[1:9], ', ') " \
+            "|| CASE WHEN count(DISTINCT (#{expr})::text) > 9 " \
+            "THEN ', ' || (count(DISTINCT (#{expr})::text) - 9) || ' more' ELSE '' END " \
+            "AS #{b.column_alias}"
         else
           selects << b.select_fragment
         end
