@@ -19,10 +19,23 @@ module CoreDataConnector
         self.send(:accepts_nested_attributes_for, name.to_sym, allow_destroy: true)
 
         @names_table = name
+        @nameable_attribute = options[:as] if options && options[:as]
       end
 
       def get_names_table
         @names_table
+      end
+
+      def name_column(table_alias = nil)
+        if table_alias
+          return "#{table_alias}.name"
+        end
+
+        "name"
+      end
+
+      def nameable_attribute
+        @nameable_attribute
       end
     end
 

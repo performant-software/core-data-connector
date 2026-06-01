@@ -4,6 +4,9 @@ module CoreDataConnector
     include JwtAuth::Authenticateable
     include ClerkAuthenticatable
 
+    # Errors
+    rescue_from ArgumentError, with: :render_bad_request
+
     # Actions
     skip_before_action :authenticate_request
     before_action :handle_authentication
@@ -28,6 +31,10 @@ module CoreDataConnector
 
     def log_error(error)
       Rails.logger.error (["#{self.class} - #{error.class}: #{error.message}", error.backtrace]).join("\n")
+    end
+
+    def render_bad_request(error)
+      render json: { errors: [{ base: error.message }] }, status: :bad_request
     end
   end
 end
