@@ -33,5 +33,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'typesense', '~> 5.0'
   spec.add_dependency 'typhoeus', '~> 1.6'
   spec.add_dependency 'clerk-sdk-ruby', '~> 5.1', '>= 5.1.2'
-  spec.add_dependency 'ostruct', '~> 0.6.3'
 end

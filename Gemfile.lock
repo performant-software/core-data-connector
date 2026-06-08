@@ -54,7 +54,6 @@ PATH
       fuzzy_dates
       jwt (~> 3.2)
       jwt_auth
-      ostruct (~> 0.6.3)
       postmark-rails (~> 0.22.1)
       rack-cors (~> 3.0.0)
       rails (>= 8.1, < 9)
@@ -232,7 +231,6 @@ GEM
     nokogiri (1.18.8)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    ostruct (0.6.3)
     pagy (5.10.1)
       activesupport
     postmark (1.25.1)
