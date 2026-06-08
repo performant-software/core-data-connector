@@ -18,10 +18,10 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency 'faker'
-  spec.add_dependency 'rails', '>= 8.0', '< 9'
-  spec.add_dependency 'activerecord-postgis-adapter', '~> 11.0'
+  spec.add_dependency 'rails', '>= 8.1', '< 9'
+  spec.add_dependency 'activerecord-postgis-adapter', '~> 11.1'
   spec.add_dependency 'fuzzy_dates'
-  spec.add_dependency 'jwt', '~> 3.1.2'
+  spec.add_dependency 'jwt', '~> 3.2'
   spec.add_dependency 'jwt_auth'
   spec.add_dependency 'postmark-rails', '~> 0.22.1'
   spec.add_dependency 'rack-cors', '~> 3.0.0'
@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rubyzip', '~> 2.3.2'
   spec.add_dependency 'user_defined_fields'
   spec.add_dependency 'triple_eye_effable'
-  spec.add_dependency 'typesense', '~> 0.14'
-  spec.add_dependency 'typhoeus', '~> 1.4'
+  spec.add_dependency 'typesense', '~> 5.0'
+  spec.add_dependency 'typhoeus', '~> 1.6'
   spec.add_dependency 'clerk-sdk-ruby', '~> 5.1', '>= 5.1.2'
 end
