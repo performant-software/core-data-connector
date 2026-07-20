@@ -12,6 +12,10 @@ module CoreDataConnector
     include Relateable
     include UserDefinedFields::Fieldable
     include Search::Taxonomy
+    include Auditable
+
+    # Audit logging
+    track_changes
 
     # User defined fields parent
     resolve_defineable -> (taxonomy) { taxonomy.project_model }

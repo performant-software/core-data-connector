@@ -12,7 +12,11 @@ module CoreDataConnector
     include Reconcile::Event
     include Relateable
     include Search::Event
+    include Auditable
     include UserDefinedFields::Fieldable
+
+    # Audit logging
+    track_changes
 
     # Fuzzy dates
     has_fuzzy_dates :start_date, :end_date

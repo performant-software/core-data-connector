@@ -1,5 +1,11 @@
 module CoreDataConnector
   class PlaceGeometry < ApplicationRecord
+    # Includes
+    include Auditable
+
+    # todo: we can't directly log geometry updates, but we
+    # should store some sort of event in Papertrail.
+
     # Relationships
     belongs_to :place
 
@@ -8,6 +14,13 @@ module CoreDataConnector
 
     # Callbacks
     before_save :set_geometry
+
+    # Stores a GeoJSON snapshot of the geometry on each version.
+    def audit_metadata
+      return nil if geometry.blank?
+
+      { geometry: to_geojson }
+    end
 
     # Returns the "geometry" as GeoJSON
     def to_geojson

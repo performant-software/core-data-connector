@@ -10,8 +10,12 @@ module CoreDataConnector
     include Ownable
     include Relateable
     include Search::MediaContent
+    include Auditable
     include TripleEyeEffable::Resourceable
     include UserDefinedFields::Fieldable
+
+    # Audit logging
+    track_changes
 
     # Delegates
     delegate :storage_key, to: :project, allow_nil: true

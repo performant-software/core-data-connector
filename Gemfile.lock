@@ -54,6 +54,7 @@ PATH
       fuzzy_dates
       jwt (~> 3.2)
       jwt_auth
+      paper_trail (>= 16.0)
       postmark-rails (~> 0.22.1)
       rack-cors (~> 3.0.0)
       rails (>= 8.1, < 9)
@@ -234,6 +235,9 @@ GEM
       racc (~> 1.4)
     pagy (5.10.1)
       activesupport
+    paper_trail (17.0.0)
+      activerecord (>= 7.1)
+      request_store (~> 1.4)
     postmark (1.25.1)
       json
     postmark-rails (0.22.1)
@@ -296,6 +300,8 @@ GEM
       psych (>= 4.0.0)
     reline (0.6.1)
       io-console (~> 0.5)
+    request_store (1.7.0)
+      rack (>= 1.4)
     rgeo (3.0.1)
     rgeo-activerecord (8.1.0)
       activerecord (>= 8.1, < 8.2)

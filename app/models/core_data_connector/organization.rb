@@ -12,7 +12,11 @@ module CoreDataConnector
     include Reconcile::Organization
     include Relateable
     include Search::Organization
+    include Auditable
     include UserDefinedFields::Fieldable
+
+    # Audit logging
+    track_changes
 
     # Delegates
     delegate :name, to: :primary_name, allow_nil: true

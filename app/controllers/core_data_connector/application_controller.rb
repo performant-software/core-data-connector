@@ -9,7 +9,7 @@ module CoreDataConnector
 
     # Actions
     skip_before_action :authenticate_request
-    before_action :handle_authentication
+    before_action :handle_authentication, :set_paper_trail_whodunnit
 
     def item_class
       "CoreDataConnector::#{controller_name.singularize.classify}".constantize
@@ -17,6 +17,16 @@ module CoreDataConnector
 
     def serializer_class
       "CoreDataConnector::#{"#{controller_name}_serializer".classify}".constantize
+    end
+
+    protected
+
+    def user_for_paper_trail
+      current_user&.id
+    end
+
+    def info_for_paper_trail
+      { request_uuid: request.uuid }
     end
 
     private

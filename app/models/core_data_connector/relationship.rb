@@ -2,7 +2,10 @@ module CoreDataConnector
   class Relationship < ApplicationRecord
     # Includes
     include Export::Relationship
+    include Auditable
     include UserDefinedFields::Fieldable
+
+    # Todo: audit log relationships
 
     # Relationships
     belongs_to :project_model_relationship

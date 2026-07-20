@@ -14,6 +14,10 @@ module CoreDataConnector
     include Relateable
     include UserDefinedFields::Fieldable
     include Search::Item
+    include Auditable
+
+    # Audit logging
+    track_changes
 
     # Nameable table
     name_table :source_names, as: :nameable
