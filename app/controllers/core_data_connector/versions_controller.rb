@@ -12,6 +12,8 @@ module CoreDataConnector
       Work
     ].freeze
 
+    preloads :user, root: :primary_name
+
     protected
 
     def base_query
@@ -19,23 +21,21 @@ module CoreDataConnector
 
       if params[:project_id].present?
         authorize project, :show?
-
-        scope.merge(project_condition).order(created_at: :desc, id: :desc)
+        scope = scope.merge(project_condition)
       elsif is_valid?
         authorize root_record, :show?
-
-        scope
-          .where(root_type: root_record.class.name, root_id: root_record.id)
-          .order(created_at: :desc, id: :desc)
+        scope = scope.where(root_type:
+                              root_record.class.name, root_id: root_record.id)
       else
-        Version.none
+        return Version.none
       end
+
+      params[:sort_by].present? ? scope :
+        scope.order(created_at: :desc, id: :desc)
     end
 
     def load_records(items)
-      versions = [items].flatten
-
-      preload_user_defined_fields versions
+      preload_user_defined_fields [items].flatten
 
       super.merge(
         attribute_changes: method(:attribute_changes),
