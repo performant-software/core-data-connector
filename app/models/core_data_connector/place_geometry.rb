@@ -3,8 +3,12 @@ module CoreDataConnector
     # Includes
     include Auditable
 
-    # todo: we can't directly log geometry updates, but we
-    # should store some sort of event in Papertrail.
+    # Audit logging. Geometries are too large to store in the audit log, but
+    # every geometry update destroys the existing place_geometry record
+    # and creates a new one, so that event should appear in the log.
+    track_changes root: ->(place_geometry) { place_geometry.place },
+                  ignore: [:place_id],
+                  skip: [:geometry]
 
     # Relationships
     belongs_to :place
@@ -14,13 +18,6 @@ module CoreDataConnector
 
     # Callbacks
     before_save :set_geometry
-
-    # Stores a GeoJSON snapshot of the geometry on each version.
-    def audit_metadata
-      return nil if geometry.blank?
-
-      { geometry: to_geojson }
-    end
 
     # Returns the "geometry" as GeoJSON
     def to_geojson

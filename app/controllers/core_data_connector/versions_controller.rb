@@ -12,7 +12,7 @@ module CoreDataConnector
       Work
     ].freeze
 
-    preloads :user, root: :primary_name
+    preloads :user
 
     protected
 
@@ -21,7 +21,7 @@ module CoreDataConnector
 
       if params[:project_id].present?
         authorize project, :show?
-        scope = scope.merge(project_condition)
+        scope = scope.where(project_id: project.id)
       elsif is_valid?
         authorize root_record, :show?
         scope = scope.where(root_type:
@@ -132,20 +132,6 @@ module CoreDataConnector
 
     def project
       @project ||= Project.find(params[:project_id])
-    end
-
-    # Combines each trackable model's owned records for the project into a single
-    # (root_type = X AND root_id IN (...)) OR (...) condition.
-    def project_condition
-      TRACKABLE_MODELS
-        .map { |model| trackable_condition(model) }
-        .reduce(:or)
-    end
-
-    def trackable_condition(model)
-      klass = "CoreDataConnector::#{model}".constantize
-
-      Version.where(root_type: klass.name, root_id: klass.owned_records_by_project(project.id).select(:id))
     end
   end
 end
