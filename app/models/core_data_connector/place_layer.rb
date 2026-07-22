@@ -6,7 +6,7 @@ module CoreDataConnector
     include Auditable
 
     # Audit logging
-    track_changes root: ->(place_layer) { place_layer.place }
+    track_changes root: ->(place_layer) { place_layer.place }, ignore: [:place_id]
 
     # Relationships
     belongs_to :place

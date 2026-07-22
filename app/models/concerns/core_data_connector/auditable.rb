@@ -6,13 +6,13 @@ module CoreDataConnector
       def track_changes(root: nil, **options)
         has_paper_trail(
           versions: { class_name: 'CoreDataConnector::Version' },
-          ignore: [:updated_at],
           meta: {
             root_type: ->(record) { record.audit_root&.class&.name },
             root_id: ->(record) { record.audit_root&.id },
             meta: ->(record) { record.audit_metadata }
           },
-          **options
+          **options,
+          ignore: [:id, :created_at, :updated_at, :uuid].concat(options[:ignore] || []),
         )
 
         if root

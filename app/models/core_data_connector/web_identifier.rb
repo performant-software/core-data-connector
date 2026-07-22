@@ -5,7 +5,7 @@ module CoreDataConnector
     include Auditable
 
     # Audit logging
-    track_changes root: ->(web_identifier) { web_identifier.identifiable }
+    track_changes root: ->(web_identifier) { web_identifier.identifiable }, ignore: [:identifiable_id]
 
     # Relationships
     belongs_to :identifiable, polymorphic: true

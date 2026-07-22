@@ -1,6 +1,6 @@
 module CoreDataConnector
   class VersionsSerializer < BaseSerializer
-    index_attributes :id, :event, :item_id, :request_uuid, :created_at, :root_id, user: UsersSerializer
+    index_attributes :id, :uuid, :event, :item_id, :request_uuid, :created_at, :root_id, user: UsersSerializer
 
     ROOT_ATTRIBUTES = {
       root_display_name: :display_name,
