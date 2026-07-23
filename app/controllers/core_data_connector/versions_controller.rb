@@ -24,8 +24,7 @@ module CoreDataConnector
         scope = scope.where(project_id: project.id)
       elsif is_valid?
         authorize root_record, :show?
-        scope = scope.where(root_type:
-                              root_record.class.name, root_id: root_record.id)
+        scope = scope.merge(Version.for_record(root_record))
       else
         return Version.none
       end

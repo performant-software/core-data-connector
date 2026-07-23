@@ -5,7 +5,8 @@ module CoreDataConnector
     include Auditable
     include UserDefinedFields::Fieldable
 
-    # Todo: audit log relationships
+    track_changes roots: ->(relationship) { [relationship.primary_record, relationship.related_record] },
+                  only: [:user_defined]
 
     # Relationships
     belongs_to :project_model_relationship

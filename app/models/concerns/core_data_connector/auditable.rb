@@ -3,16 +3,12 @@ module CoreDataConnector
     extend ActiveSupport::Concern
 
     class_methods do
-      def track_changes(root: nil, **options)
+      def track_changes(root: nil, roots: nil, **options)
         has_paper_trail(
           versions: { class_name: 'CoreDataConnector::Version' },
           meta: {
-            root_type: ->(record) { record.audit_root&.class&.name },
-            root_id: ->(record) { record.audit_root&.id },
-            root_display_name: ->(record) { record.audit_root&.display_name },
-            root_uuid: ->(record) { record.audit_root&.uuid },
-            root_project_model_id: ->(record) { record.audit_root&.project_model_id },
-            project_id: ->(record) { record.audit_root&.project_id },
+            roots: ->(record) { record.audit_roots_data },
+            project_id: ->(record) { record.audit_roots.first&.project_id },
             meta: ->(record) { record.audit_metadata }
           },
           **options,
@@ -35,17 +31,45 @@ module CoreDataConnector
           ].concat(options[:ignore] || []),
         )
 
-        if root
-          define_method(:audit_root) { root.call(self) }
-        else
-          define_method(:audit_root) { self }
+        after_commit :backfill_audit_roots_data, on: :create
+
+        if roots
+          define_method(:audit_roots) { Array(roots.call(self)).compact }
+        elsif root
+          define_method(:audit_roots) { [root.call(self)].compact }
         end
+      end
+    end
+
+    def audit_roots
+      [self]
+    end
+
+    def audit_roots_data
+      audit_roots.map do |record|
+        {
+          type: record.class.name,
+          id: record.id,
+          display_name: record.display_name,
+          uuid: record.uuid,
+          project_model_id: record.project_model_id
+        }
       end
     end
 
     # Additional model-specific data to store alongside each version
     def audit_metadata
       nil
+    end
+
+    private
+
+    # Fill in root data after record creation
+    def backfill_audit_roots_data
+      data = self.class.find_by(id: id)&.audit_roots_data
+      return if data.blank?
+
+      versions.where(event: 'create').update_all(roots: data)
     end
   end
 end

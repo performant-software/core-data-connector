@@ -4,11 +4,10 @@ module CoreDataConnector
     self.table_name = 'core_data_connector_versions'
 
     # Relationships
-    belongs_to :root, polymorphic: true, optional: true
     has_one :user, foreign_key: :id, primary_key: :whodunnit
 
     def self.for_record(record)
-      where(root_type: record.class.name, root_id: record.id)
+      where('roots @> ?', [{ type: record.class.name, id: record.id }].to_json)
     end
 
     # Group by request_uuid so we can combine changes to multiple tables that were semantically
