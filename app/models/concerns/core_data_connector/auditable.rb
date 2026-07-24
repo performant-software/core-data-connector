@@ -37,7 +37,14 @@ module CoreDataConnector
           define_method(:audit_roots) { Array(roots.call(self)).compact }
         elsif root
           define_method(:audit_roots) { [root.call(self)].compact }
+        else
+          @audit_root = true
         end
+      end
+
+      # Returns whether this model is a top-level trackable record
+      def audit_root?
+        @audit_root
       end
     end
 

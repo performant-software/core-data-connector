@@ -1,17 +1,5 @@
 module CoreDataConnector
   class VersionsController < ApplicationController
-    TRACKABLE_MODELS = %w[
-      Event
-      Instance
-      Item
-      MediaContent
-      Organization
-      Person
-      Place
-      Taxonomy
-      Work
-    ].freeze
-
     preloads :user
 
     protected
@@ -113,7 +101,7 @@ module CoreDataConnector
     end
 
     def is_valid?
-      record_class.is_a?(Class) && record_class < ApplicationRecord && record_class.include?(Auditable)
+      record_class.present?
     end
 
     def root_record
@@ -121,12 +109,32 @@ module CoreDataConnector
     end
 
     def record_class
-      @record_class ||= parent_param && "CoreDataConnector::#{parent_param.to_s.delete_suffix('_id').classify}".safe_constantize
+      resolve_parent
+      @record_class
     end
 
     def parent_param
-      @parent_param ||= TRACKABLE_MODELS.map { |model| :"#{model.underscore}_id" }
-                                         .find { |key| params[key].present? }
+      resolve_parent
+      @parent_param
+    end
+
+    def resolve_parent
+      return if defined?(@resolved_parent)
+      @resolved_parent = true
+
+      @parent_param = params.keys
+                            .map(&:to_sym)
+                            .select { |key| key.to_s.end_with?('_id') && params[key].present? }
+                            .find do |key|
+                              klass = audit_root_class(key)
+                              @record_class = klass if klass
+                              klass
+                            end
+    end
+
+    def audit_root_class(param)
+      klass = "CoreDataConnector::#{param.to_s.delete_suffix('_id').classify}".safe_constantize
+      klass if klass.is_a?(Class) && klass.respond_to?(:audit_root?) && klass.audit_root?
     end
 
     def project
