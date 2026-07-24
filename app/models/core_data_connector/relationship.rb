@@ -2,7 +2,11 @@ module CoreDataConnector
   class Relationship < ApplicationRecord
     # Includes
     include Export::Relationship
+    include Auditable
     include UserDefinedFields::Fieldable
+
+    track_changes roots: ->(relationship) { [relationship.primary_record, relationship.related_record] },
+                  only: [:user_defined]
 
     # Relationships
     belongs_to :project_model_relationship

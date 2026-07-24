@@ -14,7 +14,11 @@ module CoreDataConnector
     include Reconcile::Place
     include Relateable
     include Search::Place
+    include Auditable
     include UserDefinedFields::Fieldable
+
+    # Audit logging
+    track_changes
 
     # Relationships
     has_one :place_geometry, dependent: :destroy

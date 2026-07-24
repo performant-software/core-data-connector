@@ -1,5 +1,15 @@
 module CoreDataConnector
   class PlaceGeometry < ApplicationRecord
+    # Includes
+    include Auditable
+
+    # Audit logging. Geometries are too large to store in the audit log, but
+    # every geometry update destroys the existing place_geometry record
+    # and creates a new one, so that event should appear in the log.
+    track_changes root: ->(place_geometry) { place_geometry.place },
+                  ignore: [:place_id],
+                  skip: [:geometry]
+
     # Relationships
     belongs_to :place
 
