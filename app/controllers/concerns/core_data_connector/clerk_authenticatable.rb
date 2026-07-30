@@ -9,7 +9,7 @@ module CoreDataConnector
     private
 
     def authenticate_clerk_request
-      token = request.cookies["__session"]
+      token = clerk_token
       return render_unauthorized unless token.present?
 
       clerk_session = clerk_client.verify_token(token)
@@ -46,6 +46,21 @@ module CoreDataConnector
       user.save!
 
       user
+    end
+
+    # The Clerk-issued JWT to verify: the __session cookie set by a browser,
+    # or a Bearer token from a non-browser client (the pstudio CLI's OAuth
+    # login). Both are Clerk JWTs, verified the same way against Clerk's JWKS;
+    # sub is the Clerk user id in either case.
+    def clerk_token
+      request.cookies["__session"].presence || bearer_token
+    end
+
+    def bearer_token
+      header = request.headers["Authorization"]
+      return nil unless header&.start_with?("Bearer ")
+
+      header.split(" ", 2).last
     end
 
     def get_clerk_data(clerk_id)
