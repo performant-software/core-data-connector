@@ -71,6 +71,7 @@ module CoreDataConnector
 
     private
 
+    # Fill in root data after record creation
     def backfill_audit_roots_data
       incomplete = versions.where(event: 'create').reject { |version| audit_roots_complete?(version) }
       return if incomplete.blank?
