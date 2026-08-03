@@ -73,10 +73,18 @@ module CoreDataConnector
 
     # Fill in root data after record creation
     def backfill_audit_roots_data
+      incomplete = versions.where(event: 'create').reject { |version| audit_roots_complete?(version) }
+      return if incomplete.blank?
+
       data = self.class.find_by(id: id)&.audit_roots_data
       return if data.blank?
 
-      versions.where(event: 'create').update_all(roots: data)
+      versions.where(id: incomplete.map(&:id)).update_all(roots: data)
+    end
+
+    def audit_roots_complete?(version)
+      roots = Array(version.roots)
+      roots.present? && roots.all? { |root| root['uuid'].present? }
     end
   end
 end

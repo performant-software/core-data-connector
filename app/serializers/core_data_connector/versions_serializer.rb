@@ -4,16 +4,8 @@ module CoreDataConnector
 
     index_attributes(:record_type) { |version| version.item_type.demodulize }
 
-    index_attributes(:roots) do |version|
-      Array(version.roots).map do |root|
-        {
-          record_type: root['type']&.demodulize,
-          id: root['id'],
-          display_name: root['display_name'],
-          uuid: root['uuid'],
-          project_model_id: root['project_model_id']
-        }
-      end
+    index_attributes(:roots) do |version, _current_user, options|
+      Array(version.roots).map { |root| options[:root_data].call(root) }
     end
     index_attributes(:attributes) { |version, _current_user, options| options[:attribute_changes].call(version) }
     index_attributes(:user_defined) { |version, _current_user, options| options[:user_defined_changes].call(version) }

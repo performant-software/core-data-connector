@@ -22,12 +22,31 @@ module CoreDataConnector
     end
 
     def load_records(items)
-      preload_user_defined_fields [items].flatten
+      versions = [items].flatten
+
+      preload_user_defined_fields versions
+      preload_roots versions
 
       super.merge(
         attribute_changes: method(:attribute_changes),
-        user_defined_changes: method(:user_defined_changes)
+        user_defined_changes: method(:user_defined_changes),
+        root_data: method(:root_data)
       )
+    end
+
+    def root_data(root)
+      record = @roots[root_key(root)]
+      project_model_id = record&.project_model_id || root['project_model_id']
+
+      {
+        record_type: root['type']&.demodulize,
+        id: root['id'],
+        uuid: record&.uuid || root['uuid'],
+        display_name: record&.display_name || root['display_name'],
+        project_model_id: project_model_id,
+        project_model_name: @project_models[project_model_id]&.name,
+        deleted: record.nil?
+      }
     end
 
     def attribute_changes(version)
@@ -83,6 +102,46 @@ module CoreDataConnector
       @user_defined_fields = UserDefinedFields::UserDefinedField
                                .where(uuid: uuids)
                                .index_by(&:uuid)
+    end
+
+    def preload_roots(versions)
+      roots = versions.flat_map { |version| Array(version.roots) }
+
+      @roots = {}
+
+      roots.group_by { |root| root['type'] }.each do |type, group|
+        klass = root_class(type)
+        next if klass.nil?
+
+        scope = klass.where(id: group.map { |root| root['id'] }.uniq)
+
+        if klass.respond_to?(:get_names_table) && klass.get_names_table.present?
+          scope = scope.includes(:primary_name)
+        end
+
+        scope.each { |record| @roots[[type, record.id]] = record }
+      end
+
+      preload_project_models roots
+    end
+
+    def preload_project_models(roots)
+      ids = roots.filter_map do |root|
+        @roots[root_key(root)]&.project_model_id || root['project_model_id']
+      end.uniq
+
+      @project_models = ProjectModel.where(id: ids).index_by(&:id)
+    end
+
+    def root_key(root)
+      [root['type'], root['id']]
+    end
+
+    # Guards against types stored on older versions that have since been renamed
+    # or removed.
+    def root_class(type)
+      klass = type&.safe_constantize
+      klass if klass.is_a?(Class) && klass < ActiveRecord::Base
     end
 
     def user_defined_uuids(version)
