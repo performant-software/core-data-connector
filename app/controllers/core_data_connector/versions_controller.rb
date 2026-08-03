@@ -22,11 +22,15 @@ module CoreDataConnector
     end
 
     def load_records(items)
-      preload_user_defined_fields [items].flatten
+      versions = [items].flatten
+
+      preload_user_defined_fields versions
+      preload_project_models versions
 
       super.merge(
         attribute_changes: method(:attribute_changes),
-        user_defined_changes: method(:user_defined_changes)
+        user_defined_changes: method(:user_defined_changes),
+        project_model_name: method(:project_model_name)
       )
     end
 
@@ -83,6 +87,20 @@ module CoreDataConnector
       @user_defined_fields = UserDefinedFields::UserDefinedField
                                .where(uuid: uuids)
                                .index_by(&:uuid)
+    end
+
+    def preload_project_models(versions)
+      ids = versions.flat_map { |version| project_model_ids(version) }.uniq
+
+      @project_models = ProjectModel.where(id: ids).index_by(&:id)
+    end
+
+    def project_model_ids(version)
+      Array(version.roots).filter_map { |root| root['project_model_id'] }
+    end
+
+    def project_model_name(project_model_id)
+      @project_models[project_model_id]&.name
     end
 
     def user_defined_uuids(version)
