@@ -1,4 +1,7 @@
 # CoreDataConnector
+
+**Note: The functionality of this gem has been integrated into FairData and the gem is no longer maintained.**
+
 Short description and motivation.
 
 ## Usage
