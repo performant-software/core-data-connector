@@ -3,7 +3,6 @@ module CoreDataConnector
     class Passwords
 
       # default lengths of generated passwords
-      SSO_PASSWORD_LENGTH = 50
       USER_PASSWORD_LENGTH = 16
 
       # Password format; must match frontend validation regex
@@ -14,10 +13,6 @@ module CoreDataConnector
         (?=.*[A-Z])          # Must contain an upper case character
         (?=.*[^a-zA-Z0-9\s]) # Must contain a symbol
       /x
-
-      def self.generate_sso_password
-        generate_password SSO_PASSWORD_LENGTH
-      end
 
       def self.generate_user_password
         generate_password USER_PASSWORD_LENGTH
