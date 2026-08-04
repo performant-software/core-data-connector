@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'faker', '~> 3.2.1'
 gem 'fuzzy_dates', git: 'https://github.com/performant-software/fuzzy-dates.git', tag: 'v0.1.1'
 gem 'jwt_auth', git: 'https://github.com/performant-software/jwt-auth.git', tag: 'v1.0.0'
 gem 'resource_api', git: 'https://github.com/performant-software/resource-api.git', tag: 'v0.5.16'

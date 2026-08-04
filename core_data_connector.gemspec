@@ -17,7 +17,6 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
-  spec.add_dependency 'faker'
   spec.add_dependency 'rails', '>= 8.1', '< 9'
   spec.add_dependency 'activerecord-postgis-adapter', '~> 11.1'
   spec.add_dependency 'fuzzy_dates'
