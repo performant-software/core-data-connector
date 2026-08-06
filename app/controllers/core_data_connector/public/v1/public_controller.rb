@@ -14,7 +14,7 @@ module CoreDataConnector
           query = super
 
           if nested_resource? && current_record.present?
-            query = query.joins(build_base_sql).order('record.order')
+            query = query.joins(build_base_sql).distinct
           elsif nested_resource?
             query = item_class.none
           elsif params[:id].present?
